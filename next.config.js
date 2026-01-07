@@ -98,7 +98,8 @@ const nextConfig = {
   },
 
   // Output configuration
-  output: 'standalone',
+  // Note: 'standalone' is for self-hosting. Remove for Netlify/Vercel
+  // output: 'standalone', // Commented out for Netlify compatibility
 
   // Enable compression
   compress: true,
