@@ -292,7 +292,7 @@ export function ContentRepurposer() {
 
               <LoadingButton
                 onClick={handleRepurpose}
-                isLoading={isRepurposing}
+                loading={isRepurposing}
                 disabled={!content.trim() || selectedPlatforms.length === 0}
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
               >

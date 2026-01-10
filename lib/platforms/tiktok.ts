@@ -235,7 +235,7 @@ export async function uploadVideoChunk({
       'Content-Type': 'video/mp4',
       'Content-Range': `bytes ${startByte}-${endByte}/${totalSize}`,
     },
-    body: videoData,
+    body: videoData as any,
   })
 
   if (!response.ok) {

@@ -222,7 +222,7 @@ export function CreatePostFormWithInitialData({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <LoadingButton type="submit" isLoading={isSubmitting}>
+            <LoadingButton type="submit" loading={isSubmitting}>
               <Calendar className="h-4 w-4 mr-2" />
               Create Post
             </LoadingButton>

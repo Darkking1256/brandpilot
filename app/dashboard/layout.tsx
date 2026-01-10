@@ -25,7 +25,7 @@ import { OnboardingProvider, useOnboarding } from "@/components/onboarding/onboa
 import { HelpCenter } from "@/components/help/help-center"
 import { MobileNav } from "@/components/mobile/mobile-nav"
 import { BottomNav } from "@/components/mobile/bottom-nav"
-import { useGlobalKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
 import { GlobalSearch } from "@/components/search/global-search"
 
 const navItems = [
@@ -47,7 +47,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false)
   
   // Enable global keyboard shortcuts
-  useGlobalKeyboardShortcuts([
+  useKeyboardShortcuts([
     {
       key: "k",
       ctrl: true,

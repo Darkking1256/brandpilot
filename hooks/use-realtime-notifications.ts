@@ -42,8 +42,8 @@ export function useRealtimeNotifications() {
           table: "posts",
         },
         (payload) => {
-          const post = payload.new || payload.old
-          const postData = payload.new || payload.old
+          const post: any = payload.new || payload.old
+          const postData: any = payload.new || payload.old
 
           if (payload.eventType === "INSERT") {
             addNotification({
@@ -118,8 +118,8 @@ export function useRealtimeNotifications() {
           table: "campaigns",
         },
         (payload) => {
-          const campaign = payload.new || payload.old
-          const campaignData = payload.new || payload.old
+          const campaign: any = payload.new || payload.old
+          const campaignData: any = payload.new || payload.old
 
           if (payload.eventType === "INSERT") {
             addNotification({

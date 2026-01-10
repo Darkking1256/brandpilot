@@ -22,7 +22,7 @@ export function ErrorMessage({
 }: ErrorMessageProps) {
   return (
     <Alert
-      variant={variant}
+      variant={variant === "warning" ? "default" : variant}
       className={cn(
         "border-2",
         variant === "destructive" && "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20",

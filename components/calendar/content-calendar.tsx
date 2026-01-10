@@ -137,7 +137,7 @@ export function ContentCalendar({
               isTodayDate && "ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-950/20"
             )}
             onClick={() => onDateChange?.(day)}
-            onDragOver={handleDragOver}
+            onDragOver={(e) => handleDragOver(e, day)}
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, day)}
           >

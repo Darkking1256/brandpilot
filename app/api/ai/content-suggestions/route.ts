@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { requireAuth } from "@/lib/auth"
@@ -142,7 +143,7 @@ async function generateAISuggestions(
 
   if (openaiKey || groqKey) {
     try {
-      const aiSuggestions = await generateAISuggestionsWithAPI(topPosts, userPosts, openaiKey || groqKey)
+      const aiSuggestions = await generateAISuggestionsWithAPI(topPosts, userPosts, (openaiKey || groqKey) as string)
       suggestions.push(...aiSuggestions)
     } catch (error) {
       console.error("AI suggestion generation failed, using fallback:", error)

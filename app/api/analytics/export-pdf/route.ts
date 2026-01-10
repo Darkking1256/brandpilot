@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from "next/server"
 
 // Simple PDF export using HTML to PDF conversion

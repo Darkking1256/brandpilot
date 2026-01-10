@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { createPortalSession } from '@/lib/stripe'
 import { requireAuth } from '@/lib/auth'

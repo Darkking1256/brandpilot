@@ -428,7 +428,7 @@ export function CreateAdForm({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <LoadingButton type="submit" isLoading={isSubmitting}>
+            <LoadingButton type="submit" loading={isSubmitting}>
               <DollarSign className="h-4 w-4 mr-2" />
               {mode === "edit" ? "Update Ad" : "Create Ad"}
             </LoadingButton>

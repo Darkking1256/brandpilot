@@ -132,7 +132,7 @@ export function ApprovalWorkflow({ post, onApprove, onReject, currentUserId }: A
             {approvalStatus === "approved" && <CheckCircle2 className="h-3 w-3 mr-1" />}
             {approvalStatus === "rejected" && <XCircle className="h-3 w-3 mr-1" />}
             {approvalStatus === "pending_review" && <Clock className="h-3 w-3 mr-1" />}
-            {approvalStatus.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+             {approvalStatus.replace("_", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
           </Badge>
         </CardTitle>
       </CardHeader>

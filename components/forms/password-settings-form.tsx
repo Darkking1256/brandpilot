@@ -129,7 +129,7 @@ export function PasswordSettingsForm({ onSuccess }: PasswordSettingsFormProps) {
 
       <LoadingButton
         type="submit"
-        isLoading={isLoading}
+        loading={isLoading}
         className="bg-gradient-to-r from-blue-600 to-cyan-600"
       >
         Update Password

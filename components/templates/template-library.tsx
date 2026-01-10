@@ -171,9 +171,7 @@ export function TemplateLibrary({ type, onSelectTemplate, onSaveAsTemplate }: Te
             size="sm"
             variant="outline"
             onClick={() => {
-              if (onSaveAsTemplate) {
-                openSaveDialog({})
-              }
+              openSaveDialog({})
             }}
           >
             <Plus className="h-4 w-4 mr-2" />

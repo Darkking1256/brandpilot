@@ -33,7 +33,7 @@ export default function NewPostPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6 md:pt-0">
-          <CreatePostForm />
+          <CreatePostForm inline />
         </CardContent>
       </Card>
     </div>

@@ -52,11 +52,12 @@ const postSchema = z.object({
 type PostFormValues = z.infer<typeof postSchema>
 
 interface CreatePostFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   onSubmit?: (data: PostFormValues) => void
   post?: Post | null
   mode?: "create" | "edit"
+  inline?: boolean
 }
 
 export function CreatePostForm({ 
@@ -64,7 +65,8 @@ export function CreatePostForm({
   onOpenChange, 
   onSubmit: onSubmitCallback,
   post,
-  mode = "create"
+  mode = "create",
+  inline = false
 }: CreatePostFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [draftPostId, setDraftPostId] = useState<string | null>(null)
@@ -286,7 +288,7 @@ export function CreatePostForm({
       
       form.reset()
       clearMedia()
-      onOpenChange(false)
+      onOpenChange?.(false)
     } catch (error) {
       console.error("Error saving post:", error)
       toast({
@@ -299,8 +301,386 @@ export function CreatePostForm({
     }
   }
 
+  const formContent = (
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      {/* Platform Selection */}
+      <div className="space-y-2">
+        <Label htmlFor="platform">Platform *</Label>
+        <Select
+          value={form.watch("platform")}
+          onValueChange={(value) => form.setValue("platform", value as any)}
+        >
+          <SelectTrigger id="platform">
+            <SelectValue placeholder="Select a platform" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="twitter">Twitter/X</SelectItem>
+            <SelectItem value="linkedin">LinkedIn</SelectItem>
+            <SelectItem value="facebook">Facebook</SelectItem>
+            <SelectItem value="instagram">Instagram</SelectItem>
+            <SelectItem value="tiktok">TikTok</SelectItem>
+            <SelectItem value="youtube">YouTube</SelectItem>
+          </SelectContent>
+        </Select>
+        {form.formState.errors.platform && (
+          <p className="text-sm text-destructive">
+            {form.formState.errors.platform.message}
+          </p>
+        )}
+      </div>
+
+      {/* Content with AI Features */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="content">Content *</Label>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const currentContent = form.getValues("content")
+                if (currentContent) {
+                  // Open optimizer with current content
+                  const optimizerDialog = document.createElement("div")
+                  // We'll handle this differently - show optimizer inline
+                }
+              }}
+              className="text-xs"
+            >
+              <Wand2 className="h-3 w-3 mr-1" />
+              Optimize
+            </Button>
+          </div>
+        </div>
+        
+        <Tabs defaultValue="manual" className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="manual">Write</TabsTrigger>
+            <TabsTrigger value="ai-generate">
+              <Sparkles className="h-3 w-3 mr-1" />
+              AI Generate
+            </TabsTrigger>
+            <TabsTrigger value="ai-optimize">
+              <Wand2 className="h-3 w-3 mr-1" />
+              AI Optimize
+            </TabsTrigger>
+            <TabsTrigger value="templates">
+              <FileText className="h-3 w-3 mr-1" />
+              Templates
+            </TabsTrigger>
+            <TabsTrigger value="preview">
+              <Eye className="h-3 w-3 mr-1" />
+              Preview
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="manual" className="space-y-2">
+            <Textarea
+              id="content"
+              placeholder="What's on your mind?"
+              rows={6}
+              {...form.register("content")}
+              className="resize-none"
+            />
+            <div className="flex justify-between items-center">
+              {form.formState.errors.content && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.content.message}
+                </p>
+              )}
+              <p className="text-xs text-muted-foreground ml-auto">
+                {form.watch("content")?.length || 0} characters
+              </p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="ai-generate" className="space-y-2">
+            <AIContentGenerator
+              platform={form.watch("platform")}
+              onContentGenerated={(content) => {
+                form.setValue("content", content)
+              }}
+            />
+          </TabsContent>
+          
+          <TabsContent value="ai-optimize" className="space-y-2">
+            <AIPostOptimizer
+              initialContent={form.watch("content")}
+              platform={form.watch("platform")}
+              onOptimized={(content) => {
+                form.setValue("content", content)
+              }}
+            />
+          </TabsContent>
+          
+          <TabsContent value="templates" className="space-y-2">
+            <TemplateLibrary
+              type="post"
+              onSelectTemplate={(template) => {
+                const content = template.content
+                if (content.content) form.setValue("content", content.content)
+                if (content.platform) form.setValue("platform", content.platform)
+                if (content.imageUrl) form.setValue("imageUrl", content.imageUrl)
+                if (content.linkUrl) form.setValue("linkUrl", content.linkUrl)
+                toast({
+                  variant: "success",
+                  title: "Template loaded",
+                  description: `"${template.name}" template has been loaded.`,
+                })
+              }}
+              onSaveAsTemplate={(saveFn) => {
+                // Store save function for later use
+                ;(window as any).savePostTemplate = () => {
+                  const formData = form.getValues()
+                  saveFn({
+                    content: formData.content,
+                    platform: formData.platform,
+                    imageUrl: formData.imageUrl,
+                    linkUrl: formData.linkUrl,
+                  })
+                }
+              }}
+            />
+          </TabsContent>
+          
+          <TabsContent value="preview" className="space-y-2">
+            {form.watch("content") || mediaPreview || form.watch("imageUrl") ? (
+              <PostPreview
+                post={{
+                  id: "preview",
+                  content: form.watch("content") || "",
+                  platform: form.watch("platform") || "twitter",
+                  imageUrl: mediaPreview || form.watch("imageUrl") || undefined,
+                  linkUrl: form.watch("linkUrl") || undefined,
+                  status: "draft",
+                  scheduledDate: form.watch("scheduledDate") || new Date().toISOString().split("T")[0],
+                  scheduledTime: form.watch("scheduledTime") || "09:00",
+                  createdAt: new Date().toISOString(),
+                }}
+              />
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Eye className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>Add content to see preview</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {/* Media Upload */}
+      <div className="space-y-3">
+        <Label className="flex items-center gap-2">
+          <Image className="h-4 w-4" />
+          Media (Optional)
+        </Label>
+        
+        {/* Drag & Drop Zone */}
+        {!mediaPreview && !form.watch("imageUrl") && (
+          <div
+            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
+              isDragging 
+                ? "border-primary bg-primary/5" 
+                : "border-muted-foreground/25 hover:border-primary/50"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) handleFileSelect(file)
+              }}
+            />
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex gap-2">
+                <FileImage className="h-8 w-8 text-muted-foreground" />
+                <FileVideo className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <p className="text-sm font-medium">
+                Drag & drop image or video here
+              </p>
+              <p className="text-xs text-muted-foreground">
+                or click to browse (JPG, PNG, GIF, MP4, WebM)
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Max: 10MB for images, 100MB for videos
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Media Preview */}
+        {mediaPreview && (
+          <div className="relative">
+            {mediaType === "image" ? (
+              <img
+                src={mediaPreview}
+                alt="Preview"
+                className="w-full h-48 object-cover rounded-lg border"
+              />
+            ) : (
+              <video
+                src={mediaPreview}
+                className="w-full h-48 object-contain rounded-lg border bg-black"
+                controls
+              />
+            )}
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              className="absolute top-2 right-2 h-8 w-8"
+              onClick={clearMedia}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            <div className="absolute bottom-2 left-2">
+              <span className="bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                {mediaType === "image" ? <FileImage className="h-3 w-3" /> : <FileVideo className="h-3 w-3" />}
+                {mediaFile?.name}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* URL Input Alternative */}
+        {!mediaPreview && (
+          <>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or paste URL</span>
+              </div>
+            </div>
+            
+            <Input
+              id="imageUrl"
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              {...form.register("imageUrl")}
+            />
+            {form.formState.errors.imageUrl && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.imageUrl.message}
+              </p>
+            )}
+            {form.watch("imageUrl") && (
+              <div className="relative">
+                <img
+                  src={form.watch("imageUrl")}
+                  alt="Preview"
+                  className="w-full h-32 object-cover rounded-lg border"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none"
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2 h-8 w-8"
+                  onClick={() => form.setValue("imageUrl", "")}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Link URL */}
+      <div className="space-y-2">
+        <Label htmlFor="linkUrl" className="flex items-center gap-2">
+          <Link2 className="h-4 w-4" />
+          Link URL (Optional)
+        </Label>
+        <Input
+          id="linkUrl"
+          type="url"
+          placeholder="https://example.com"
+          {...form.register("linkUrl")}
+        />
+        {form.formState.errors.linkUrl && (
+          <p className="text-sm text-destructive">
+            {form.formState.errors.linkUrl.message}
+          </p>
+        )}
+      </div>
+
+      {/* Schedule Date & Time */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="scheduledDate" className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            Date *
+          </Label>
+          <Input
+            id="scheduledDate"
+            type="date"
+            min={new Date().toISOString().split("T")[0]}
+            {...form.register("scheduledDate")}
+          />
+          {form.formState.errors.scheduledDate && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.scheduledDate.message}
+            </p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="scheduledTime">Time *</Label>
+          <Input
+            id="scheduledTime"
+            type="time"
+            {...form.register("scheduledTime")}
+          />
+          {form.formState.errors.scheduledTime && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.scheduledTime.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2">
+        {!inline && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange?.(false)}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+        )}
+        <LoadingButton
+          type="submit"
+          loading={isSubmitting}
+          loadingText={mode === "edit" ? "Updating..." : "Scheduling..."}
+          className="bg-gradient-to-r from-blue-600 to-cyan-600"
+        >
+          {mode === "edit" ? "Update Post" : "Schedule Post"}
+        </LoadingButton>
+      </div>
+    </form>
+  )
+
+  if (inline) {
+    return formContent
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open || false} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">{mode === "edit" ? "Edit Post" : "Create New Post"}</DialogTitle>
@@ -310,379 +690,7 @@ export function CreatePostForm({
               : "Schedule a new post for your social media platforms"}
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Platform Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="platform">Platform *</Label>
-            <Select
-              value={form.watch("platform")}
-              onValueChange={(value) => form.setValue("platform", value as any)}
-            >
-              <SelectTrigger id="platform">
-                <SelectValue placeholder="Select a platform" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="twitter">Twitter/X</SelectItem>
-                <SelectItem value="linkedin">LinkedIn</SelectItem>
-                <SelectItem value="facebook">Facebook</SelectItem>
-                <SelectItem value="instagram">Instagram</SelectItem>
-                <SelectItem value="tiktok">TikTok</SelectItem>
-                <SelectItem value="youtube">YouTube</SelectItem>
-              </SelectContent>
-            </Select>
-            {form.formState.errors.platform && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.platform.message}
-              </p>
-            )}
-          </div>
-
-          {/* Content with AI Features */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="content">Content *</Label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const currentContent = form.getValues("content")
-                    if (currentContent) {
-                      // Open optimizer with current content
-                      const optimizerDialog = document.createElement("div")
-                      // We'll handle this differently - show optimizer inline
-                    }
-                  }}
-                  className="text-xs"
-                >
-                  <Wand2 className="h-3 w-3 mr-1" />
-                  Optimize
-                </Button>
-              </div>
-            </div>
-            
-            <Tabs defaultValue="manual" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="manual">Write</TabsTrigger>
-                <TabsTrigger value="ai-generate">
-                  <Sparkles className="h-3 w-3 mr-1" />
-                  AI Generate
-                </TabsTrigger>
-                <TabsTrigger value="ai-optimize">
-                  <Wand2 className="h-3 w-3 mr-1" />
-                  AI Optimize
-                </TabsTrigger>
-                <TabsTrigger value="templates">
-                  <FileText className="h-3 w-3 mr-1" />
-                  Templates
-                </TabsTrigger>
-                <TabsTrigger value="preview">
-                  <Eye className="h-3 w-3 mr-1" />
-                  Preview
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="manual" className="space-y-2">
-                <Textarea
-                  id="content"
-                  placeholder="What's on your mind?"
-                  rows={6}
-                  {...form.register("content")}
-                  className="resize-none"
-                />
-                <div className="flex justify-between items-center">
-                  {form.formState.errors.content && (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.content.message}
-                    </p>
-                  )}
-                  <p className="text-xs text-muted-foreground ml-auto">
-                    {form.watch("content")?.length || 0} characters
-                  </p>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="ai-generate" className="space-y-2">
-                <AIContentGenerator
-                  platform={form.watch("platform")}
-                  onContentGenerated={(content) => {
-                    form.setValue("content", content)
-                  }}
-                />
-              </TabsContent>
-              
-              <TabsContent value="ai-optimize" className="space-y-2">
-                <AIPostOptimizer
-                  initialContent={form.watch("content")}
-                  platform={form.watch("platform")}
-                  onOptimized={(content) => {
-                    form.setValue("content", content)
-                  }}
-                />
-              </TabsContent>
-              
-              <TabsContent value="templates" className="space-y-2">
-                <TemplateLibrary
-                  type="post"
-                  onSelectTemplate={(template) => {
-                    const content = template.content
-                    if (content.content) form.setValue("content", content.content)
-                    if (content.platform) form.setValue("platform", content.platform)
-                    if (content.imageUrl) form.setValue("imageUrl", content.imageUrl)
-                    if (content.linkUrl) form.setValue("linkUrl", content.linkUrl)
-                    toast({
-                      variant: "success",
-                      title: "Template loaded",
-                      description: `"${template.name}" template has been loaded.`,
-                    })
-                  }}
-                  onSaveAsTemplate={(saveFn) => {
-                    // Store save function for later use
-                    ;(window as any).savePostTemplate = () => {
-                      const formData = form.getValues()
-                      saveFn({
-                        content: formData.content,
-                        platform: formData.platform,
-                        imageUrl: formData.imageUrl,
-                        linkUrl: formData.linkUrl,
-                      })
-                    }
-                  }}
-                />
-              </TabsContent>
-              
-              <TabsContent value="preview" className="space-y-2">
-                {form.watch("content") || mediaPreview || form.watch("imageUrl") ? (
-                  <PostPreview
-                    content={form.watch("content") || ""}
-                    platform={form.watch("platform") || "twitter"}
-                    imageUrl={mediaPreview || form.watch("imageUrl") || undefined}
-                    linkUrl={form.watch("linkUrl") || undefined}
-                  />
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Eye className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p>Add content to see preview</p>
-                  </div>
-                )}
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          {/* Media Upload */}
-          <div className="space-y-3">
-            <Label className="flex items-center gap-2">
-              <Image className="h-4 w-4" />
-              Media (Optional)
-            </Label>
-            
-            {/* Drag & Drop Zone */}
-            {!mediaPreview && !form.watch("imageUrl") && (
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
-                  isDragging 
-                    ? "border-primary bg-primary/5" 
-                    : "border-muted-foreground/25 hover:border-primary/50"
-                }`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*,video/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) handleFileSelect(file)
-                  }}
-                />
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex gap-2">
-                    <FileImage className="h-8 w-8 text-muted-foreground" />
-                    <FileVideo className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm font-medium">
-                    Drag & drop image or video here
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    or click to browse (JPG, PNG, GIF, MP4, WebM)
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Max: 10MB for images, 100MB for videos
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Media Preview */}
-            {mediaPreview && (
-              <div className="relative">
-                {mediaType === "image" ? (
-                  <img
-                    src={mediaPreview}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded-lg border"
-                  />
-                ) : (
-                  <video
-                    src={mediaPreview}
-                    className="w-full h-48 object-contain rounded-lg border bg-black"
-                    controls
-                  />
-                )}
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-2 right-2 h-8 w-8"
-                  onClick={clearMedia}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                <div className="absolute bottom-2 left-2">
-                  <span className="bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                    {mediaType === "image" ? <FileImage className="h-3 w-3" /> : <FileVideo className="h-3 w-3" />}
-                    {mediaFile?.name}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* URL Input Alternative */}
-            {!mediaPreview && (
-              <>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">Or paste URL</span>
-                  </div>
-                </div>
-                
-                <Input
-                  id="imageUrl"
-                  type="url"
-                  placeholder="https://example.com/image.jpg"
-                  {...form.register("imageUrl")}
-                />
-                {form.formState.errors.imageUrl && (
-                  <p className="text-sm text-destructive">
-                    {form.formState.errors.imageUrl.message}
-                  </p>
-                )}
-                {form.watch("imageUrl") && (
-                  <div className="relative">
-                    <img
-                      src={form.watch("imageUrl")}
-                      alt="Preview"
-                      className="w-full h-32 object-cover rounded-lg border"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none"
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2 h-8 w-8"
-                      onClick={() => form.setValue("imageUrl", "")}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Link URL */}
-          <div className="space-y-2">
-            <Label htmlFor="linkUrl" className="flex items-center gap-2">
-              <Link2 className="h-4 w-4" />
-              Link URL (Optional)
-            </Label>
-            <Input
-              id="linkUrl"
-              type="url"
-              placeholder="https://example.com"
-              {...form.register("linkUrl")}
-            />
-            {form.formState.errors.linkUrl && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.linkUrl.message}
-              </p>
-            )}
-          </div>
-
-          {/* Schedule Date & Time */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="scheduledDate" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Date *
-              </Label>
-              <Input
-                id="scheduledDate"
-                type="date"
-                min={new Date().toISOString().split("T")[0]}
-                {...form.register("scheduledDate")}
-              />
-              {form.formState.errors.scheduledDate && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.scheduledDate.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="scheduledTime">Time *</Label>
-              <Input
-                id="scheduledTime"
-                type="time"
-                {...form.register("scheduledTime")}
-              />
-              {form.formState.errors.scheduledTime && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.scheduledTime.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <div className="flex-1 text-xs text-muted-foreground">
-              {isSaving && mode === "create" && (
-                <span className="flex items-center gap-1">
-                  <span className="animate-pulse">●</span>
-                  Saving draft...
-                </span>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <LoadingButton
-                type="submit"
-                loading={isSubmitting}
-                loadingText={mode === "edit" ? "Updating..." : "Scheduling..."}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600"
-              >
-                {mode === "edit" ? "Update Post" : "Schedule Post"}
-              </LoadingButton>
-            </div>
-          </DialogFooter>
-        </form>
+        {formContent}
       </DialogContent>
     </Dialog>
   )

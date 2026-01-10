@@ -270,7 +270,7 @@ export default function OAuthCredentialsPage() {
                 <div className="flex gap-2">
                   <LoadingButton
                     onClick={() => handleSave(platform.value)}
-                    isLoading={saving === platform.value}
+                    loading={saving === platform.value}
                     className="flex-1"
                   >
                     <Save className="h-4 w-4 mr-2" />

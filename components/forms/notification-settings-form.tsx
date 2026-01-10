@@ -200,7 +200,7 @@ export function NotificationSettingsForm({ onSuccess }: NotificationSettingsForm
 
       <LoadingButton
         type="submit"
-        isLoading={isLoading}
+        loading={isLoading}
         className="bg-gradient-to-r from-blue-600 to-cyan-600"
       >
         Save Preferences

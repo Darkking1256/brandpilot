@@ -196,7 +196,7 @@ export async function uploadVideoData({
   const response = await fetch(uploadUrl, {
     method: 'PUT',
     headers: { 'Content-Type': contentType },
-    body: videoData,
+    body: videoData as any,
   })
 
   if (!response.ok) {

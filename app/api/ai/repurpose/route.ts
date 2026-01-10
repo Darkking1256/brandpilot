@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth, getUserSubscription, hasFeatureAccess } from '@/lib/auth'
 import { repurposeContent } from '@/lib/ai'
