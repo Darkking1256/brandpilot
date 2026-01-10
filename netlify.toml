@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm ci && npm run build"
   publish = ".next"
 
 [[plugins]]
@@ -8,6 +8,7 @@
 [build.environment]
   NODE_VERSION = "18.18.0"
   NPM_FLAGS = "--legacy-peer-deps"
+  NPM_CONFIG_LEGACY_PEER_DEPS = "true"
 
 # Redirects for Next.js App Router
 [[redirects]]
