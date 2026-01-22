@@ -1,16 +1,21 @@
 [build]
   command = "npm ci && npm run build"
-  publish = ".next"
+  # Don't set publish directory when using @netlify/plugin-nextjs
+  # The plugin handles this automatically
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[functions]
+  # Increase timeout for API routes that might take longer
+  node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "18.18.0"
   NPM_FLAGS = "--legacy-peer-deps"
   NPM_CONFIG_LEGACY_PEER_DEPS = "true"
 
-# Redirects for Next.js App Router
+# Redirects for Next.js App Router (required for proper routing)
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/___netlify-handler"

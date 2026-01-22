@@ -53,10 +53,20 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Check for required environment variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // If env vars are missing, allow request to proceed (will fail at runtime)
+    // This prevents build failures during deployment
+    return response
+  }
+
   // Create Supabase client for middleware
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {
@@ -93,6 +103,7 @@ export async function middleware(request: NextRequest) {
   const publicRoutes = [
     '/',
     '/auth',
+    '/dashboard', // Allow dashboard access without auth
     '/api/auth',
     '/api/platforms/oauth',
     '/api/link-preview',
@@ -104,16 +115,26 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // Define protected routes (dashboard and API routes)
-  const isProtectedRoute = request.nextUrl.pathname.startsWith('/dashboard') ||
-    (request.nextUrl.pathname.startsWith('/api') && 
-     !publicRoutes.some(route => request.nextUrl.pathname.startsWith(route)))
+  // Define routes that require authentication (only API routes that modify data)
+  const requiresAuth = [
+    '/api/posts',
+    '/api/campaigns',
+    '/api/platforms/connect',
+    '/api/platforms/disconnect',
+    '/api/user',
+    '/api/teams',
+    '/api/stripe',
+    '/api/subscriptions',
+  ]
 
-  // If accessing a protected route without authentication, redirect to login
+  const isProtectedRoute = requiresAuth.some(route => request.nextUrl.pathname.startsWith(route))
+
+  // If accessing a protected route without authentication, return 401
   if (isProtectedRoute && !user) {
-    const redirectUrl = new URL('/auth/login', request.url)
-    redirectUrl.searchParams.set('redirect', request.nextUrl.pathname)
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.json(
+      { error: 'Authentication required. Please sign in to connect your social media accounts.' },
+      { status: 401 }
+    )
   }
 
   // If user is authenticated and trying to access auth pages, redirect to dashboard
