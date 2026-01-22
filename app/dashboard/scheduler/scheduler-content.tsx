@@ -375,7 +375,7 @@ export function SchedulerContent() {
   }
 
   return (
-    <>
+      <>
       <div className="space-y-8">
         {/* Header */}
         <div className="section-header border-0 pb-0 mb-0">
@@ -478,21 +478,33 @@ export function SchedulerContent() {
         </div>
 
         {/* Quick Status Filters */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-muted-foreground mr-2">Filter:</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-sm text-slate-400 mr-2">Filter:</span>
           {[
-            { key: "all", label: "All", icon: null, count: posts.length },
-            { key: "draft", label: "Drafts", icon: FileEdit, count: posts.filter(p => p.status === "draft").length },
-            { key: "scheduled", label: "Scheduled", icon: Calendar, count: posts.filter(p => p.status === "scheduled").length },
-            { key: "published", label: "Published", icon: CheckCircle2, count: posts.filter(p => p.status === "published").length },
-            { key: "failed", label: "Failed", icon: null, count: posts.filter(p => p.status === "failed").length },
+            { key: "all", label: "All", icon: null, count: posts.length, color: "slate" },
+            { key: "draft", label: "Drafts", icon: FileEdit, count: posts.filter(p => p.status === "draft").length, color: "orange" },
+            { key: "scheduled", label: "Scheduled", icon: Calendar, count: posts.filter(p => p.status === "scheduled").length, color: "blue" },
+            { key: "published", label: "Published", icon: CheckCircle2, count: posts.filter(p => p.status === "published").length, color: "green" },
+            { key: "failed", label: "Failed", icon: null, count: posts.filter(p => p.status === "failed").length, color: "red" },
           ].map((filter) => (
-            <Button 
+            <Button
               key={filter.key}
-              variant={statusFilter === filter.key ? "default" : "outline"} 
+              variant={statusFilter === filter.key ? "default" : "outline"}
               size="sm"
               onClick={() => setStatusFilter(filter.key)}
-              className={filter.key === "failed" && filter.count > 0 ? "text-red-600 border-red-200 hover:text-red-700" : ""}
+              className={`transition-all duration-300 ${
+                statusFilter === filter.key
+                  ? filter.color === "red"
+                    ? "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white border-red-500"
+                    : filter.color === "blue"
+                    ? "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-blue-500"
+                    : filter.color === "green"
+                    ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-green-500"
+                    : filter.color === "orange"
+                    ? "bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white border-orange-500"
+                    : "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white border-slate-500"
+                  : `border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:text-white hover:border-${filter.color}-500/50 hover:bg-gradient-to-r hover:from-${filter.color}-600/20 hover:to-${filter.color}-700/20`
+              } ${filter.key === "failed" && filter.count > 0 ? "animate-pulse" : ""}`}
             >
               {filter.icon && <filter.icon className="h-3.5 w-3.5 mr-1.5" />}
               {filter.label} ({filter.count})
@@ -504,16 +516,21 @@ export function SchedulerContent() {
         <PostRecycling />
 
         {/* Filters and Search */}
-        <Card className="card-professional">
-          <CardHeader className="pb-3">
+        <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+          <div className="p-8 border-b border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-lg font-semibold">Posts</CardTitle>
-                <CardDescription>
+                <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 shadow-md">
+                    <FileEdit className="h-5 w-5 text-white" />
+                  </div>
+                  Posts
+                </h3>
+                <p className="text-slate-400">
                   Manage and filter your scheduled posts
-                </CardDescription>
+                </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 {/* View Toggle */}
                 <div className="flex border rounded-md">
                   <Button
@@ -544,8 +561,8 @@ export function SchedulerContent() {
                 </Button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div className="p-8">
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               {/* Search */}
               <div className="flex-1 relative">
@@ -751,17 +768,11 @@ export function SchedulerContent() {
                 </div>
               </>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      <CreatePostForm 
-        open={isCreatePostOpen} 
-        onOpenChange={handleCloseForm}
-        onSubmit={handleCreatePost}
-        post={editingPost}
-        mode={editingPost ? "edit" : "create"}
-      />
+      <CreatePostForm open={isCreatePostOpen} onOpenChange={handleCloseForm} onSubmit={handleCreatePost} post={editingPost} mode={editingPost ? "edit" : "create"} />
       <DuplicatePostDialog
         open={duplicateDialogOpen}
         onOpenChange={setDuplicateDialogOpen}
@@ -773,6 +784,6 @@ export function SchedulerContent() {
         open={historyDialogOpen}
         onOpenChange={setHistoryDialogOpen}
       />
-    </>
+      </>
   )
 }
