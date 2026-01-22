@@ -7,43 +7,14 @@ export async function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // During build time, env vars may not be available
-  // Return a client with placeholder values to prevent build errors
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return createServerClient(
-      supabaseUrl || 'https://placeholder.supabase.co',
-      supabaseAnonKey || 'placeholder-key',
-      {
-        cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value
-          },
-          set(name: string, value: string, options: any) {
-            try {
-              cookieStore.set({ name, value, ...options })
-            } catch (error) {
-              // The `set` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing
-              // user sessions.
-            }
-          },
-          remove(name: string, options: any) {
-            try {
-              cookieStore.set({ name, value: '', ...options })
-            } catch (error) {
-              // The `delete` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing
-              // user sessions.
-            }
-          },
-        },
-      }
-    )
-  }
+  // During build time, env vars may not be available - use placeholders to prevent build errors
+  // At runtime, if still missing, we'll use placeholders but operations will fail gracefully
+  const url = supabaseUrl || 'https://placeholder.supabase.co'
+  const key = supabaseAnonKey || 'placeholder-key'
 
   return createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
+    url,
+    key,
     {
       cookies: {
         get(name: string) {
