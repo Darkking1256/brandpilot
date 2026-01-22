@@ -15,11 +15,8 @@
   NPM_FLAGS = "--legacy-peer-deps"
   NPM_CONFIG_LEGACY_PEER_DEPS = "true"
 
-# Redirects for Next.js App Router (required for proper routing)
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/___netlify-handler"
-  status = 200
+# Redirects are handled automatically by @netlify/plugin-nextjs
+# No manual redirects needed for Next.js App Router
 
 # Headers for security
 [[headers]]
