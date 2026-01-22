@@ -7,6 +7,14 @@ import { processScheduledPosts, getQueueStatus } from '@/lib/publishing/publishe
 
 export async function GET(request: NextRequest) {
   try {
+    // Skip during build time - environment variables may not be available
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: 'Service not configured', message: 'Supabase environment variables are not set' },
+        { status: 503 }
+      )
+    }
+
     // Verify cron secret to prevent unauthorized calls
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET

@@ -8,11 +8,17 @@ import * as youtube from '@/lib/platforms/youtube'
 import { getOAuthConfig } from '@/lib/platforms'
 import { Platform } from '@/types'
 
-// Supabase admin client for cron jobs
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Supabase admin client for cron jobs (lazy initialization to avoid build-time errors)
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Supabase configuration is missing. NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set.')
+  }
+  
+  return createClient(supabaseUrl, serviceRoleKey)
+}
 
 // Decryption for tokens
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || ''
@@ -110,7 +116,7 @@ async function refreshTokenIfNeeded(
   const encryptedToken = encryptToken(newTokens.access_token)
   const newExpiry = new Date(Date.now() + newTokens.expires_in * 1000)
 
-  await supabaseAdmin
+  await getSupabaseAdmin()
     .from('platform_connections')
     .update({
       access_token: encryptedToken,
@@ -233,7 +239,7 @@ export async function processScheduledPosts(): Promise<{
     // Get posts that are scheduled and due for publishing
     const now = new Date().toISOString()
     
-    const { data: posts, error: fetchError } = await supabaseAdmin
+    const { data: posts, error: fetchError } = await getSupabaseAdmin()
       .from('posts')
       .select('*')
       .eq('status', 'scheduled')
@@ -254,7 +260,7 @@ export async function processScheduledPosts(): Promise<{
 
       try {
         // Get platform connection for this user
-        const { data: connection, error: connError } = await supabaseAdmin
+        const { data: connection, error: connError } = await getSupabaseAdmin()
           .from('platform_connections')
           .select('*')
           .eq('user_id', post.user_id)
@@ -274,7 +280,7 @@ export async function processScheduledPosts(): Promise<{
 
         if (publishResult.success) {
           // Update post status to published
-          await supabaseAdmin
+          await getSupabaseAdmin()
             .from('posts')
             .update({
               status: 'published',
@@ -294,7 +300,7 @@ export async function processScheduledPosts(): Promise<{
         results.failed++
 
         // Update post status to failed
-        await supabaseAdmin
+        await getSupabaseAdmin()
           .from('posts')
           .update({
             status: 'failed',
@@ -323,21 +329,22 @@ export async function getQueueStatus(): Promise<{
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
+  const supabase = getSupabaseAdmin()
   const [pending, scheduled, publishedToday, failedToday] = await Promise.all([
-    supabaseAdmin
+    supabase
       .from('posts')
       .select('id', { count: 'exact' })
       .eq('status', 'draft'),
-    supabaseAdmin
+    supabase
       .from('posts')
       .select('id', { count: 'exact' })
       .eq('status', 'scheduled'),
-    supabaseAdmin
+    supabase
       .from('posts')
       .select('id', { count: 'exact' })
       .eq('status', 'published')
       .gte('published_at', today.toISOString()),
-    supabaseAdmin
+    supabase
       .from('posts')
       .select('id', { count: 'exact' })
       .eq('status', 'failed')
