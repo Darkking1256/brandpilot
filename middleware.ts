@@ -26,6 +26,10 @@ function checkRateLimit(ip: string): boolean {
 // Development mode: Set NEXT_PUBLIC_DISABLE_AUTH=true in .env.local to bypass authentication
 const DISABLE_AUTH = process.env.NEXT_PUBLIC_DISABLE_AUTH === "true"
 
+// Get Supabase URL and key with fallbacks for build time / missing env vars
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
 export async function middleware(request: NextRequest) {
   // Create a response object
   let response = NextResponse.next({
@@ -33,6 +37,11 @@ export async function middleware(request: NextRequest) {
       headers: request.headers,
     },
   })
+
+  // If Supabase env vars are not configured, skip auth checks and allow access
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return response
+  }
 
   // Development mode: Skip all authentication checks
   if (DISABLE_AUTH) {
@@ -55,8 +64,8 @@ export async function middleware(request: NextRequest) {
 
   // Create Supabase client for middleware
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {
