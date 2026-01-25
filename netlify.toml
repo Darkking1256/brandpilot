@@ -1,5 +1,5 @@
 [build]
-  command = "npm ci && npm run build"
+  command = "rm -rf .next && npm ci && npm run build"
   # Don't set publish directory when using @netlify/plugin-nextjs
   # The plugin handles this automatically
 
@@ -48,4 +48,4 @@
 # STRIPE_SECRET_KEY (optional)
 # STRIPE_PUBLISHABLE_KEY (optional)
 
-# Trigger rebuild - January 25, 2026
+# Force clean rebuild - January 25, 2026 - v2 (clearing .next cache)
