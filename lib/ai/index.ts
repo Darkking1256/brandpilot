@@ -310,6 +310,151 @@ Output format:
   }
 }
 
+// Generate a month of content for calendar auto-fill
+export interface CalendarAutoFillOptions {
+  industry: string
+  niche?: string
+  platforms: Platform[]
+  postsPerWeek?: number // Number of posts per week (default: 3)
+  startDate?: Date
+  tone?: 'professional' | 'casual' | 'humorous' | 'inspirational' | 'educational'
+}
+
+export interface CalendarContentIdea {
+  title: string
+  content: string
+  platform: Platform
+  suggestedDate: string // ISO date string
+  suggestedTime: string // HH:mm format
+  hashtags: string[]
+  contentType: 'text' | 'image' | 'video' | 'carousel' | 'story'
+}
+
+export async function generateCalendarContent(
+  options: CalendarAutoFillOptions
+): Promise<CalendarContentIdea[]> {
+  const {
+    industry,
+    niche,
+    platforms,
+    postsPerWeek = 3,
+    startDate = new Date(),
+    tone = 'professional',
+  } = options
+
+  // Calculate number of posts for the month (4 weeks)
+  const totalPosts = postsPerWeek * 4 * platforms.length
+  const platformList = platforms.join(', ')
+
+  const systemPrompt = `You are an expert social media content strategist. Generate a month's worth of social media content ideas for a ${industry}${niche ? ` (${niche})` : ''} business.
+
+Requirements:
+- Generate exactly ${totalPosts} post ideas
+- Distribute across these platforms: ${platformList}
+- Create ${postsPerWeek} posts per week for each platform
+- Tone: ${tone}
+- Include a mix of content types (educational, promotional, engagement, behind-the-scenes, trending)
+- Consider best posting times for each platform
+- Make content relevant to ${industry} trends and audience interests
+
+Output format (JSON array):
+[
+  {
+    "title": "Brief title for the post",
+    "content": "Full post content with hashtags",
+    "platform": "platform name",
+    "dayOfMonth": number (1-28),
+    "suggestedTime": "HH:mm",
+    "hashtags": ["hashtag1", "hashtag2"],
+    "contentType": "text" | "image" | "video" | "carousel" | "story"
+  }
+]
+
+Best posting times by platform:
+- Twitter: 9am, 12pm, 6pm
+- LinkedIn: 8am, 12pm, 5pm (weekdays)
+- Facebook: 1pm, 4pm, 8pm
+- Instagram: 11am, 2pm, 7pm
+- TikTok: 7am, 10am, 7pm, 9pm
+- YouTube: 2pm-4pm (weekdays), 9am-11am (weekends)
+
+Only output valid JSON array, nothing else.`
+
+  const userPrompt = `Generate a month of content ideas for a ${industry}${niche ? ` specializing in ${niche}` : ''} business starting from ${startDate.toISOString().split('T')[0]}.`
+
+  let response: string
+
+  try {
+    // Use Groq for speed, fallback to OpenAI
+    if (groq) {
+      response = await generateWithGroq(systemPrompt, userPrompt, 'llama3-70b-8192')
+    } else if (openai) {
+      response = await generateWithOpenAI(systemPrompt, userPrompt, 'gpt-4')
+    } else {
+      throw new Error('No AI provider configured')
+    }
+  } catch (error) {
+    // Try fallback
+    try {
+      if (openai && !groq) {
+        response = await generateWithOpenAI(systemPrompt, userPrompt, 'gpt-3.5-turbo')
+      } else if (groq && !openai) {
+        response = await generateWithGroq(systemPrompt, userPrompt, 'mixtral-8x7b-32768')
+      } else {
+        throw error
+      }
+    } catch (fallbackError) {
+      throw error
+    }
+  }
+
+  try {
+    // Clean up response - extract JSON array if wrapped in markdown
+    let cleanedResponse = response.trim()
+    if (cleanedResponse.startsWith('```json')) {
+      cleanedResponse = cleanedResponse.slice(7)
+    }
+    if (cleanedResponse.startsWith('```')) {
+      cleanedResponse = cleanedResponse.slice(3)
+    }
+    if (cleanedResponse.endsWith('```')) {
+      cleanedResponse = cleanedResponse.slice(0, -3)
+    }
+    cleanedResponse = cleanedResponse.trim()
+
+    const rawIdeas = JSON.parse(cleanedResponse) as Array<{
+      title: string
+      content: string
+      platform: string
+      dayOfMonth: number
+      suggestedTime: string
+      hashtags: string[]
+      contentType: string
+    }>
+
+    // Convert to proper format with actual dates
+    const ideas: CalendarContentIdea[] = rawIdeas.map(idea => {
+      const date = new Date(startDate)
+      date.setDate(idea.dayOfMonth)
+      
+      return {
+        title: idea.title,
+        content: idea.content,
+        platform: idea.platform.toLowerCase() as Platform,
+        suggestedDate: date.toISOString().split('T')[0],
+        suggestedTime: idea.suggestedTime || '12:00',
+        hashtags: idea.hashtags || [],
+        contentType: (idea.contentType as CalendarContentIdea['contentType']) || 'text',
+      }
+    })
+
+    return ideas
+  } catch (parseError) {
+    console.error('Error parsing calendar content:', parseError)
+    throw new Error('Failed to parse AI response. Please try again.')
+  }
+}
+
 // Analyze content sentiment and engagement potential
 export async function analyzeContent(
   content: string,

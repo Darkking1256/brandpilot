@@ -49,6 +49,7 @@ interface PlatformConnection {
   access_token: string
   refresh_token?: string
   token_expires_at: string
+  access_token_secret?: string // For OAuth 1.0a (Twitter media upload)
 }
 
 // Check if token is expired or about to expire
@@ -147,9 +148,76 @@ async function publishToPlatform(
   try {
     switch (post.platform) {
       case 'twitter': {
+        let mediaIds: string[] | undefined
+
+        // Handle media uploads if media_urls are present
+        if (post.media_urls && post.media_urls.length > 0) {
+          const config = getOAuthConfig('twitter')
+          
+          // For Twitter media upload, we need OAuth 1.0a credentials
+          // These should be the consumer key/secret from Twitter Developer Portal
+          const consumerKey = config.clientId
+          const consumerSecret = config.clientSecret
+          
+          // We need the access token secret for OAuth 1.0a
+          // This is stored separately from the OAuth 2.0 access token
+          const accessTokenSecret = connection.access_token_secret 
+            ? decrypt(connection.access_token_secret)
+            : ''
+
+          if (!accessTokenSecret) {
+            console.warn('Twitter OAuth 1.0a access token secret not available, posting without media')
+          } else {
+            mediaIds = []
+            
+            for (const mediaUrl of post.media_urls.slice(0, 4)) { // Twitter max 4 images
+              try {
+                // Fetch the media from URL
+                const mediaResponse = await fetch(mediaUrl)
+                if (!mediaResponse.ok) {
+                  console.error(`Failed to fetch media from ${mediaUrl}`)
+                  continue
+                }
+                
+                const mediaBuffer = Buffer.from(await mediaResponse.arrayBuffer())
+                
+                // Detect media type from URL or response
+                const contentType = mediaResponse.headers.get('content-type') || 'image/jpeg'
+                let mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp' | 'video/mp4' = 'image/jpeg'
+                
+                if (contentType.includes('png')) mediaType = 'image/png'
+                else if (contentType.includes('gif')) mediaType = 'image/gif'
+                else if (contentType.includes('webp')) mediaType = 'image/webp'
+                else if (contentType.includes('mp4') || contentType.includes('video')) mediaType = 'video/mp4'
+                
+                // Upload media using OAuth 1.0a
+                const mediaId = await twitter.uploadMedia({
+                  consumerKey,
+                  consumerSecret,
+                  accessToken,
+                  accessTokenSecret,
+                  mediaData: mediaBuffer,
+                  mediaType,
+                })
+                
+                mediaIds.push(mediaId)
+              } catch (mediaError) {
+                console.error('Twitter media upload error:', mediaError)
+                // Continue without this media
+              }
+            }
+            
+            // If no media was successfully uploaded, set to undefined
+            if (mediaIds.length === 0) {
+              mediaIds = undefined
+            }
+          }
+        }
+
         const result = await twitter.postTweet({
           accessToken,
           text: post.content,
+          mediaIds,
         })
         return { success: true, platformPostId: result.id }
       }
@@ -200,13 +268,152 @@ async function publishToPlatform(
       }
 
       case 'tiktok': {
-        // TikTok requires video upload - simplified for now
-        return { success: false, error: 'TikTok video upload requires additional implementation' }
+        // TikTok requires video content
+        if (!post.media_urls || post.media_urls.length === 0) {
+          return { success: false, error: 'TikTok requires a video file' }
+        }
+
+        const tiktokVideoUrl = post.media_urls[0]
+        
+        try {
+          // Fetch the video from URL
+          const videoResponse = await fetch(tiktokVideoUrl)
+          if (!videoResponse.ok) {
+            return { success: false, error: 'Failed to fetch video for TikTok upload' }
+          }
+          
+          const videoBuffer = Buffer.from(await videoResponse.arrayBuffer())
+          const videoSize = videoBuffer.length
+          const chunkSize = 10 * 1024 * 1024 // 10MB chunks
+          const totalChunkCount = Math.ceil(videoSize / chunkSize)
+          
+          // Initialize video upload
+          const initResult = await tiktok.initVideoUpload({
+            accessToken,
+            sourceType: 'FILE_UPLOAD',
+            videoSize,
+            chunkSize,
+            totalChunkCount,
+          })
+          
+          // Upload video in chunks
+          for (let i = 0; i < totalChunkCount; i++) {
+            const startByte = i * chunkSize
+            const endByte = Math.min(startByte + chunkSize - 1, videoSize - 1)
+            const chunk = videoBuffer.slice(startByte, endByte + 1)
+            
+            await tiktok.uploadVideoChunk({
+              uploadUrl: initResult.upload_url,
+              videoData: chunk,
+              chunkIndex: i,
+              startByte,
+              endByte,
+              totalSize: videoSize,
+            })
+          }
+          
+          // Publish the video
+          const publishResult = await tiktok.publishVideo({
+            accessToken,
+            publishId: initResult.publish_id,
+            title: post.content.slice(0, 150), // TikTok title limit
+            privacyLevel: 'PUBLIC_TO_EVERYONE',
+          })
+          
+          // Poll for publish status (with timeout)
+          let status = await tiktok.getPublishStatus({
+            accessToken,
+            publishId: publishResult.publish_id,
+          })
+          
+          let attempts = 0
+          const maxAttempts = 30 // Max 30 attempts, 2s each = 60s timeout
+          
+          while (
+            status.status !== 'PUBLISH_COMPLETE' && 
+            status.status !== 'FAILED' && 
+            attempts < maxAttempts
+          ) {
+            await new Promise(resolve => setTimeout(resolve, 2000))
+            status = await tiktok.getPublishStatus({
+              accessToken,
+              publishId: publishResult.publish_id,
+            })
+            attempts++
+          }
+          
+          if (status.status === 'PUBLISH_COMPLETE') {
+            return { success: true, platformPostId: status.published_video_id }
+          } else if (status.status === 'FAILED') {
+            return { success: false, error: `TikTok publish failed: ${status.fail_reason}` }
+          } else {
+            // Still processing - mark as success, video will appear eventually
+            return { success: true, platformPostId: publishResult.publish_id }
+          }
+        } catch (error) {
+          console.error('TikTok upload error:', error)
+          return { 
+            success: false, 
+            error: error instanceof Error ? error.message : 'TikTok upload failed' 
+          }
+        }
       }
 
       case 'youtube': {
-        // YouTube requires video upload
-        return { success: false, error: 'YouTube video upload requires additional implementation' }
+        // YouTube requires video content
+        if (!post.media_urls || post.media_urls.length === 0) {
+          return { success: false, error: 'YouTube requires a video file' }
+        }
+
+        const youtubeVideoUrl = post.media_urls[0]
+        
+        try {
+          // Fetch the video from URL
+          const videoResponse = await fetch(youtubeVideoUrl)
+          if (!videoResponse.ok) {
+            return { success: false, error: 'Failed to fetch video for YouTube upload' }
+          }
+          
+          const videoBuffer = Buffer.from(await videoResponse.arrayBuffer())
+          
+          // Extract title and description from content
+          // Format: First line is title, rest is description
+          const contentLines = post.content.split('\n')
+          const title = contentLines[0].slice(0, 100) || 'Video' // YouTube title max 100 chars
+          const description = contentLines.slice(1).join('\n') || post.content
+          
+          // Extract hashtags as tags
+          const hashtagRegex = /#(\w+)/g
+          const tags: string[] = []
+          let match
+          while ((match = hashtagRegex.exec(post.content)) !== null) {
+            tags.push(match[1])
+          }
+          
+          // Initialize resumable upload
+          const uploadUrl = await youtube.initVideoUpload({
+            accessToken,
+            title,
+            description,
+            privacyStatus: 'public',
+            tags: tags.length > 0 ? tags : undefined,
+          })
+          
+          // Upload the video data
+          const uploadResult = await youtube.uploadVideoData({
+            uploadUrl,
+            videoData: videoBuffer,
+            contentType: 'video/mp4',
+          })
+          
+          return { success: true, platformPostId: uploadResult.id }
+        } catch (error) {
+          console.error('YouTube upload error:', error)
+          return { 
+            success: false, 
+            error: error instanceof Error ? error.message : 'YouTube upload failed' 
+          }
+        }
       }
 
       default:

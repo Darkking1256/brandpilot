@@ -11,7 +11,10 @@ export const PRICING_TIERS = {
   free: {
     name: 'Free',
     price: 0,
+    annualPrice: 0,
     priceId: null,
+    annualPriceId: null,
+    trialDays: 0, // No trial for free tier
     features: [
       '5 scheduled posts/month',
       '1 social account',
@@ -28,7 +31,10 @@ export const PRICING_TIERS = {
   pro: {
     name: 'Pro',
     price: 29,
+    annualPrice: 278, // 20% discount: $29 * 12 = $348, with 20% off = $278.40 ≈ $278
     priceId: process.env.STRIPE_PRO_PRICE_ID,
+    annualPriceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID,
+    trialDays: 14, // 14-day free trial
     features: [
       'Unlimited scheduled posts',
       '10 social accounts',
@@ -47,7 +53,10 @@ export const PRICING_TIERS = {
   enterprise: {
     name: 'Enterprise',
     price: 99,
+    annualPrice: 950, // 20% discount: $99 * 12 = $1188, with 20% off = $950.40 ≈ $950
     priceId: process.env.STRIPE_ENTERPRISE_PRICE_ID,
+    annualPriceId: process.env.STRIPE_ENTERPRISE_ANNUAL_PRICE_ID,
+    trialDays: 14, // 14-day free trial
     features: [
       'Everything in Pro',
       'Unlimited social accounts',
@@ -73,20 +82,27 @@ export async function createCheckoutSession({
   userId,
   userEmail,
   tier,
+  billingPeriod = 'monthly',
   successUrl,
   cancelUrl,
 }: {
   userId: string
   userEmail: string
   tier: 'pro' | 'enterprise'
+  billingPeriod?: 'monthly' | 'annual'
   successUrl: string
   cancelUrl: string
 }) {
-  const priceId = PRICING_TIERS[tier].priceId
+  const priceId = billingPeriod === 'annual' 
+    ? PRICING_TIERS[tier].annualPriceId 
+    : PRICING_TIERS[tier].priceId
 
   if (!priceId) {
-    throw new Error(`No price ID configured for tier: ${tier}`)
+    throw new Error(`No price ID configured for tier: ${tier} (${billingPeriod})`)
   }
+
+  // Get trial days for the tier (default to 0 if not specified)
+  const trialDays = PRICING_TIERS[tier].trialDays || 0
 
   const session = await stripe.checkout.sessions.create({
     customer_email: userEmail,
@@ -104,12 +120,16 @@ export async function createCheckoutSession({
     metadata: {
       userId,
       tier,
+      billingPeriod,
     },
     subscription_data: {
       metadata: {
         userId,
         tier,
+        billingPeriod,
       },
+      // Add 14-day free trial for Pro and Enterprise tiers
+      ...(trialDays > 0 && { trial_period_days: trialDays }),
     },
   })
 

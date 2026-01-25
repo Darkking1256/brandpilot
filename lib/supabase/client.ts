@@ -9,6 +9,10 @@ export function createClient() {
   const url = supabaseUrl || 'https://placeholder.supabase.co'
   const key = supabaseAnonKey || 'placeholder-key'
 
+  // #region agent log
+  console.log('[DEBUG][HYP-A/B] Supabase client creation:', { hasUrl: !!supabaseUrl, hasKey: !!supabaseAnonKey, urlUsed: url.substring(0, 40), isPlaceholder: url.includes('placeholder') });
+  // #endregion
+
   return createBrowserClient(url, key)
 }
 

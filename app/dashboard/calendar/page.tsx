@@ -7,7 +7,7 @@ import type { Post } from "@/components/posts-table"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar as CalendarIcon, Grid, List, Plus, Clock, CheckCircle2, FileEdit, AlertCircle } from "lucide-react"
+import { Calendar as CalendarIcon, Grid, List, Plus, Clock, CheckCircle2, FileEdit, AlertCircle, Sparkles, Loader2, Wand2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { CalendarExport } from "@/components/calendar/calendar-export"
 import { useRealtimePosts } from "@/hooks/use-realtime-posts"
@@ -20,7 +20,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import { format } from "date-fns"
 
 export default function CalendarPage() {
@@ -33,6 +37,14 @@ export default function CalendarPage() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false)
   const [editingPost, setEditingPost] = useState<Post | null>(null)
+  const [isAutoFillOpen, setIsAutoFillOpen] = useState(false)
+  const [isAutoFillLoading, setIsAutoFillLoading] = useState(false)
+  const [autoFillIndustry, setAutoFillIndustry] = useState("")
+  const [autoFillNiche, setAutoFillNiche] = useState("")
+  const [autoFillPlatforms, setAutoFillPlatforms] = useState<string[]>(["twitter", "linkedin", "instagram"])
+  const [autoFillPostsPerWeek, setAutoFillPostsPerWeek] = useState(3)
+  const [autoFillTone, setAutoFillTone] = useState<"professional" | "casual" | "humorous" | "inspirational" | "educational">("professional")
+  const [generatedIdeas, setGeneratedIdeas] = useState<any[]>([])
   const { toast } = useToast()
 
   useEffect(() => {
@@ -99,6 +111,147 @@ export default function CalendarPage() {
     if (!open) {
       setEditingPost(null)
     }
+  }
+
+  const handleAutoFill = async () => {
+    if (!autoFillIndustry.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Industry required",
+        description: "Please enter your industry or business type.",
+      })
+      return
+    }
+
+    if (autoFillPlatforms.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Platforms required",
+        description: "Please select at least one platform.",
+      })
+      return
+    }
+
+    setIsAutoFillLoading(true)
+    try {
+      const response = await fetch("/api/ai/calendar-autofill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          industry: autoFillIndustry,
+          niche: autoFillNiche,
+          platforms: autoFillPlatforms,
+          postsPerWeek: autoFillPostsPerWeek,
+          tone: autoFillTone,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            variant: "destructive",
+            title: "Pro Feature",
+            description: data.message || "AI Calendar Auto-Fill requires a Pro subscription.",
+          })
+        } else {
+          throw new Error(data.error || "Failed to generate content")
+        }
+        return
+      }
+
+      setGeneratedIdeas(data.ideas || [])
+      toast({
+        title: "Content Generated!",
+        description: `Generated ${data.ideas?.length || 0} content ideas for your calendar.`,
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Generation failed",
+        description: error instanceof Error ? error.message : "Failed to generate content ideas.",
+      })
+    } finally {
+      setIsAutoFillLoading(false)
+    }
+  }
+
+  const handleCreateFromIdea = async (idea: any) => {
+    try {
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: idea.content,
+          platform: idea.platform,
+          scheduledDate: idea.suggestedDate,
+          scheduledTime: idea.suggestedTime,
+          status: "draft",
+        }),
+      })
+
+      if (!response.ok) throw new Error("Failed to create post")
+
+      toast({
+        title: "Post created",
+        description: `"${idea.title}" has been added to your calendar as a draft.`,
+      })
+
+      // Remove from generated ideas
+      setGeneratedIdeas(prev => prev.filter(i => i !== idea))
+      fetchPosts()
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to create post",
+        description: error instanceof Error ? error.message : "Unknown error",
+      })
+    }
+  }
+
+  const handleAddAllIdeas = async () => {
+    setIsAutoFillLoading(true)
+    let added = 0
+    
+    for (const idea of generatedIdeas) {
+      try {
+        const response = await fetch("/api/posts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: idea.content,
+            platform: idea.platform,
+            scheduledDate: idea.suggestedDate,
+            scheduledTime: idea.suggestedTime,
+            status: "draft",
+          }),
+        })
+
+        if (response.ok) added++
+      } catch (error) {
+        console.error("Failed to add idea:", error)
+      }
+    }
+
+    setIsAutoFillLoading(false)
+    setGeneratedIdeas([])
+    setIsAutoFillOpen(false)
+    
+    toast({
+      title: "Calendar filled!",
+      description: `Added ${added} posts to your calendar as drafts.`,
+    })
+    
+    fetchPosts()
+  }
+
+  const togglePlatform = (platform: string) => {
+    setAutoFillPlatforms(prev => 
+      prev.includes(platform) 
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    )
   }
 
   // Calculate stats
@@ -176,13 +329,23 @@ export default function CalendarPage() {
                   Visualize and manage your scheduled posts
                 </p>
               </div>
-              <Button 
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg"
-                onClick={() => setIsCreatePostOpen(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Post
-              </Button>
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline"
+                  className="border-purple-500/50 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 hover:text-purple-300"
+                  onClick={() => setIsAutoFillOpen(true)}
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  AI Auto-Fill
+                </Button>
+                <Button 
+                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg"
+                  onClick={() => setIsCreatePostOpen(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Post
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -403,6 +566,209 @@ export default function CalendarPage() {
               </div>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Auto-Fill Dialog */}
+      <Dialog open={isAutoFillOpen} onOpenChange={(open) => { setIsAutoFillOpen(open); if (!open) setGeneratedIdeas([]); }}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+              AI Calendar Auto-Fill
+              <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">Pro Feature</Badge>
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Generate a month&apos;s worth of content ideas tailored to your industry and brand.
+            </DialogDescription>
+          </DialogHeader>
+
+          {generatedIdeas.length === 0 ? (
+            <div className="space-y-6 py-4">
+              {/* Industry Input */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Industry / Business Type *</Label>
+                <Input
+                  placeholder="e.g., SaaS, E-commerce, Fitness, Real Estate..."
+                  value={autoFillIndustry}
+                  onChange={(e) => setAutoFillIndustry(e.target.value)}
+                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                />
+              </div>
+
+              {/* Niche Input */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Niche (optional)</Label>
+                <Input
+                  placeholder="e.g., B2B Marketing Tools, Women's Activewear, Luxury Homes..."
+                  value={autoFillNiche}
+                  onChange={(e) => setAutoFillNiche(e.target.value)}
+                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                />
+              </div>
+
+              {/* Platform Selection */}
+              <div className="space-y-3">
+                <Label className="text-slate-300">Platforms *</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  {["twitter", "linkedin", "facebook", "instagram", "tiktok", "youtube"].map((platform) => (
+                    <div
+                      key={platform}
+                      className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-all ${
+                        autoFillPlatforms.includes(platform)
+                          ? "border-purple-500 bg-purple-500/10"
+                          : "border-slate-700 bg-slate-800/30 hover:border-slate-600"
+                      }`}
+                      onClick={() => togglePlatform(platform)}
+                    >
+                      <Checkbox
+                        checked={autoFillPlatforms.includes(platform)}
+                        className="border-slate-500 data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500"
+                      />
+                      <span className="text-sm capitalize text-slate-300">{platform}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Posts Per Week */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Posts per week (per platform)</Label>
+                <Select value={String(autoFillPostsPerWeek)} onValueChange={(v) => setAutoFillPostsPerWeek(Number(v))}>
+                  <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-700">
+                    <SelectItem value="2">2 posts/week</SelectItem>
+                    <SelectItem value="3">3 posts/week</SelectItem>
+                    <SelectItem value="5">5 posts/week</SelectItem>
+                    <SelectItem value="7">7 posts/week (daily)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Tone */}
+              <div className="space-y-2">
+                <Label className="text-slate-300">Content Tone</Label>
+                <Select value={autoFillTone} onValueChange={(v: any) => setAutoFillTone(v)}>
+                  <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-700">
+                    <SelectItem value="professional">Professional</SelectItem>
+                    <SelectItem value="casual">Casual</SelectItem>
+                    <SelectItem value="humorous">Humorous</SelectItem>
+                    <SelectItem value="inspirational">Inspirational</SelectItem>
+                    <SelectItem value="educational">Educational</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 py-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-400">Generated {generatedIdeas.length} content ideas</p>
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                  onClick={handleAddAllIdeas}
+                  disabled={isAutoFillLoading}
+                >
+                  {isAutoFillLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Plus className="h-4 w-4 mr-2" />
+                  )}
+                  Add All to Calendar
+                </Button>
+              </div>
+
+              <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                {generatedIdeas.map((idea, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-slate-600 transition-all"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="capitalize border-slate-600 text-slate-300">
+                            {idea.platform}
+                          </Badge>
+                          <Badge variant="outline" className="border-slate-600 text-slate-400">
+                            {idea.contentType}
+                          </Badge>
+                          <span className="text-xs text-slate-500">
+                            {idea.suggestedDate} at {idea.suggestedTime}
+                          </span>
+                        </div>
+                        <h4 className="font-medium text-white mb-1">{idea.title}</h4>
+                        <p className="text-sm text-slate-400 line-clamp-2">{idea.content}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-shrink-0 border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                        onClick={() => handleCreateFromIdea(idea)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="border-t border-slate-700/50 pt-4">
+            {generatedIdeas.length === 0 ? (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsAutoFillOpen(false)}
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  onClick={handleAutoFill}
+                  disabled={isAutoFillLoading}
+                >
+                  {isAutoFillLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="h-4 w-4 mr-2" />
+                      Generate Content
+                    </>
+                  )}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => setGeneratedIdeas([])}
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                >
+                  Generate New
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsAutoFillOpen(false)}
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                >
+                  Done
+                </Button>
+              </>
+            )}
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

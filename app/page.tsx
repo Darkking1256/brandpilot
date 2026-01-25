@@ -961,15 +961,16 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 p-1 bg-slate-800/50 backdrop-blur-md rounded-lg border border-slate-700/50">
               <button 
                 onClick={() => setIsAnnual(false)}
-                className={`px-6 py-2 rounded-md text-sm font-medium text-white transition-colors ${!isAnnual ? 'bg-slate-700 shadow-sm' : ''}`}
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${!isAnnual ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
                 Monthly
               </button>
               <button 
                 onClick={() => setIsAnnual(true)}
-                className={`px-6 py-2 rounded-md text-sm font-medium text-white transition-colors ${isAnnual ? 'bg-slate-700 shadow-sm' : ''}`}
+                className={`px-6 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${isAnnual ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'}`}
               >
-                Yearly
+                Annual
+                <span className="px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded-full border border-green-500/30">Save 20%</span>
               </button>
             </div>
           </div>
@@ -977,58 +978,95 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { 
-                name: "Starter", 
-                subtitle: "Up to 2,000 words / mo",
-                price: "$3", 
-                period: "/mo", 
-                features: ["Up to 10,000 words", "Access to basic tools", "Access to AI copywriting tools", "Email support only", "Advance 700+ tools"]
+                name: "Free", 
+                subtitle: "Perfect for getting started",
+                monthlyPrice: 0,
+                annualPrice: 0,
+                features: [
+                  "5 scheduled posts/month",
+                  "1 social account",
+                  "Basic analytics",
+                  "Standard support"
+                ],
+                cta: "Get Started Free"
               },
               { 
-                name: "Professional", 
-                subtitle: "Up to 10,000 words / mo",
-                price: "$9", 
-                period: "/mo", 
+                name: "Pro", 
+                subtitle: "For serious content creators",
+                monthlyPrice: 29,
+                annualPrice: 278,
                 popular: true,
-                features: ["Up to 10,000 words", "Access to basic tools", "Access to AI copywriting tools", "Email support only", "Advance 700+ tools"]
+                features: [
+                  "Unlimited scheduled posts",
+                  "10 social accounts",
+                  "Advanced analytics",
+                  "AI content generation",
+                  "Video editing & export",
+                  "Priority support"
+                ],
+                cta: "Start 14-day free trial"
               },
               { 
                 name: "Enterprise", 
-                subtitle: "Up to 10,000 words / mo",
-                price: "$18", 
-                period: "/mo", 
-                features: ["Up to 10,000 words", "Access to basic tools", "Access to AI copywriting tools", "Email support only", "Advance 700+ tools"]
+                subtitle: "For teams and agencies",
+                monthlyPrice: 99,
+                annualPrice: 950,
+                features: [
+                  "Everything in Pro",
+                  "Unlimited social accounts",
+                  "Unlimited AI generations",
+                  "Team collaboration",
+                  "API access",
+                  "White-label options",
+                  "Dedicated support"
+                ],
+                cta: "Start 14-day free trial"
               },
-            ].map((plan, idx) => (
-              <Card key={idx} className={`relative border-2 hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 ${plan.popular ? 'border-blue-500 shadow-lg shadow-blue-500/20 scale-105' : 'border-slate-700/50 hover:border-blue-500'} bg-slate-900/50 backdrop-blur-xl`}>
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold rounded-full">
-                    Most Popular
-                  </div>
-                )}
-                <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-2xl mb-2 text-white">{plan.name}</CardTitle>
-                  <p className="text-sm text-slate-400 mb-4">{plan.subtitle}</p>
-                  <div className="mb-4">
-                    <span className="text-5xl font-bold text-white">{plan.price}</span>
-                    <span className="text-slate-400">{plan.period}</span>
-                  </div>
-                  <p className="text-sm text-slate-500">*Get MarketPilot tailored</p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                        <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className={`w-full font-semibold ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' : 'border-slate-700 hover:bg-slate-800 hover:border-blue-500 text-white'}`} variant={plan.popular ? 'default' : 'outline'} asChild>
-                    <Link href="/dashboard">Start 1 month free trial</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            ].map((plan, idx) => {
+              const displayPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice
+              const originalAnnualPrice = plan.monthlyPrice * 12
+              const savings = originalAnnualPrice - plan.annualPrice
+              
+              return (
+                <Card key={idx} className={`relative border-2 hover:shadow-xl hover:shadow-blue-500/20 transition-all duration-300 ${plan.popular ? 'border-blue-500 shadow-lg shadow-blue-500/20 scale-105' : 'border-slate-700/50 hover:border-blue-500'} bg-slate-900/50 backdrop-blur-xl`}>
+                  {plan.popular && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold rounded-full">
+                      Most Popular
+                    </div>
+                  )}
+                  <CardHeader className="text-center pb-8">
+                    <CardTitle className="text-2xl mb-2 text-white">{plan.name}</CardTitle>
+                    <p className="text-sm text-slate-400 mb-4">{plan.subtitle}</p>
+                    <div className="mb-4">
+                      <span className="text-5xl font-bold text-white">${displayPrice}</span>
+                      <span className="text-slate-400">{isAnnual ? '/year' : '/mo'}</span>
+                    </div>
+                    {isAnnual && plan.monthlyPrice > 0 && (
+                      <div className="space-y-1">
+                        <p className="text-sm text-slate-500 line-through">${originalAnnualPrice}/year</p>
+                        <p className="text-sm text-green-400 font-medium">Save ${savings}/year (20% off)</p>
+                      </div>
+                    )}
+                    {!isAnnual && plan.monthlyPrice > 0 && (
+                      <p className="text-sm text-slate-500">Billed monthly</p>
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3 mb-6">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                          <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button className={`w-full font-semibold ${plan.popular ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' : 'border-slate-700 hover:bg-slate-800 hover:border-blue-500 text-white'}`} variant={plan.popular ? 'default' : 'outline'} asChild>
+                      <Link href={plan.monthlyPrice === 0 ? "/auth/signup" : "/dashboard/billing"}>{plan.cta}</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </div>
       </section>

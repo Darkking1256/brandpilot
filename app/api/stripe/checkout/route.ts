@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (authError) return authError
 
     const body = await request.json()
-    const { tier } = body as { tier: PricingTier }
+    const { tier, billingPeriod = 'monthly' } = body as { tier: PricingTier; billingPeriod?: 'monthly' | 'annual' }
 
     if (!tier || !['pro', 'enterprise'].includes(tier)) {
       return NextResponse.json(
@@ -18,9 +18,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!PRICING_TIERS[tier].priceId) {
+    const priceId = billingPeriod === 'annual' 
+      ? PRICING_TIERS[tier].annualPriceId 
+      : PRICING_TIERS[tier].priceId
+
+    if (!priceId) {
       return NextResponse.json(
-        { error: 'Stripe price not configured. Please set STRIPE_PRO_PRICE_ID and STRIPE_ENTERPRISE_PRICE_ID in environment variables.' },
+        { error: `Stripe price not configured for ${tier} (${billingPeriod}). Please set the corresponding STRIPE_*_PRICE_ID in environment variables.` },
         { status: 500 }
       )
     }
@@ -31,6 +35,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       userEmail: user.email!,
       tier: tier as 'pro' | 'enterprise',
+      billingPeriod,
       successUrl: `${baseUrl}/dashboard/billing?success=true`,
       cancelUrl: `${baseUrl}/dashboard/billing?canceled=true`,
     })

@@ -21,6 +21,8 @@ const PRICING_TIERS = {
   free: {
     name: 'Free',
     price: 0,
+    annualPrice: 0,
+    trialDays: 0,
     icon: Sparkles,
     features: [
       '5 scheduled posts/month',
@@ -32,6 +34,8 @@ const PRICING_TIERS = {
   pro: {
     name: 'Pro',
     price: 29,
+    annualPrice: 278, // 20% discount
+    trialDays: 14,
     icon: Zap,
     popular: true,
     features: [
@@ -46,6 +50,8 @@ const PRICING_TIERS = {
   enterprise: {
     name: 'Enterprise',
     price: 99,
+    annualPrice: 950, // 20% discount
+    trialDays: 14,
     icon: Building2,
     features: [
       'Everything in Pro',
@@ -66,6 +72,7 @@ export function BillingContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [isCheckoutLoading, setIsCheckoutLoading] = useState<string | null>(null)
   const [isPortalLoading, setIsPortalLoading] = useState(false)
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly')
 
   useEffect(() => {
     fetchSubscription()
@@ -110,7 +117,7 @@ export function BillingContent() {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier }),
+        body: JSON.stringify({ tier, billingPeriod }),
       })
 
       const data = await response.json()
@@ -235,6 +242,37 @@ export function BillingContent() {
           </div>
         )}
 
+        {/* Billing Period Toggle */}
+        <div className="flex justify-center mb-8">
+          <div className="p-1 rounded-xl bg-slate-800/50 backdrop-blur-xl border border-slate-700/50">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setBillingPeriod('monthly')}
+                className={cn(
+                  "px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  billingPeriod === 'monthly' 
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
+                    : 'text-slate-400 hover:text-white'
+                )}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBillingPeriod('annual')}
+                className={cn(
+                  "px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2",
+                  billingPeriod === 'annual' 
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
+                    : 'text-slate-400 hover:text-white'
+                )}
+              >
+                Annual
+                <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">Save 20%</Badge>
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Pricing Cards */}
         <div className="grid gap-6 md:grid-cols-3">
           {(Object.entries(PRICING_TIERS) as [keyof typeof PRICING_TIERS, typeof PRICING_TIERS[keyof typeof PRICING_TIERS]][]).map(([tier, plan]) => {
@@ -270,8 +308,25 @@ export function BillingContent() {
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
                   <div>
-                    <span className="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">${plan.price}</span>
-                    {plan.price > 0 && <span className="text-slate-400">/month</span>}
+                    {billingPeriod === 'annual' && plan.price > 0 ? (
+                      <>
+                        <span className="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                          ${plan.annualPrice}
+                        </span>
+                        <span className="text-slate-400">/year</span>
+                        <div className="mt-1">
+                          <span className="text-sm line-through text-slate-500">${plan.price * 12}/year</span>
+                          <span className="text-sm text-green-400 ml-2">Save ${(plan.price * 12) - plan.annualPrice}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                          ${plan.price}
+                        </span>
+                        {plan.price > 0 && <span className="text-slate-400">/month</span>}
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -286,7 +341,12 @@ export function BillingContent() {
                   ))}
                 </div>
 
-                <div>
+                <div className="space-y-2">
+                  {tier !== 'free' && plan.trialDays > 0 && !isCurrent && (
+                    <p className="text-center text-sm text-green-400 font-medium">
+                      {plan.trialDays}-day free trial included
+                    </p>
+                  )}
                   {tier === 'free' ? (
                     <Button className="w-full border-slate-700/50 bg-slate-800/50 text-slate-400" variant="outline" disabled>
                       {isCurrent ? 'Current Plan' : 'Downgrade'}
@@ -313,7 +373,7 @@ export function BillingContent() {
                         </>
                       ) : (
                         <>
-                          Upgrade to {plan.name}
+                          Start {plan.trialDays}-day free trial
                           <ArrowRight className="h-4 w-4 ml-2" />
                         </>
                       )}

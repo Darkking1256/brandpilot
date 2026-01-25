@@ -83,8 +83,17 @@ export default function SignupPage() {
 
     setIsLoading(true)
 
+    // #region agent log
+    console.log('[DEBUG][HYP-D] Signup attempt starting:', { emailPrefix: email.substring(0, 5) + '***', hasPassword: !!password });
+    // #endregion
+
     try {
       const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
+      
+      // #region agent log
+      console.log('[DEBUG][HYP-D] About to call supabase.auth.signUp:', { baseUrl });
+      // #endregion
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -95,6 +104,10 @@ export default function SignupPage() {
           emailRedirectTo: `${baseUrl}/auth/callback?next=/dashboard`,
         },
       })
+
+      // #region agent log
+      console.log('[DEBUG][HYP-D] signUp call completed:', { hasData: !!data, hasError: !!error, errorMsg: error?.message, userId: data?.user?.id?.substring(0, 8) });
+      // #endregion
 
       if (error) {
         toast({
@@ -117,8 +130,12 @@ export default function SignupPage() {
         setConfirmPassword("")
       }
     } catch (error: any) {
+      // #region agent log
+      console.log('[DEBUG][HYP-E] Caught exception in signup:', { errorName: error?.name, errorMsg: error?.message, errorStack: error?.stack?.substring(0, 300) });
+      // #endregion
+
       toast({
-        title: "Error",
+        title: "Signup failed",
         description: error.message || "An unexpected error occurred",
         variant: "destructive",
       })
