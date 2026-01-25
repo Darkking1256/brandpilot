@@ -17,8 +17,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ posts: [] })
     }
 
-    const { user, error: authError } = await requireAuth()
-    if (authError) return NextResponse.json({ posts: [] })
+    // Try to authenticate, return empty data if auth fails (guest mode)
+    let user
+    try {
+      const authResult = await requireAuth()
+      if (authResult.error) {
+        return NextResponse.json({ posts: [] })
+      }
+      user = authResult.user
+    } catch {
+      return NextResponse.json({ posts: [] })
+    }
+    
+    if (!user) {
+      return NextResponse.json({ posts: [] })
+    }
 
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get("limit") || "10")

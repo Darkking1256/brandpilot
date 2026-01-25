@@ -22,15 +22,30 @@ interface QuickStats {
   } | null
 }
 
+const emptyStats = { stats: { totalPosts: 0, totalEngagement: 0, avgEngagementRate: 0, topPlatform: "none", bestPost: null } }
+
 export async function GET() {
   try {
     // Return empty stats if Supabase is not configured (demo mode)
     if (!isSupabaseConfigured()) {
-      return NextResponse.json({ stats: { totalPosts: 0, totalEngagement: 0, avgEngagementRate: 0, topPlatform: "none", bestPost: null } })
+      return NextResponse.json(emptyStats)
     }
 
-    const { user, error: authError } = await requireAuth()
-    if (authError) return NextResponse.json({ stats: { totalPosts: 0, totalEngagement: 0, avgEngagementRate: 0, topPlatform: "none", bestPost: null } })
+    // Try to authenticate, return empty data if auth fails (guest mode)
+    let user
+    try {
+      const authResult = await requireAuth()
+      if (authResult.error) {
+        return NextResponse.json(emptyStats)
+      }
+      user = authResult.user
+    } catch {
+      return NextResponse.json(emptyStats)
+    }
+    
+    if (!user) {
+      return NextResponse.json(emptyStats)
+    }
 
     const supabase = await createClient()
 

@@ -26,8 +26,21 @@ export async function GET() {
       return NextResponse.json({ suggestions: [] })
     }
 
-    const { user, error: authError } = await requireAuth()
-    if (authError) return NextResponse.json({ suggestions: [] })
+    // Try to authenticate, return empty data if auth fails (guest mode)
+    let user
+    try {
+      const authResult = await requireAuth()
+      if (authResult.error) {
+        return NextResponse.json({ suggestions: [] })
+      }
+      user = authResult.user
+    } catch {
+      return NextResponse.json({ suggestions: [] })
+    }
+    
+    if (!user) {
+      return NextResponse.json({ suggestions: [] })
+    }
 
     const supabase = await createClient()
     
