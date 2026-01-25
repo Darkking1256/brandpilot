@@ -31,6 +31,11 @@ export default function SignupPage() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const supabase = createClient()
+  
+  // #region agent log - Debug: Check if Supabase is configured
+  const supabaseConfigured = isSupabaseConfigured()
+  console.log('[DEBUG] Supabase configured:', supabaseConfigured)
+  // #endregion
 
   // Check password requirements
   const passwordChecks = useMemo(() => {
@@ -254,6 +259,14 @@ export default function SignupPage() {
       </div>
       
       <Card className="w-full max-w-md border-2 border-slate-700/50 shadow-2xl bg-slate-900/50 backdrop-blur-xl relative z-10">
+        {/* Debug banner - shows Supabase config status */}
+        {!supabaseConfigured && (
+          <div className="bg-yellow-600/20 border-b border-yellow-500/50 px-4 py-2 text-center">
+            <p className="text-yellow-300 text-sm font-medium">
+              ⚠️ Demo Mode: Supabase not configured. Authentication disabled.
+            </p>
+          </div>
+        )}
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <div className="rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 p-3 shadow-lg">
