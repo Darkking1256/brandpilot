@@ -47,3 +47,5 @@
 # GROQ_API_KEY (optional)
 # STRIPE_SECRET_KEY (optional)
 # STRIPE_PUBLISHABLE_KEY (optional)
+
+# Trigger rebuild - January 25, 2026
