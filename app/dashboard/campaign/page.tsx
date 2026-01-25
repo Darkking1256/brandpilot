@@ -260,358 +260,353 @@ export default function CampaignPage() {
 
   return (
     <>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-4xl font-bold tracking-tight">Campaigns</h1>
-            <p className="text-muted-foreground text-lg">
-              Create and manage your marketing campaigns with AI-powered insights
-            </p>
-          </div>
-          <Button 
-            size="lg" 
-            className="shadow-lg bg-gradient-to-r from-blue-600 to-cyan-600"
-            onClick={() => setIsCreateCampaignOpen(true)}
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            New Campaign
-          </Button>
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950">
+        {/* Animated background blobs */}
+        <div className="fixed inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-6 md:grid-cols-4">
-          {isLoading ? (
-            <>
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-            </>
-          ) : (
-            <>
-              <Card 
-                className="border-2 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-950/20 dark:to-slate-950/20 shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-                onClick={() => setStatusFilter("draft")}
+        <div className="relative z-10 space-y-8">
+          {/* Header */}
+          <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-2">
+                  Marketing <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Campaigns</span>
+                </h1>
+                <p className="text-slate-400 text-lg">
+                  Create and manage your marketing campaigns with AI-powered insights
+                </p>
+              </div>
+              <Button 
+                size="lg" 
+                className="shadow-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+                onClick={() => setIsCreateCampaignOpen(true)}
               >
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Drafts</CardTitle>
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-gray-500 to-slate-500">
-                    <FileEdit className="h-5 w-5 text-white" />
+                <Plus className="h-5 w-5 mr-2" />
+                New Campaign
+              </Button>
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid gap-6 md:grid-cols-4">
+            {isLoading ? (
+              <>
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+              </>
+            ) : (
+              <>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-slate-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  onClick={() => setStatusFilter("draft")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400">Drafts</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-gray-500 to-slate-500 shadow-md">
+                      <FileEdit className="h-4 w-4 text-white" />
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold mb-1">
+                  <div className="text-3xl font-bold text-white mb-1">
                     {campaigns.filter((c) => c.status === "draft").length}
                   </div>
-                  <p className="text-xs text-muted-foreground">In preparation</p>
-                </CardContent>
-              </Card>
-              <Card 
-                className="border-2 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-                onClick={() => setStatusFilter("active")}
-              >
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Active</CardTitle>
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
-                    <Megaphone className="h-5 w-5 text-white" />
+                  <p className="text-xs text-slate-500">In preparation</p>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  onClick={() => setStatusFilter("active")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400">Active</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+                      <Megaphone className="h-4 w-4 text-white" />
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold mb-1">
+                  <div className="text-3xl font-bold text-white mb-1">
                     {campaigns.filter((c) => c.status === "active").length}
                   </div>
-                  <p className="text-xs text-muted-foreground">Running campaigns</p>
-                </CardContent>
-              </Card>
-              <Card 
-                className="border-2 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-                onClick={() => setStatusFilter("paused")}
-              >
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Paused</CardTitle>
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500">
-                    <Pause className="h-5 w-5 text-white" />
+                  <p className="text-xs text-slate-500">Running campaigns</p>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-yellow-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  onClick={() => setStatusFilter("paused")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400">Paused</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 shadow-md">
+                      <Pause className="h-4 w-4 text-white" />
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold mb-1">
+                  <div className="text-3xl font-bold text-white mb-1">
                     {campaigns.filter((c) => c.status === "paused").length}
                   </div>
-                  <p className="text-xs text-muted-foreground">On hold</p>
-                </CardContent>
-              </Card>
-              <Card 
-                className="border-2 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-                onClick={() => setStatusFilter("completed")}
-              >
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Completed</CardTitle>
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500">
-                    <CheckCircle2 className="h-5 w-5 text-white" />
+                  <p className="text-xs text-slate-500">On hold</p>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  onClick={() => setStatusFilter("completed")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400">Completed</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-md">
+                      <CheckCircle2 className="h-4 w-4 text-white" />
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold mb-1">
+                  <div className="text-3xl font-bold text-white mb-1">
                     {campaigns.filter((c) => c.status === "completed").length}
                   </div>
-                  <p className="text-xs text-muted-foreground">Finished campaigns</p>
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </div>
+                  <p className="text-xs text-slate-500">Finished campaigns</p>
+                </div>
+              </>
+            )}
+          </div>
 
-        {/* Quick Status Filters */}
-        <div className="flex flex-wrap gap-2">
-          <Button 
-            variant={statusFilter === "all" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setStatusFilter("all")}
-          >
-            All Campaigns ({campaigns.length})
-          </Button>
-          <Button 
-            variant={statusFilter === "draft" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setStatusFilter("draft")}
-          >
-            <FileEdit className="h-4 w-4 mr-1" />
-            Drafts ({campaigns.filter(c => c.status === "draft").length})
-          </Button>
-          <Button 
-            variant={statusFilter === "active" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setStatusFilter("active")}
-          >
-            <Megaphone className="h-4 w-4 mr-1" />
-            Active ({campaigns.filter(c => c.status === "active").length})
-          </Button>
-          <Button 
-            variant={statusFilter === "paused" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setStatusFilter("paused")}
-          >
-            <Pause className="h-4 w-4 mr-1" />
-            Paused ({campaigns.filter(c => c.status === "paused").length})
-          </Button>
-          <Button 
-            variant={statusFilter === "completed" ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setStatusFilter("completed")}
-          >
-            <CheckCircle2 className="h-4 w-4 mr-1" />
-            Completed ({campaigns.filter(c => c.status === "completed").length})
-          </Button>
-        </div>
+          {/* Quick Status Filters */}
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant={statusFilter === "all" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("all")}
+              className={statusFilter === "all" ? "bg-gradient-to-r from-slate-600 to-slate-700" : "border-slate-700/50 bg-slate-900/50 text-slate-300 hover:text-white hover:border-slate-600"}
+            >
+              All Campaigns ({campaigns.length})
+            </Button>
+            <Button 
+              variant={statusFilter === "draft" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("draft")}
+              className={statusFilter === "draft" ? "bg-gradient-to-r from-gray-600 to-slate-600" : "border-slate-700/50 bg-slate-900/50 text-slate-300 hover:text-white hover:border-slate-600"}
+            >
+              <FileEdit className="h-4 w-4 mr-1" />
+              Drafts ({campaigns.filter(c => c.status === "draft").length})
+            </Button>
+            <Button 
+              variant={statusFilter === "active" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("active")}
+              className={statusFilter === "active" ? "bg-gradient-to-r from-purple-600 to-pink-600" : "border-slate-700/50 bg-slate-900/50 text-slate-300 hover:text-white hover:border-purple-500/50"}
+            >
+              <Megaphone className="h-4 w-4 mr-1" />
+              Active ({campaigns.filter(c => c.status === "active").length})
+            </Button>
+            <Button 
+              variant={statusFilter === "paused" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("paused")}
+              className={statusFilter === "paused" ? "bg-gradient-to-r from-yellow-600 to-orange-600" : "border-slate-700/50 bg-slate-900/50 text-slate-300 hover:text-white hover:border-yellow-500/50"}
+            >
+              <Pause className="h-4 w-4 mr-1" />
+              Paused ({campaigns.filter(c => c.status === "paused").length})
+            </Button>
+            <Button 
+              variant={statusFilter === "completed" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("completed")}
+              className={statusFilter === "completed" ? "bg-gradient-to-r from-green-600 to-emerald-600" : "border-slate-700/50 bg-slate-900/50 text-slate-300 hover:text-white hover:border-green-500/50"}
+            >
+              <CheckCircle2 className="h-4 w-4 mr-1" />
+              Completed ({campaigns.filter(c => c.status === "completed").length})
+            </Button>
+          </div>
 
-        {/* Campaign Metrics */}
-        <div className="grid gap-6 md:grid-cols-4">
-          {isLoading ? (
-            <>
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-            </>
-          ) : (
-            <>
-              <Card className="border-2">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+          {/* Campaign Metrics */}
+          <div className="grid gap-6 md:grid-cols-4">
+            {isLoading ? (
+              <>
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+              </>
+            ) : (
+              <>
+                <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300">
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-3">
                     <DollarSign className="h-4 w-4" />
                     Total Budget
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+                  </div>
+                  <div className="text-2xl font-bold text-white">
                     ${campaigns.reduce((sum, c) => sum + (c.budget || 0), 0).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Across all campaigns</p>
-                </CardContent>
-              </Card>
-              <Card className="border-2">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <p className="text-xs text-slate-500 mt-1">Across all campaigns</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300">
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-3">
                     <Target className="h-4 w-4" />
                     Active Budget
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+                  </div>
+                  <div className="text-2xl font-bold text-white">
                     ${campaigns.filter(c => c.status === "active").reduce((sum, c) => sum + (c.budget || 0), 0).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Currently running</p>
-                </CardContent>
-              </Card>
-              <Card className="border-2">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <p className="text-xs text-slate-500 mt-1">Currently running</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-300">
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-3">
                     <TrendingUp className="h-4 w-4" />
                     Avg Budget
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+                  </div>
+                  <div className="text-2xl font-bold text-white">
                     ${campaigns.length > 0 ? Math.round(campaigns.reduce((sum, c) => sum + (c.budget || 0), 0) / campaigns.length).toLocaleString() : 0}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Per campaign</p>
-                </CardContent>
-              </Card>
-              <Card className="border-2">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <p className="text-xs text-slate-500 mt-1">Per campaign</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300">
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-3">
                     <Megaphone className="h-4 w-4" />
                     Platforms
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
+                  </div>
+                  <div className="text-2xl font-bold text-white">
                     {new Set(campaigns.map(c => c.platform)).size}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Active platforms</p>
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </div>
+                  <p className="text-xs text-slate-500 mt-1">Active platforms</p>
+                </div>
+              </>
+            )}
+          </div>
 
-        {/* Analytics Charts */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="border-2 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl">Campaign by Platform</CardTitle>
-              <CardDescription>Distribution of campaigns across platforms</CardDescription>
-            </CardHeader>
-            <CardContent>
+          {/* Analytics Charts */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+              <div className="mb-4">
+                <h3 className="text-xl font-bold text-white">Campaign by Platform</h3>
+                <p className="text-slate-400 text-sm">Distribution of campaigns across platforms</p>
+              </div>
               {isLoading ? (
                 <ChartSkeleton />
               ) : (
                 <PerformanceChart posts={campaigns.map(c => ({ platform: c.platform, status: c.status }))} />
               )}
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="border-2 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl">Campaign Timeline</CardTitle>
-              <CardDescription>Campaigns created over time</CardDescription>
-            </CardHeader>
-            <CardContent>
+            <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+              <div className="mb-4">
+                <h3 className="text-xl font-bold text-white">Campaign Timeline</h3>
+                <p className="text-slate-400 text-sm">Campaigns created over time</p>
+              </div>
               {isLoading ? (
                 <ChartSkeleton />
               ) : (
                 <TrendChart posts={campaigns.map(c => ({ createdAt: c.createdAt, scheduledDate: c.startDate }))} />
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </div>
 
-        {/* Filters and Search */}
-        <Card className="border-2 shadow-lg">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl">Your Campaigns</CardTitle>
-                <CardDescription className="text-base">
-                  All your marketing campaigns will appear here
-                </CardDescription>
-              </div>
-              <div className="flex gap-2">
-                {/* View Toggle */}
-                <div className="flex border rounded-md">
+          {/* Filters and Search */}
+          <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+            <div className="p-8 border-b border-slate-700/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 shadow-md">
+                      <Megaphone className="h-5 w-5 text-white" />
+                    </div>
+                    Your Campaigns
+                  </h3>
+                  <p className="text-slate-400">
+                    All your marketing campaigns will appear here
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  {/* View Toggle */}
+                  <div className="flex border border-slate-700/50 rounded-md bg-slate-900/50">
+                    <Button
+                      variant={viewMode === "table" ? "secondary" : "ghost"}
+                      size="sm"
+                      className="rounded-r-none"
+                      onClick={() => setViewMode("table")}
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === "cards" ? "secondary" : "ghost"}
+                      size="sm"
+                      className="rounded-l-none"
+                      onClick={() => setViewMode("cards")}
+                    >
+                      <LayoutGrid className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <Button
-                    variant={viewMode === "table" ? "secondary" : "ghost"}
+                    variant="outline"
                     size="sm"
-                    className="rounded-r-none"
-                    onClick={() => setViewMode("table")}
+                    onClick={() => handleExportAll("csv")}
+                    className="border-slate-700/50 bg-slate-900/50 text-slate-300 hover:text-white hover:border-slate-600"
                   >
-                    <List className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "cards" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="rounded-l-none"
-                    onClick={() => setViewMode("cards")}
-                  >
-                    <LayoutGrid className="h-4 w-4" />
+                    <FileDown className="h-4 w-4 mr-2" />
+                    Export CSV
                   </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleExportAll("csv")}
-                >
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Export CSV
-                </Button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              {/* Search */}
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search campaigns..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
+            <div className="p-8">
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                {/* Search */}
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                  <Input
+                    placeholder="Search campaigns..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
+                  />
+                </div>
 
-              {/* Status Filter */}
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="paused">Paused</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* Platform Filter */}
-              <Select value={platformFilter} onValueChange={setPlatformFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by platform" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Platforms</SelectItem>
-                  <SelectItem value="twitter">Twitter</SelectItem>
-                  <SelectItem value="linkedin">LinkedIn</SelectItem>
-                  <SelectItem value="facebook">Facebook</SelectItem>
-                  <SelectItem value="instagram">Instagram</SelectItem>
-                  <SelectItem value="tiktok">TikTok</SelectItem>
-                  <SelectItem value="youtube">YouTube</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* Sort */}
-              <div className="flex gap-2">
-                <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue />
+                {/* Status Filter */}
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[180px] bg-slate-800/50 border-slate-700/50 text-slate-300">
+                    <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="date">Sort by Date</SelectItem>
-                    <SelectItem value="name">Sort by Name</SelectItem>
-                    <SelectItem value="status">Sort by Status</SelectItem>
+                  <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="paused">Paused</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-                >
-                  <ArrowUpDown className="h-4 w-4" />
-                </Button>
+
+                {/* Platform Filter */}
+                <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                  <SelectTrigger className="w-[180px] bg-slate-800/50 border-slate-700/50 text-slate-300">
+                    <SelectValue placeholder="Filter by platform" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+                    <SelectItem value="all">All Platforms</SelectItem>
+                    <SelectItem value="twitter">Twitter</SelectItem>
+                    <SelectItem value="linkedin">LinkedIn</SelectItem>
+                    <SelectItem value="facebook">Facebook</SelectItem>
+                    <SelectItem value="instagram">Instagram</SelectItem>
+                    <SelectItem value="tiktok">TikTok</SelectItem>
+                    <SelectItem value="youtube">YouTube</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Sort */}
+                <div className="flex gap-2">
+                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+                    <SelectTrigger className="w-[150px] bg-slate-800/50 border-slate-700/50 text-slate-300">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+                      <SelectItem value="date">Sort by Date</SelectItem>
+                      <SelectItem value="name">Sort by Name</SelectItem>
+                      <SelectItem value="status">Sort by Status</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                    className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-slate-600"
+                  >
+                    <ArrowUpDown className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
 
             {/* Campaigns Table */}
             {campaigns.length === 0 ? (
@@ -742,13 +737,14 @@ export default function CampaignPage() {
                     />
                   </div>
                 )}
-                <div className="mt-4 text-sm text-muted-foreground">
+                <div className="mt-4 text-sm text-slate-500">
                   Showing {paginatedCampaigns.length} of {filteredAndSortedCampaigns.length} campaigns
                 </div>
               </>
             )}
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       </div>
 
       <CreateCampaignForm 

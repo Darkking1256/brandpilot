@@ -114,25 +114,28 @@ export function PostRecycling() {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+      <div className="p-8 border-b border-slate-700/50">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <RefreshCw className="h-5 w-5 text-blue-500" />
+          <h3 className="text-2xl font-bold text-white mb-0 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+              <RefreshCw className="h-5 w-5 text-white" />
+            </div>
             Recycle Top Content
-          </CardTitle>
+          </h3>
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={fetchTopPosts}
             disabled={isLoading}
+            className="border border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-400 hover:text-white hover:border-purple-500/50"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-8">
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             <div className="flex-1">
@@ -208,8 +211,8 @@ export function PostRecycling() {
             </>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 

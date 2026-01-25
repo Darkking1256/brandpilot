@@ -237,119 +237,139 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="section-header border-0 pb-0 mb-0">
-        <div>
-          <h1 className="section-title text-3xl">Analytics</h1>
-          <p className="section-subtitle">
-            Detailed insights and performance metrics
-          </p>
-        </div>
-        <LoadingButton onClick={handleExportPDF} loading={isExporting}>
-          <Download className="h-4 w-4 mr-2" />
-          Export PDF Report
-        </LoadingButton>
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950">
+      {/* Animated background blobs */}
+      <div className="fixed inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
       </div>
 
-      {/* Date Range & Comparison Controls */}
-      <Card className="border-2">
-        <CardHeader>
-          <CardTitle>Date Range & Comparison</CardTitle>
-          <CardDescription>Select date range and compare with previous period</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Start Date</label>
-              <Input
-                type="date"
-                value={format(dateRange.start, "yyyy-MM-dd")}
-                onChange={(e) =>
-                  setDateRange({ ...dateRange, start: new Date(e.target.value) })
-                }
-              />
+      <div className="relative z-10 space-y-8">
+        {/* Header */}
+        <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">
+                Analytics & <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Insights</span>
+              </h1>
+              <p className="text-slate-400">
+                Detailed insights and performance metrics
+              </p>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">End Date</label>
-              <Input
-                type="date"
-                value={format(dateRange.end, "yyyy-MM-dd")}
-                onChange={(e) =>
-                  setDateRange({ ...dateRange, end: new Date(e.target.value) })
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Quick Select</label>
-              <select
-                className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                onChange={(e) => {
-                  const days = Number(e.target.value)
-                  if (days > 0) {
-                    setDateRange({
-                      start: subDays(new Date(), days),
-                      end: new Date(),
-                    })
-                  }
-                }}
-              >
-                <option value="">Select period</option>
-                <option value="7">Last 7 days</option>
-                <option value="30">Last 30 days</option>
-                <option value="90">Last 90 days</option>
-                <option value="365">Last year</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Compare With</label>
-              <select
-                className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                value={comparisonPeriod || ""}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setComparisonPeriod(value === "" ? null : (value as ComparisonPeriod))
-                }}
-              >
-                <option value="">No comparison</option>
-                <option value="previous">Previous period</option>
-                <option value="custom">Custom range</option>
-              </select>
-            </div>
+            <LoadingButton onClick={handleExportPDF} loading={isExporting} className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+              <Download className="h-4 w-4 mr-2" />
+              Export PDF Report
+            </LoadingButton>
           </div>
+        </div>
 
-          {comparisonPeriod === "custom" && (
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+        {/* Date Range & Comparison Controls */}
+        <div className="p-8 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+          <div className="mb-6">
+            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 shadow-md">
+                <Calendar className="h-5 w-5 text-white" />
+              </div>
+              Date Range & Comparison
+            </h3>
+            <p className="text-slate-400">Select date range and compare with previous period</p>
+          </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Comparison Start Date</label>
+                <label className="text-sm font-medium text-slate-300">Start Date</label>
                 <Input
                   type="date"
-                  value={comparisonDateRange ? format(comparisonDateRange.start, "yyyy-MM-dd") : ""}
+                  value={format(dateRange.start, "yyyy-MM-dd")}
                   onChange={(e) =>
-                    setComparisonDateRange({
-                      ...(comparisonDateRange || { start: new Date(), end: new Date() }),
-                      start: new Date(e.target.value),
-                    })
+                    setDateRange({ ...dateRange, start: new Date(e.target.value) })
                   }
+                  className="bg-slate-800/50 border-slate-700/50 text-white"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Comparison End Date</label>
+                <label className="text-sm font-medium text-slate-300">End Date</label>
                 <Input
                   type="date"
-                  value={comparisonDateRange ? format(comparisonDateRange.end, "yyyy-MM-dd") : ""}
+                  value={format(dateRange.end, "yyyy-MM-dd")}
                   onChange={(e) =>
-                    setComparisonDateRange({
-                      ...(comparisonDateRange || { start: new Date(), end: new Date() }),
-                      end: new Date(e.target.value),
-                    })
+                    setDateRange({ ...dateRange, end: new Date(e.target.value) })
                   }
+                  className="bg-slate-800/50 border-slate-700/50 text-white"
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-300">Quick Select</label>
+                <select
+                  className="w-full h-10 px-3 rounded-md border border-slate-700/50 bg-slate-800/50 text-white"
+                  onChange={(e) => {
+                    const days = Number(e.target.value)
+                    if (days > 0) {
+                      setDateRange({
+                        start: subDays(new Date(), days),
+                        end: new Date(),
+                      })
+                    }
+                  }}
+                >
+                  <option value="">Select period</option>
+                  <option value="7">Last 7 days</option>
+                  <option value="30">Last 30 days</option>
+                  <option value="90">Last 90 days</option>
+                  <option value="365">Last year</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-300">Compare With</label>
+                <select
+                  className="w-full h-10 px-3 rounded-md border border-slate-700/50 bg-slate-800/50 text-white"
+                  value={comparisonPeriod || ""}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setComparisonPeriod(value === "" ? null : (value as ComparisonPeriod))
+                  }}
+                >
+                  <option value="">No comparison</option>
+                  <option value="previous">Previous period</option>
+                  <option value="custom">Custom range</option>
+                </select>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+
+            {comparisonPeriod === "custom" && (
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-700/50">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-300">Comparison Start Date</label>
+                  <Input
+                    type="date"
+                    value={comparisonDateRange ? format(comparisonDateRange.start, "yyyy-MM-dd") : ""}
+                    onChange={(e) =>
+                      setComparisonDateRange({
+                        ...(comparisonDateRange || { start: new Date(), end: new Date() }),
+                        start: new Date(e.target.value),
+                      })
+                    }
+                    className="bg-slate-800/50 border-slate-700/50 text-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-300">Comparison End Date</label>
+                  <Input
+                    type="date"
+                    value={comparisonDateRange ? format(comparisonDateRange.end, "yyyy-MM-dd") : ""}
+                    onChange={(e) =>
+                      setComparisonDateRange({
+                        ...(comparisonDateRange || { start: new Date(), end: new Date() }),
+                        end: new Date(e.target.value),
+                      })
+                    }
+                    className="bg-slate-800/50 border-slate-700/50 text-white"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
       {/* Metrics Cards with Comparison */}
       {isLoading ? (
@@ -363,412 +383,368 @@ export default function AnalyticsPage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="border-2 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">Published Posts</CardTitle>
-              <FileText className="h-5 w-5 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{currentMetrics.publishedPosts}</div>
-              {percentageChanges && (
-                <div className="flex items-center gap-1 mt-2">
-                  {percentageChanges.publishedPosts >= 0 ? (
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
-                  )}
-                  <span
-                    className={`text-sm ${
-                      percentageChanges.publishedPosts >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {percentageChanges.publishedPosts >= 0 ? "+" : ""}
-                    {percentageChanges.publishedPosts.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">vs previous</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">Active Campaigns</CardTitle>
-              <Target className="h-5 w-5 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{currentMetrics.activeCampaigns}</div>
-              {percentageChanges && (
-                <div className="flex items-center gap-1 mt-2">
-                  {percentageChanges.activeCampaigns >= 0 ? (
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
-                  )}
-                  <span
-                    className={`text-sm ${
-                      percentageChanges.activeCampaigns >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {percentageChanges.activeCampaigns >= 0 ? "+" : ""}
-                    {percentageChanges.activeCampaigns.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">vs previous</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">Total Ad Spend</CardTitle>
-              <DollarSign className="h-5 w-5 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                ${currentMetrics.totalAdSpend.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Published Posts</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
+                <FileText className="h-4 w-4 text-white" />
               </div>
-              {percentageChanges && (
-                <div className="flex items-center gap-1 mt-2">
-                  {percentageChanges.totalAdSpend >= 0 ? (
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
-                  )}
-                  <span
-                    className={`text-sm ${
-                      percentageChanges.totalAdSpend >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {percentageChanges.totalAdSpend >= 0 ? "+" : ""}
-                    {percentageChanges.totalAdSpend.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">vs previous</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 bg-gradient-to-br from-cyan-50 to-sky-50 dark:from-cyan-950/20 dark:to-sky-950/20">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">Total Impressions</CardTitle>
-              <Eye className="h-5 w-5 text-cyan-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {currentMetrics.totalImpressions.toLocaleString()}
+            </div>
+            <div className="text-3xl font-bold text-white">{currentMetrics.publishedPosts}</div>
+            {percentageChanges && (
+              <div className="flex items-center gap-1 mt-2">
+                {percentageChanges.publishedPosts >= 0 ? (
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-400" />
+                )}
+                <span className={`text-sm ${percentageChanges.publishedPosts >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {percentageChanges.publishedPosts >= 0 ? "+" : ""}{percentageChanges.publishedPosts.toFixed(1)}%
+                </span>
+                <span className="text-sm text-slate-500">vs previous</span>
               </div>
-              {percentageChanges && (
-                <div className="flex items-center gap-1 mt-2">
-                  {percentageChanges.totalImpressions >= 0 ? (
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
-                  )}
-                  <span
-                    className={`text-sm ${
-                      percentageChanges.totalImpressions >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {percentageChanges.totalImpressions >= 0 ? "+" : ""}
-                    {percentageChanges.totalImpressions.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">vs previous</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            )}
+          </div>
 
-          <Card className="border-2 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
-              <MousePointerClick className="h-5 w-5 text-orange-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {currentMetrics.totalClicks.toLocaleString()}
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Active Campaigns</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+                <Target className="h-4 w-4 text-white" />
               </div>
-              {percentageChanges && (
-                <div className="flex items-center gap-1 mt-2">
-                  {percentageChanges.totalClicks >= 0 ? (
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
-                  )}
-                  <span
-                    className={`text-sm ${
-                      percentageChanges.totalClicks >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {percentageChanges.totalClicks >= 0 ? "+" : ""}
-                    {percentageChanges.totalClicks.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">vs previous</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+            <div className="text-3xl font-bold text-white">{currentMetrics.activeCampaigns}</div>
+            {percentageChanges && (
+              <div className="flex items-center gap-1 mt-2">
+                {percentageChanges.activeCampaigns >= 0 ? (
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-400" />
+                )}
+                <span className={`text-sm ${percentageChanges.activeCampaigns >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {percentageChanges.activeCampaigns >= 0 ? "+" : ""}{percentageChanges.activeCampaigns.toFixed(1)}%
+                </span>
+                <span className="text-sm text-slate-500">vs previous</span>
+              </div>
+            )}
+          </div>
 
-          <Card className="border-2 bg-gradient-to-br from-rose-50 to-red-50 dark:from-rose-950/20 dark:to-red-950/20">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium">Average CTR</CardTitle>
-              <BarChart3 className="h-5 w-5 text-rose-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{currentMetrics.avgCTR.toFixed(2)}%</div>
-              {percentageChanges && (
-                <div className="flex items-center gap-1 mt-2">
-                  {percentageChanges.avgCTR >= 0 ? (
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600" />
-                  )}
-                  <span
-                    className={`text-sm ${
-                      percentageChanges.avgCTR >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {percentageChanges.avgCTR >= 0 ? "+" : ""}
-                    {percentageChanges.avgCTR.toFixed(1)}%
-                  </span>
-                  <span className="text-sm text-muted-foreground">vs previous</span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Total Ad Spend</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-md">
+                <DollarSign className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">
+              ${currentMetrics.totalAdSpend.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+            {percentageChanges && (
+              <div className="flex items-center gap-1 mt-2">
+                {percentageChanges.totalAdSpend >= 0 ? (
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-400" />
+                )}
+                <span className={`text-sm ${percentageChanges.totalAdSpend >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {percentageChanges.totalAdSpend >= 0 ? "+" : ""}{percentageChanges.totalAdSpend.toFixed(1)}%
+                </span>
+                <span className="text-sm text-slate-500">vs previous</span>
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Total Impressions</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-sky-500 shadow-md">
+                <Eye className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{currentMetrics.totalImpressions.toLocaleString()}</div>
+            {percentageChanges && (
+              <div className="flex items-center gap-1 mt-2">
+                {percentageChanges.totalImpressions >= 0 ? (
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-400" />
+                )}
+                <span className={`text-sm ${percentageChanges.totalImpressions >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {percentageChanges.totalImpressions >= 0 ? "+" : ""}{percentageChanges.totalImpressions.toFixed(1)}%
+                </span>
+                <span className="text-sm text-slate-500">vs previous</span>
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Total Clicks</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 shadow-md">
+                <MousePointerClick className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{currentMetrics.totalClicks.toLocaleString()}</div>
+            {percentageChanges && (
+              <div className="flex items-center gap-1 mt-2">
+                {percentageChanges.totalClicks >= 0 ? (
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-400" />
+                )}
+                <span className={`text-sm ${percentageChanges.totalClicks >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {percentageChanges.totalClicks >= 0 ? "+" : ""}{percentageChanges.totalClicks.toFixed(1)}%
+                </span>
+                <span className="text-sm text-slate-500">vs previous</span>
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-rose-500/50 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Average CTR</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-rose-500 to-red-500 shadow-md">
+                <BarChart3 className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{currentMetrics.avgCTR.toFixed(2)}%</div>
+            {percentageChanges && (
+              <div className="flex items-center gap-1 mt-2">
+                {percentageChanges.avgCTR >= 0 ? (
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                ) : (
+                  <TrendingDown className="h-4 w-4 text-red-400" />
+                )}
+                <span className={`text-sm ${percentageChanges.avgCTR >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {percentageChanges.avgCTR >= 0 ? "+" : ""}{percentageChanges.avgCTR.toFixed(1)}%
+                </span>
+                <span className="text-sm text-slate-500">vs previous</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* Charts */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Engagement Trends</CardTitle>
-            <CardDescription>
+        <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-white">Engagement Trends</h3>
+            <p className="text-slate-400 text-sm">
               {format(dateRange.start, "MMM d")} - {format(dateRange.end, "MMM d, yyyy")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <ChartSkeleton />
-            ) : filteredData.posts.length > 0 ? (
-              <EngagementChart posts={filteredData.posts} />
-            ) : (
-              <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                <p>No data for selected period</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </p>
+          </div>
+          {isLoading ? (
+            <ChartSkeleton />
+          ) : filteredData.posts.length > 0 ? (
+            <EngagementChart posts={filteredData.posts} />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-slate-500">
+              <p>No data for selected period</p>
+            </div>
+          )}
+        </div>
 
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Performance by Platform</CardTitle>
-            <CardDescription>
+        <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-white">Performance by Platform</h3>
+            <p className="text-slate-400 text-sm">
               {format(dateRange.start, "MMM d")} - {format(dateRange.end, "MMM d, yyyy")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <ChartSkeleton />
-            ) : filteredData.posts.length > 0 ? (
-              <PerformanceChart posts={filteredData.posts} />
-            ) : (
-              <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                <p>No data for selected period</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </p>
+          </div>
+          {isLoading ? (
+            <ChartSkeleton />
+          ) : filteredData.posts.length > 0 ? (
+            <PerformanceChart posts={filteredData.posts} />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-slate-500">
+              <p>No data for selected period</p>
+            </div>
+          )}
+        </div>
 
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Growth Trends</CardTitle>
-            <CardDescription>
+        <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-500">
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-white">Growth Trends</h3>
+            <p className="text-slate-400 text-sm">
               {format(dateRange.start, "MMM d")} - {format(dateRange.end, "MMM d, yyyy")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <ChartSkeleton />
-            ) : filteredData.posts.length > 0 ? (
-              <TrendChart posts={filteredData.posts} />
-            ) : (
-              <div className="flex items-center justify-center h-[200px] text-muted-foreground">
-                <p>No data for selected period</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </p>
+          </div>
+          {isLoading ? (
+            <ChartSkeleton />
+          ) : filteredData.posts.length > 0 ? (
+            <TrendChart posts={filteredData.posts} />
+          ) : (
+            <div className="flex items-center justify-center h-[200px] text-slate-500">
+              <p>No data for selected period</p>
+            </div>
+          )}
+        </div>
 
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle>Platform Distribution</CardTitle>
-            <CardDescription>
+        <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-orange-500/50 transition-all duration-500">
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-white">Platform Distribution</h3>
+            <p className="text-slate-400 text-sm">
               {format(dateRange.start, "MMM d")} - {format(dateRange.end, "MMM d, yyyy")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <ChartSkeleton />
-            ) : filteredData.posts.length > 0 ? (
-              <PlatformDistributionChart posts={filteredData.posts} />
-            ) : (
-              <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-                <p>No data for selected period</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </p>
+          </div>
+          {isLoading ? (
+            <ChartSkeleton />
+          ) : filteredData.posts.length > 0 ? (
+            <PlatformDistributionChart posts={filteredData.posts} />
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-slate-500">
+              <p>No data for selected period</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Advanced Analytics */}
-      <Tabs defaultValue="performance" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="timing">Best Times</TabsTrigger>
-          <TabsTrigger value="hashtags">Hashtags</TabsTrigger>
-          <TabsTrigger value="competitors">Competitors</TabsTrigger>
-        </TabsList>
+      <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+        <Tabs defaultValue="performance" className="space-y-6">
+          <TabsList className="bg-slate-800/50 border border-slate-700/50">
+            <TabsTrigger value="performance" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">Performance</TabsTrigger>
+            <TabsTrigger value="timing" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">Best Times</TabsTrigger>
+            <TabsTrigger value="hashtags" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">Hashtags</TabsTrigger>
+            <TabsTrigger value="competitors" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">Competitors</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="performance" className="space-y-6">
-          {isLoading ? (
-            <Card className="border-2 p-6">
-              <ChartSkeleton />
-            </Card>
-          ) : filteredData.posts.length > 0 ? (
-            <PostPerformanceComparison
-              posts={filteredData.posts.map((post: any) => ({
-                id: post.id,
-                content: post.content,
-                platform: post.platform,
-                postedAt: post.scheduledDate || post.created_at,
-                impressions: post.impressions || 0,
-                reach: post.reach || 0,
-                likes: post.likes || 0,
-                comments: post.comments || 0,
-                shares: post.shares || 0,
-                clicks: post.clicks || 0,
-                engagementRate: post.engagement_rate || 0,
-              }))}
-            />
-          ) : (
-            <EmptyState
-              icon={BarChart3}
-              title="No performance data"
-              description="Publish some posts to see performance comparisons here."
-            />
-          )}
-        </TabsContent>
+          <TabsContent value="performance" className="space-y-6">
+            {isLoading ? (
+              <div className="p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50">
+                <ChartSkeleton />
+              </div>
+            ) : filteredData.posts.length > 0 ? (
+              <PostPerformanceComparison
+                posts={filteredData.posts.map((post: any) => ({
+                  id: post.id,
+                  content: post.content,
+                  platform: post.platform,
+                  postedAt: post.scheduledDate || post.created_at,
+                  impressions: post.impressions || 0,
+                  reach: post.reach || 0,
+                  likes: post.likes || 0,
+                  comments: post.comments || 0,
+                  shares: post.shares || 0,
+                  clicks: post.clicks || 0,
+                  engagementRate: post.engagement_rate || 0,
+                }))}
+              />
+            ) : (
+              <EmptyState
+                icon={BarChart3}
+                title="No performance data"
+                description="Publish some posts to see performance comparisons here."
+              />
+            )}
+          </TabsContent>
 
-        <TabsContent value="timing" className="space-y-6">
-          {isLoading ? (
-            <Card className="border-2 p-6">
-              <ChartSkeleton />
-            </Card>
-          ) : (
-            <BestTimeToPost
-              data={(() => {
-                // Generate timing data from actual posts
-                const timingMap = new Map<string, { postCount: number; totalEngagement: number }>()
-                
-                filteredData.posts.forEach((post: any) => {
-                  const date = new Date(post.scheduledDate || post.created_at)
-                  const day = date.getDay()
-                  const hour = date.getHours()
-                  const key = `${day}-${hour}`
+          <TabsContent value="timing" className="space-y-6">
+            {isLoading ? (
+              <div className="p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50">
+                <ChartSkeleton />
+              </div>
+            ) : (
+              <BestTimeToPost
+                data={(() => {
+                  const timingMap = new Map<string, { postCount: number; totalEngagement: number }>()
                   
-                  const existing = timingMap.get(key) || { postCount: 0, totalEngagement: 0 }
-                  timingMap.set(key, {
-                    postCount: existing.postCount + 1,
-                    totalEngagement: existing.totalEngagement + (post.likes || 0) + (post.comments || 0) + (post.shares || 0),
-                  })
-                })
-                
-                return Array.from({ length: 168 }, (_, i) => {
-                  const day = Math.floor(i / 24)
-                  const hour = i % 24
-                  const key = `${day}-${hour}`
-                  const data = timingMap.get(key) || { postCount: 0, totalEngagement: 0 }
-                  
-                  return {
-                    day,
-                    hour,
-                    postCount: data.postCount,
-                    avgEngagementRate: data.postCount > 0 ? data.totalEngagement / data.postCount : 0,
-                    totalEngagement: data.totalEngagement,
-                  }
-                })
-              })()}
-            />
-          )}
-        </TabsContent>
-
-        <TabsContent value="hashtags" className="space-y-6">
-          {isLoading ? (
-            <Card className="border-2 p-6">
-              <ChartSkeleton />
-            </Card>
-          ) : (
-            <HashtagPerformance
-              hashtags={(() => {
-                // Extract hashtags from actual posts
-                const hashtagMap = new Map<string, { platform: string; usageCount: number; totalEngagement: number; firstUsedAt: string; lastUsedAt: string }>()
-                
-                filteredData.posts.forEach((post: any) => {
-                  const hashtags = post.content?.match(/#\w+/g) || []
-                  hashtags.forEach((hashtag: string) => {
-                    const existing = hashtagMap.get(hashtag)
-                    const engagement = (post.likes || 0) + (post.comments || 0) + (post.shares || 0)
-                    const postDate = post.scheduledDate || post.created_at
+                  filteredData.posts.forEach((post: any) => {
+                    const date = new Date(post.scheduledDate || post.created_at)
+                    const day = date.getDay()
+                    const hour = date.getHours()
+                    const key = `${day}-${hour}`
                     
-                    if (existing) {
-                      hashtagMap.set(hashtag, {
-                        platform: existing.platform,
-                        usageCount: existing.usageCount + 1,
-                        totalEngagement: existing.totalEngagement + engagement,
-                        firstUsedAt: postDate < existing.firstUsedAt ? postDate : existing.firstUsedAt,
-                        lastUsedAt: postDate > existing.lastUsedAt ? postDate : existing.lastUsedAt,
-                      })
-                    } else {
-                      hashtagMap.set(hashtag, {
-                        platform: post.platform,
-                        usageCount: 1,
-                        totalEngagement: engagement,
-                        firstUsedAt: postDate,
-                        lastUsedAt: postDate,
-                      })
+                    const existing = timingMap.get(key) || { postCount: 0, totalEngagement: 0 }
+                    timingMap.set(key, {
+                      postCount: existing.postCount + 1,
+                      totalEngagement: existing.totalEngagement + (post.likes || 0) + (post.comments || 0) + (post.shares || 0),
+                    })
+                  })
+                  
+                  return Array.from({ length: 168 }, (_, i) => {
+                    const day = Math.floor(i / 24)
+                    const hour = i % 24
+                    const key = `${day}-${hour}`
+                    const data = timingMap.get(key) || { postCount: 0, totalEngagement: 0 }
+                    
+                    return {
+                      day,
+                      hour,
+                      postCount: data.postCount,
+                      avgEngagementRate: data.postCount > 0 ? data.totalEngagement / data.postCount : 0,
+                      totalEngagement: data.totalEngagement,
                     }
                   })
-                })
-                
-                return Array.from(hashtagMap.entries())
-                  .map(([hashtag, data]) => ({
-                    hashtag,
-                    platform: data.platform,
-                    usageCount: data.usageCount,
-                    totalEngagement: data.totalEngagement,
-                    avgEngagementRate: data.usageCount > 0 ? data.totalEngagement / data.usageCount : 0,
-                    firstUsedAt: data.firstUsedAt,
-                    lastUsedAt: data.lastUsedAt,
-                  }))
-                  .sort((a, b) => b.totalEngagement - a.totalEngagement)
-                  .slice(0, 20)
-              })()}
-            />
-          )}
-        </TabsContent>
+                })()}
+              />
+            )}
+          </TabsContent>
 
-        <TabsContent value="competitors" className="space-y-6">
-          <CompetitorAnalysis
-            competitors={[]}
-            posts={[]}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="hashtags" className="space-y-6">
+            {isLoading ? (
+              <div className="p-6 rounded-2xl bg-slate-800/40 border border-slate-700/50">
+                <ChartSkeleton />
+              </div>
+            ) : (
+              <HashtagPerformance
+                hashtags={(() => {
+                  const hashtagMap = new Map<string, { platform: string; usageCount: number; totalEngagement: number; firstUsedAt: string; lastUsedAt: string }>()
+                  
+                  filteredData.posts.forEach((post: any) => {
+                    const hashtags = post.content?.match(/#\w+/g) || []
+                    hashtags.forEach((hashtag: string) => {
+                      const existing = hashtagMap.get(hashtag)
+                      const engagement = (post.likes || 0) + (post.comments || 0) + (post.shares || 0)
+                      const postDate = post.scheduledDate || post.created_at
+                      
+                      if (existing) {
+                        hashtagMap.set(hashtag, {
+                          platform: existing.platform,
+                          usageCount: existing.usageCount + 1,
+                          totalEngagement: existing.totalEngagement + engagement,
+                          firstUsedAt: postDate < existing.firstUsedAt ? postDate : existing.firstUsedAt,
+                          lastUsedAt: postDate > existing.lastUsedAt ? postDate : existing.lastUsedAt,
+                        })
+                      } else {
+                        hashtagMap.set(hashtag, {
+                          platform: post.platform,
+                          usageCount: 1,
+                          totalEngagement: engagement,
+                          firstUsedAt: postDate,
+                          lastUsedAt: postDate,
+                        })
+                      }
+                    })
+                  })
+                  
+                  return Array.from(hashtagMap.entries())
+                    .map(([hashtag, data]) => ({
+                      hashtag,
+                      platform: data.platform,
+                      usageCount: data.usageCount,
+                      totalEngagement: data.totalEngagement,
+                      avgEngagementRate: data.usageCount > 0 ? data.totalEngagement / data.usageCount : 0,
+                      firstUsedAt: data.firstUsedAt,
+                      lastUsedAt: data.lastUsedAt,
+                    }))
+                    .sort((a, b) => b.totalEngagement - a.totalEngagement)
+                    .slice(0, 20)
+                })()}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="competitors" className="space-y-6">
+            <CompetitorAnalysis
+              competitors={[]}
+              posts={[]}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+      </div>
     </div>
   )
 }

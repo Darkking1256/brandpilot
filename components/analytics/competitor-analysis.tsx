@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -114,55 +113,56 @@ export function CompetitorAnalysis({ competitors, posts }: CompetitorAnalysisPro
   }, [filteredPosts])
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-orange-500/50 transition-all duration-500">
+      <div className="p-6 border-b border-slate-700/50">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <Users className="h-5 w-5 text-slate-400" />
               Competitor Analysis
-            </CardTitle>
-            <CardDescription>
+            </h3>
+            <p className="text-slate-400 text-sm">
               Track and analyze your competitors&apos; content performance
-            </CardDescription>
+            </p>
           </div>
           <Dialog open={isAddingCompetitor} onOpenChange={setIsAddingCompetitor}>
             <DialogTrigger asChild>
-              <Button size="sm">
+              <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Competitor
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
               <DialogHeader>
-                <DialogTitle>Add Competitor</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-white">Add Competitor</DialogTitle>
+                <DialogDescription className="text-slate-400">
                   Add a competitor to track their content performance
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Name</label>
+                  <label className="text-sm font-medium text-slate-300">Name</label>
                   <Input
                     placeholder="Competitor name"
                     value={newCompetitor.name}
                     onChange={(e) =>
                       setNewCompetitor({ ...newCompetitor, name: e.target.value })
                     }
+                    className="bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Platform</label>
+                  <label className="text-sm font-medium text-slate-300">Platform</label>
                   <Select
                     value={newCompetitor.platform}
                     onValueChange={(value) =>
                       setNewCompetitor({ ...newCompetitor, platform: value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-800/50 border-slate-700/50 text-slate-300">
                       <SelectValue placeholder="Select platform" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                       <SelectItem value="twitter">Twitter/X</SelectItem>
                       <SelectItem value="linkedin">LinkedIn</SelectItem>
                       <SelectItem value="facebook">Facebook</SelectItem>
@@ -172,46 +172,48 @@ export function CompetitorAnalysis({ competitors, posts }: CompetitorAnalysisPro
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Handle/Username</label>
+                  <label className="text-sm font-medium text-slate-300">Handle/Username</label>
                   <Input
                     placeholder="@username"
                     value={newCompetitor.handle}
                     onChange={(e) =>
                       setNewCompetitor({ ...newCompetitor, handle: e.target.value })
                     }
+                    className="bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Profile URL (Optional)</label>
+                  <label className="text-sm font-medium text-slate-300">Profile URL (Optional)</label>
                   <Input
                     placeholder="https://..."
                     value={newCompetitor.profileUrl}
                     onChange={(e) =>
                       setNewCompetitor({ ...newCompetitor, profileUrl: e.target.value })
                     }
+                    className="bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddingCompetitor(false)}>
+                <Button variant="outline" onClick={() => setIsAddingCompetitor(false)} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white">
                   Cancel
                 </Button>
-                <Button onClick={handleAddCompetitor} disabled={!newCompetitor.name || !newCompetitor.platform || !newCompetitor.handle}>
+                <Button onClick={handleAddCompetitor} disabled={!newCompetitor.name || !newCompetitor.platform || !newCompetitor.handle} className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
                   Add Competitor
                 </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="p-6 space-y-6">
         {/* Competitor Selector */}
         {competitors.length > 0 && (
           <Select value={selectedCompetitor} onValueChange={setSelectedCompetitor}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full bg-slate-800/50 border-slate-700/50 text-slate-300">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
               <SelectItem value="all">All Competitors</SelectItem>
               {competitors.map((competitor) => (
                 <SelectItem key={competitor.id} value={competitor.id}>
@@ -231,26 +233,26 @@ export function CompetitorAnalysis({ competitors, posts }: CompetitorAnalysisPro
                 const stats = competitorStats[competitor.id]
                 if (!stats) return null
                 return (
-                  <Card key={competitor.id} className="p-4">
+                  <div key={competitor.id} className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold text-sm">{competitor.name}</span>
-                      <Badge variant="outline">{competitor.platform}</Badge>
+                      <span className="font-semibold text-sm text-white">{competitor.name}</span>
+                      <Badge variant="outline" className="border-slate-600 text-slate-400">{competitor.platform}</Badge>
                     </div>
                     <div className="space-y-1 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Posts:</span>
-                        <span className="font-medium">{stats.postCount}</span>
+                        <span className="text-slate-500">Posts:</span>
+                        <span className="font-medium text-slate-300">{stats.postCount}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Avg Engagement:</span>
-                        <span className="font-medium">{stats.avgEngagementRate.toFixed(2)}%</span>
+                        <span className="text-slate-500">Avg Engagement:</span>
+                        <span className="font-medium text-slate-300">{stats.avgEngagementRate.toFixed(2)}%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Total Engagement:</span>
-                        <span className="font-medium">{stats.totalEngagement.toLocaleString()}</span>
+                        <span className="text-slate-500">Total Engagement:</span>
+                        <span className="font-medium text-slate-300">{stats.totalEngagement.toLocaleString()}</span>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 )
               })}
           </div>
@@ -259,8 +261,8 @@ export function CompetitorAnalysis({ competitors, posts }: CompetitorAnalysisPro
         {/* Top Performing Competitor Posts */}
         {topPosts.length > 0 && (
           <div className="space-y-2">
-            <h3 className="font-semibold flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
+            <h3 className="font-semibold text-white flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-slate-400" />
               Top Performing Competitor Posts
             </h3>
             <div className="space-y-2">
@@ -269,29 +271,29 @@ export function CompetitorAnalysis({ competitors, posts }: CompetitorAnalysisPro
                 return (
                   <div
                     key={post.id}
-                    className="p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    className="p-4 border border-slate-700/50 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold">{competitor?.name || "Unknown"}</span>
-                          <Badge variant="secondary" className="text-xs">
+                          <span className="font-semibold text-white">{competitor?.name || "Unknown"}</span>
+                          <Badge variant="secondary" className="text-xs bg-slate-700/50 text-slate-300">
                             {competitor?.platform}
                           </Badge>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-slate-500">
                             {new Date(post.postedAt).toLocaleDateString()}
                           </span>
                         </div>
-                        <p className="text-sm line-clamp-2">{post.content}</p>
+                        <p className="text-sm line-clamp-2 text-slate-300">{post.content}</p>
                       </div>
                       <div className="text-right ml-4">
-                        <div className="text-lg font-bold text-green-600">
+                        <div className="text-lg font-bold text-green-400">
                           {post.engagementRate.toFixed(2)}%
                         </div>
-                        <div className="text-xs text-muted-foreground">Engagement</div>
+                        <div className="text-xs text-slate-500">Engagement</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 mt-3 pt-3 border-t text-xs text-muted-foreground">
+                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-slate-700/50 text-xs text-slate-500">
                       <span>{post.impressions.toLocaleString()} impressions</span>
                       <span>•</span>
                       <span>{post.engagement.toLocaleString()} engagement</span>
@@ -304,14 +306,14 @@ export function CompetitorAnalysis({ competitors, posts }: CompetitorAnalysisPro
         )}
 
         {competitors.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No competitors added yet</p>
-            <p className="text-sm mt-2">Add competitors to start tracking their performance</p>
+          <div className="text-center py-12">
+            <Users className="h-12 w-12 mx-auto mb-4 text-slate-600" />
+            <p className="text-slate-400">No competitors added yet</p>
+            <p className="text-sm mt-2 text-slate-500">Add competitors to start tracking their performance</p>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 

@@ -100,8 +100,27 @@ export function PlatformConnections() {
     }
   }, [fetchConnections, fetchPlatformStatus, toast])
 
-  const handleConnect = (platform: string) => {
-    // Redirect to OAuth flow - each user will authorize and get their own token
+  const handleConnect = async (platform: string) => {
+    // Check if user is authenticated
+    try {
+      const response = await fetch('/api/user/profile')
+      if (response.status === 401 || response.status === 403) {
+        // User is not authenticated - redirect to signup with return URL
+        toast({
+          title: "Account Required",
+          description: "Please create a free account to connect your social media platforms.",
+          variant: "default",
+        })
+        window.location.href = `/auth/signup?redirect=${encodeURIComponent(window.location.pathname)}`
+        return
+      }
+    } catch (error) {
+      // If API call fails, assume guest and redirect to signup
+      window.location.href = `/auth/signup?redirect=${encodeURIComponent(window.location.pathname)}`
+      return
+    }
+    
+    // User is authenticated - proceed with OAuth flow
     window.location.href = `/api/platforms/oauth/${platform}`
   }
 

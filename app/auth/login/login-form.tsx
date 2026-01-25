@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
-import { Sparkles, Mail, Lock, ArrowRight, RefreshCw } from "lucide-react"
+import { Sparkles, Mail, Lock, ArrowRight, RefreshCw, Plus } from "lucide-react"
 
 export function LoginForm() {
   const router = useRouter()
@@ -134,26 +134,60 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-      <Card className="w-full max-w-md border-2 shadow-xl">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-950 via-indigo-950 to-blue-950 p-4 relative overflow-hidden">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-1/4 right-1/4 w-[700px] h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-1/4 left-1/4 w-[700px] h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      </div>
+
+      {/* Animated decorative plus signs */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(8)].map((_, idx) => {
+          const positions = [
+            { top: '10%', left: '15%' },
+            { top: '20%', right: '12%' },
+            { bottom: '15%', left: '20%' },
+            { bottom: '25%', right: '18%' },
+            { top: '40%', left: '8%' },
+            { top: '60%', right: '10%' },
+            { top: '80%', left: '40%' },
+            { bottom: '12%', right: '30%' },
+          ]
+          return (
+            <Plus
+              key={idx}
+              className="absolute text-blue-500/20 animate-pulse-plus"
+              style={{
+                ...positions[idx],
+                animationDelay: `${idx * 0.5}s`,
+                width: '20px',
+                height: '20px',
+              }}
+            />
+          )
+        })}
+      </div>
+      
+      <Card className="w-full max-w-md border-2 border-slate-700/50 shadow-2xl bg-slate-900/50 backdrop-blur-xl relative z-10">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 p-3">
+            <div className="rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 p-3 shadow-lg">
               <Sparkles className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
             Welcome Back
           </CardTitle>
-          <CardDescription className="text-base">
+          <CardDescription className="text-base text-slate-400">
             Sign in to your MarketPilot AI account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
+              <Label htmlFor="email" className="flex items-center gap-2 text-slate-300">
+                <Mail className="h-4 w-4 text-blue-400" />
                 Email
               </Label>
               <Input
@@ -164,12 +198,12 @@ export function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-11"
+                className="h-11 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
-                <Lock className="h-4 w-4" />
+              <Label htmlFor="password" className="flex items-center gap-2 text-slate-300">
+                <Lock className="h-4 w-4 text-blue-400" />
                 Password
               </Label>
               <Input
@@ -180,12 +214,12 @@ export function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-11"
+                className="h-11 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
             </div>
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 h-11 text-base font-semibold"
+              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 h-11 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}
@@ -194,8 +228,8 @@ export function LoginForm() {
           </form>
 
           {showResendConfirmation && (
-            <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg space-y-3">
-              <p className="text-sm text-yellow-800 dark:text-yellow-200">
+            <div className="mt-4 p-4 bg-yellow-900/20 backdrop-blur-xl border border-yellow-600/50 rounded-lg space-y-3">
+              <p className="text-sm text-yellow-300">
                 Your email address hasn&apos;t been confirmed yet. Please check your inbox for the confirmation email.
               </p>
               <Button
@@ -204,7 +238,7 @@ export function LoginForm() {
                 size="sm"
                 onClick={handleResendConfirmation}
                 disabled={isResending}
-                className="w-full border-yellow-300 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 hover:bg-yellow-100 dark:hover:bg-yellow-900/40"
+                className="w-full border-yellow-600/50 text-yellow-300 hover:bg-yellow-900/40 hover:border-yellow-500"
               >
                 {isResending ? (
                   <>
@@ -218,20 +252,20 @@ export function LoginForm() {
                   </>
                 )}
               </Button>
-              <p className="text-xs text-yellow-700 dark:text-yellow-300 text-center">
+              <p className="text-xs text-yellow-400 text-center">
                 Check your spam folder if you don&apos;t see the email.
               </p>
             </div>
           )}
 
           <div className="mt-6 text-center space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-slate-400">
               Don&apos;t have an account?{" "}
-              <Link href="/auth/signup" className="text-blue-600 hover:underline font-medium">
+              <Link href="/auth/signup" className="text-blue-400 hover:text-blue-300 hover:underline font-medium transition-colors">
                 Sign up
               </Link>
             </p>
-            <Link href="/auth/forgot-password" className="text-sm text-muted-foreground hover:text-blue-600 hover:underline">
+            <Link href="/auth/forgot-password" className="text-sm text-slate-400 hover:text-blue-400 hover:underline transition-colors block">
               Forgot your password?
             </Link>
           </div>

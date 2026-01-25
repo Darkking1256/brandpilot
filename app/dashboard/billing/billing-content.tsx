@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { Check, CreditCard, Loader2, Sparkles, Zap, Building2, ArrowRight, ExternalLink } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { cn } from "@/utils/cn"
 
 interface Subscription {
   tier: 'free' | 'pro' | 'enterprise'
@@ -174,155 +175,186 @@ export function BillingContent() {
   const currentTier = subscription?.tier || 'free'
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Billing</h1>
-          <p className="text-muted-foreground">Manage your subscription and billing</p>
-        </div>
-        {currentTier !== 'free' && (
-          <Button 
-            variant="outline" 
-            onClick={handleManageSubscription}
-            disabled={isPortalLoading}
-          >
-            {isPortalLoading ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <CreditCard className="h-4 w-4 mr-2" />
-            )}
-            Manage Subscription
-            <ExternalLink className="h-4 w-4 ml-2" />
-          </Button>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950">
+      {/* Animated background blobs */}
+      <div className="fixed inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
       </div>
 
-      {/* Current Plan */}
-      {subscription && subscription.status !== 'canceled' && (
-        <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
-          <Sparkles className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-blue-800 dark:text-blue-200">
-            You&apos;re currently on the <strong className="font-semibold">{PRICING_TIERS[currentTier].name}</strong> plan.
-            {subscription.current_period_end && (
-              <span>
-                {subscription.cancel_at_period_end 
-                  ? ` Your subscription will end on ${new Date(subscription.current_period_end).toLocaleDateString()}.`
-                  : ` Next billing date: ${new Date(subscription.current_period_end).toLocaleDateString()}.`
-                }
-              </span>
-            )}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Pricing Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
-        {(Object.entries(PRICING_TIERS) as [keyof typeof PRICING_TIERS, typeof PRICING_TIERS[keyof typeof PRICING_TIERS]][]).map(([tier, plan]) => {
-          const Icon = plan.icon
-          const isCurrent = tier === currentTier
-          const isPopular = 'popular' in plan && plan.popular
-
-          return (
-            <Card 
-              key={tier} 
-              className={`relative flex flex-col ${
-                isPopular ? 'border-2 border-blue-500 shadow-lg' : ''
-              } ${isCurrent ? 'ring-2 ring-green-500' : ''}`}
-            >
-              {isPopular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-blue-500 text-white">Most Popular</Badge>
-                </div>
-              )}
-              {isCurrent && (
-                <div className="absolute -top-3 right-4">
-                  <Badge className="bg-green-500 text-white">Current Plan</Badge>
-                </div>
-              )}
-              
-              <CardHeader className="text-center pb-2">
-                <div className="mx-auto mb-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-3">
-                  <Icon className="h-6 w-6 text-blue-600" />
-                </div>
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <CardDescription>
-                  <span className="text-3xl font-bold text-foreground">${plan.price}</span>
-                  {plan.price > 0 && <span className="text-muted-foreground">/month</span>}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="flex-1">
-                <ul className="space-y-2">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-
-              <CardFooter>
-                {tier === 'free' ? (
-                  <Button className="w-full" variant="outline" disabled>
-                    {isCurrent ? 'Current Plan' : 'Downgrade'}
-                  </Button>
-                ) : isCurrent ? (
-                  <Button className="w-full" variant="outline" disabled>
-                    Current Plan
-                  </Button>
+      <div className="relative z-10 space-y-8">
+        {/* Header */}
+        <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-white mb-2">
+                Billing & <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Subscription</span>
+              </h1>
+              <p className="text-slate-400">Manage your subscription and billing</p>
+            </div>
+            {currentTier !== 'free' && (
+              <Button 
+                variant="outline" 
+                onClick={handleManageSubscription}
+                disabled={isPortalLoading}
+                className="border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:text-white hover:border-blue-500/50"
+              >
+                {isPortalLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
-                  <Button 
-                    className={`w-full ${isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
-                    onClick={() => handleCheckout(tier as 'pro' | 'enterprise')}
-                    disabled={isCheckoutLoading !== null}
-                  >
-                    {isCheckoutLoading === tier ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        Upgrade to {plan.name}
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </>
-                    )}
-                  </Button>
+                  <CreditCard className="h-4 w-4 mr-2" />
                 )}
-              </CardFooter>
-            </Card>
-          )
-        })}
-      </div>
+                Manage Subscription
+                <ExternalLink className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </div>
 
-      {/* FAQ or Additional Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Frequently Asked Questions</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h4 className="font-medium">Can I cancel anytime?</h4>
-            <p className="text-sm text-muted-foreground">
-              Yes, you can cancel your subscription at any time. You&apos;ll continue to have access until the end of your billing period.
-            </p>
+        {/* Current Plan */}
+        {subscription && subscription.status !== 'canceled' && (
+          <div className="p-6 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-blue-500/30 hover:border-blue-500/50 transition-all duration-500">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 shadow-lg">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <p className="text-slate-300">
+                  You&apos;re currently on the <strong className="font-semibold text-white">{PRICING_TIERS[currentTier].name}</strong> plan.
+                  {subscription.current_period_end && (
+                    <span className="text-slate-400">
+                      {subscription.cancel_at_period_end 
+                        ? ` Your subscription will end on ${new Date(subscription.current_period_end).toLocaleDateString()}.`
+                        : ` Next billing date: ${new Date(subscription.current_period_end).toLocaleDateString()}.`
+                      }
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
           </div>
-          <div>
-            <h4 className="font-medium">What payment methods do you accept?</h4>
-            <p className="text-sm text-muted-foreground">
-              We accept all major credit cards (Visa, Mastercard, American Express) through our secure payment provider, Stripe.
-            </p>
+        )}
+
+        {/* Pricing Cards */}
+        <div className="grid gap-6 md:grid-cols-3">
+          {(Object.entries(PRICING_TIERS) as [keyof typeof PRICING_TIERS, typeof PRICING_TIERS[keyof typeof PRICING_TIERS]][]).map(([tier, plan]) => {
+            const Icon = plan.icon
+            const isCurrent = tier === currentTier
+            const isPopular = 'popular' in plan && plan.popular
+
+            return (
+              <div 
+                key={tier} 
+                className={cn(
+                  "relative flex flex-col p-6 rounded-3xl bg-slate-900/40 backdrop-blur-xl border transition-all duration-500 hover:-translate-y-1",
+                  isPopular 
+                    ? 'border-blue-500/50 hover:border-blue-400/70 shadow-lg shadow-blue-500/10' 
+                    : 'border-slate-700/50 hover:border-slate-600/50',
+                  isCurrent && 'ring-2 ring-green-500/50'
+                )}
+              >
+                {isPopular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">Most Popular</Badge>
+                  </div>
+                )}
+                {isCurrent && (
+                  <div className="absolute -top-3 right-4">
+                    <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white border-0">Current Plan</Badge>
+                  </div>
+                )}
+                
+                <div className="text-center pb-4">
+                  <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shadow-lg">
+                    <Icon className="h-7 w-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
+                  <div>
+                    <span className="text-4xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">${plan.price}</span>
+                    {plan.price > 0 && <span className="text-slate-400">/month</span>}
+                  </div>
+                </div>
+
+                <div className="flex-1 space-y-3 mb-6">
+                  {plan.features.map((feature, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="p-1 rounded-full bg-green-500/20 mt-0.5">
+                        <Check className="h-3 w-3 text-green-400" />
+                      </div>
+                      <span className="text-sm text-slate-300">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div>
+                  {tier === 'free' ? (
+                    <Button className="w-full border-slate-700/50 bg-slate-800/50 text-slate-400" variant="outline" disabled>
+                      {isCurrent ? 'Current Plan' : 'Downgrade'}
+                    </Button>
+                  ) : isCurrent ? (
+                    <Button className="w-full border-green-500/50 bg-green-500/10 text-green-400" variant="outline" disabled>
+                      Current Plan
+                    </Button>
+                  ) : (
+                    <Button 
+                      className={cn(
+                        "w-full shadow-lg transition-all duration-300",
+                        isPopular 
+                          ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700' 
+                          : 'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800'
+                      )}
+                      onClick={() => handleCheckout(tier as 'pro' | 'enterprise')}
+                      disabled={isCheckoutLoading !== null}
+                    >
+                      {isCheckoutLoading === tier ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          Upgrade to {plan.name}
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* FAQ or Additional Info */}
+        <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+          <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+              <Sparkles className="h-5 w-5 text-white" />
+            </div>
+            Frequently Asked Questions
+          </h3>
+          <div className="space-y-6">
+            <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <h4 className="font-medium text-white mb-2">Can I cancel anytime?</h4>
+              <p className="text-sm text-slate-400">
+                Yes, you can cancel your subscription at any time. You&apos;ll continue to have access until the end of your billing period.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <h4 className="font-medium text-white mb-2">What payment methods do you accept?</h4>
+              <p className="text-sm text-slate-400">
+                We accept all major credit cards (Visa, Mastercard, American Express) through our secure payment provider, Stripe.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50">
+              <h4 className="font-medium text-white mb-2">Can I switch plans?</h4>
+              <p className="text-sm text-slate-400">
+                Yes, you can upgrade or downgrade your plan at any time. Changes will be prorated based on your remaining billing period.
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-medium">Can I switch plans?</h4>
-            <p className="text-sm text-muted-foreground">
-              Yes, you can upgrade or downgrade your plan at any time. Changes will be prorated based on your remaining billing period.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

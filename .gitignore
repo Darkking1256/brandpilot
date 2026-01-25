@@ -47,26 +47,17 @@ next-env.d.ts
 .idea/
 *.swp
 *.swo
-*~
-
-# OS
+*~# OS
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Desktop.ini
-
-# Supabase
-.supabase/
-
-# Logs
+Desktop.ini# Supabase
+.supabase/# Logs
 logs
-*.log
-
-# Temporary files
+*.log# Temporary files
 *.tmp
 *.temp
 .cache/
-

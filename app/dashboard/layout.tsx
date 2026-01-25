@@ -80,93 +80,141 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       action: () => setSearchOpen(false),
       description: "Close dialog",
     },
-  ])
+  ]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950/20">
+    <>
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950 relative">
+      {/* Animated background blobs */}
+      <div className="fixed inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
-        <div className="container flex h-16 items-center px-6 gap-4">
-          <MobileNav />
-          <Link href="/dashboard" className="flex items-center space-x-3 group flex-shrink-0" data-tour="dashboard">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 group-hover:scale-105 transition-transform shadow-md">
-              <Sparkles className="h-5 w-5 text-white" />
+      <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/95 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/80">
+        <div className="container flex h-20 items-center justify-between px-6 mx-auto">
+          <Link href="/dashboard" className="flex items-center space-x-3 group">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+              <Sparkles className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent hidden sm:inline">
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
               MarketPilot AI
             </span>
           </Link>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-md hidden md:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search campaigns, posts, analytics... (Cmd+K)" 
-                className="pl-9 bg-background/50 border-muted cursor-pointer"
-                onClick={() => setSearchOpen(true)}
-                readOnly
-              />
+          <nav className="hidden md:flex items-center space-x-8">
+            <MobileNav />
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={startTour}
+                title="Start Tour"
+                className="hover:bg-slate-800/50 backdrop-blur-xl text-slate-300 hover:text-white"
+              >
+                <HelpCircle className="h-5 w-5" />
+              </Button>
+              <HelpCenter />
+              <NotificationCenter />
+              <LogoutButton />
             </div>
-          </div>
-
-          <div className="ml-auto flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={startTour}
-              title="Start Tour"
-              className="hidden sm:flex"
-            >
-              <HelpCircle className="h-5 w-5" />
-            </Button>
-            <HelpCenter />
-            <NotificationCenter />
-            <LogoutButton />
-          </div>
+          </nav>
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex relative z-10">
         {/* Sidebar */}
-        <aside className="hidden md:flex w-64 flex-col border-r bg-background/50 backdrop-blur sticky top-16 h-[calc(100vh-4rem)]">
-          <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href))
-              const tourId = item.href === "/dashboard/scheduler" ? "scheduler-link" : 
-                            item.href === "/dashboard/analytics" ? "analytics-link" : undefined
-              
-              return (
-                <Link key={item.href} href={item.href} data-tour={tourId}>
-                  <Button
-                    variant={isActive ? "secondary" : "ghost"}
-                    className={cn(
-                      "w-full justify-start gap-3 h-11 text-base",
-                      isActive && "bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-blue-200 dark:border-blue-800 shadow-sm"
-                    )}
-                  >
-                    <Icon className={cn(
-                      "h-5 w-5",
-                      isActive && "text-blue-600 dark:text-blue-400"
-                    )} />
-                    <span className={cn(
-                      isActive && "font-semibold text-blue-700 dark:text-blue-300"
+        <aside className="hidden md:flex w-72 flex-col border-r border-slate-800 bg-slate-900/50 backdrop-blur-xl sticky top-20 h-[calc(100vh-5rem)]">
+          <nav className="flex-1 p-6">
+            {/* Navigation Section */}
+            <div className="space-y-2 mb-8">
+              <h3 className="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-3">Navigation</h3>
+              {navItems.slice(0, 5).map((item) => {
+                const Icon = item.icon
+                const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href))
+                const tourId = item.href === "/dashboard/scheduler" ? "scheduler-link" :
+                              item.href === "/dashboard/analytics" ? "analytics-link" : undefined
+
+                return (
+                  <Link key={item.href} href={item.href} data-tour={tourId}>
+                    <div className={cn(
+                      "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 group",
+                      isActive
+                        ? "bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 text-white shadow-lg"
+                        : "text-slate-400 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 hover:border-blue-500/30"
                     )}>
-                      {item.label}
-                    </span>
-                  </Button>
-                </Link>
-              )
-            })}
+                      <div className={cn(
+                        "p-1.5 rounded-lg transition-all duration-300 group-hover:scale-110",
+                        isActive ? "bg-gradient-to-br from-blue-500 to-purple-500" : "bg-gradient-to-br from-slate-700 to-slate-600 group-hover:from-blue-500 group-hover:to-purple-500"
+                      )}>
+                        <Icon className="h-4 w-4 text-white" />
+                      </div>
+                      <span className={cn(
+                        "font-medium transition-all group-hover:text-blue-400",
+                        isActive && "font-semibold text-white"
+                      )}>
+                        {item.label}
+                      </span>
+                      {isActive && (
+                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                      )}
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+
+            {/* Tools Section */}
+            <div className="space-y-2 mb-8">
+              <h3 className="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-3">Tools</h3>
+              {navItems.slice(5).map((item) => {
+                const Icon = item.icon
+                const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href))
+
+                return (
+                  <Link key={item.href} href={item.href}>
+                    <div className={cn(
+                      "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 group",
+                      isActive
+                        ? "bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 text-white shadow-lg"
+                        : "text-slate-400 hover:text-white hover:bg-gradient-to-r hover:from-purple-600/20 hover:to-pink-600/20 hover:border-purple-500/30"
+                    )}>
+                      <div className={cn(
+                        "p-1.5 rounded-lg transition-all duration-300 group-hover:scale-110",
+                        isActive ? "bg-gradient-to-br from-purple-500 to-pink-500" : "bg-gradient-to-br from-slate-700 to-slate-600 group-hover:from-purple-500 group-hover:to-pink-500"
+                      )}>
+                        <Icon className="h-4 w-4 text-white" />
+                      </div>
+                      <span className={cn(
+                        "font-medium transition-all group-hover:text-purple-400",
+                        isActive && "font-semibold text-white"
+                      )}>
+                        {item.label}
+                      </span>
+                      {isActive && (
+                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-400"></div>
+                      )}
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
           </nav>
 
           {/* Sidebar Footer */}
-          <div className="p-4 border-t">
-            <div className="p-3 rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 border border-blue-200 dark:border-blue-800">
-              <p className="text-sm font-semibold mb-1">Upgrade to Pro</p>
-              <p className="text-xs text-muted-foreground mb-3">Unlock advanced features</p>
-              <Button size="sm" className="w-full bg-gradient-to-r from-blue-600 to-cyan-600">
+          <div className="p-6 border-t border-slate-800">
+            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-xl p-4 backdrop-blur-xl">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                  <Sparkles className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">Pro Features</p>
+                  <p className="text-xs text-slate-400">Advanced analytics & more</p>
+                </div>
+              </div>
+              <Button size="sm" className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 shadow-lg transition-all duration-300">
                 Upgrade Now
               </Button>
             </div>
@@ -174,7 +222,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-8 lg:p-10 min-h-[calc(100vh-4rem)] pb-20 md:pb-10">
+        <main className="flex-1 p-6 md:p-8 lg:p-10 min-h-[calc(100vh-5rem)] pb-20 md:pb-10">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
@@ -186,6 +234,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
       
       <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
+    </>
   )
 }
 

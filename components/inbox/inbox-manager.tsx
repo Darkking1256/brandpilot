@@ -206,84 +206,84 @@ export function InboxManager() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-4">
-          <Card className="border-2 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
-              <Inbox className="h-5 w-5 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.total}</div>
-              <p className="text-xs text-muted-foreground mt-1">All time</p>
-            </CardContent>
-          </Card>
-          <Card 
-            className={`border-2 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 cursor-pointer hover:shadow-lg transition-shadow ${showUnreadOnly ? "ring-2 ring-primary" : ""}`}
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Total Messages</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
+                <Inbox className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.total}</div>
+            <p className="text-xs text-slate-500 mt-1">All time</p>
+          </div>
+          <div 
+            className={`p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border transition-all duration-300 hover:-translate-y-1 cursor-pointer ${showUnreadOnly ? "border-red-500/50 ring-2 ring-red-500/30" : "border-slate-700/50 hover:border-red-500/50"}`}
             onClick={() => setShowUnreadOnly(!showUnreadOnly)}
           >
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Unread</CardTitle>
-              <MailOpen className="h-5 w-5 text-red-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.unread}</div>
-              <p className="text-xs text-muted-foreground mt-1">Need attention</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Starred</CardTitle>
-              <Star className="h-5 w-5 text-yellow-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.starred}</div>
-              <p className="text-xs text-muted-foreground mt-1">Important messages</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-950/20 dark:to-slate-950/20">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Archived</CardTitle>
-              <Archive className="h-5 w-5 text-gray-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.archived}</div>
-              <p className="text-xs text-muted-foreground mt-1">Cleaned up</p>
-            </CardContent>
-          </Card>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Unread</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 shadow-md">
+                <MailOpen className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.unread}</div>
+            <p className="text-xs text-slate-500 mt-1">Need attention</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-yellow-500/50 transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Starred</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500 to-amber-500 shadow-md">
+                <Star className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.starred}</div>
+            <p className="text-xs text-slate-500 mt-1">Important messages</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-slate-500/50 transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Archived</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-gray-500 to-slate-500 shadow-md">
+                <Archive className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.archived}</div>
+            <p className="text-xs text-slate-500 mt-1">Cleaned up</p>
+          </div>
         </div>
       )}
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1 border-2">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+        <div className="lg:col-span-1 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+          <div className="p-6 border-b border-slate-700/50">
+            <h3 className="text-xl font-bold text-white flex items-center justify-between">
               <span className="flex items-center gap-2">
                 Messages
                 {stats.unread > 0 && (
                   <Badge variant="destructive">{stats.unread}</Badge>
                 )}
               </span>
-            </CardTitle>
-            <CardDescription>Click a message to view details</CardDescription>
+            </h3>
+            <p className="text-slate-400 text-sm mt-1">Click a message to view details</p>
             
             {/* Search */}
             <div className="relative mt-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
               <Input
                 placeholder="Search messages..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-9 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
             </div>
             
             {/* Filters */}
             <div className="flex gap-2 mt-3">
               <Select value={filterPlatform} onValueChange={setFilterPlatform}>
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="flex-1 bg-slate-800/50 border-slate-700/50 text-slate-300">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                   <SelectItem value="all">All Platforms</SelectItem>
                   <SelectItem value="twitter">Twitter</SelectItem>
                   <SelectItem value="linkedin">LinkedIn</SelectItem>
@@ -294,10 +294,10 @@ export function InboxManager() {
                 </SelectContent>
               </Select>
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="flex-1 bg-slate-800/50 border-slate-700/50 text-slate-300">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                   <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="comment">Comments</SelectItem>
                   <SelectItem value="dm">DMs</SelectItem>
@@ -309,35 +309,35 @@ export function InboxManager() {
               <Button
                 variant={showUnreadOnly ? "default" : "outline"}
                 size="sm"
-                className="flex-1"
+                className={`flex-1 ${showUnreadOnly ? "bg-gradient-to-r from-blue-600 to-cyan-600" : "border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white"}`}
                 onClick={() => setShowUnreadOnly(!showUnreadOnly)}
               >
                 {showUnreadOnly ? "Show All" : "Unread Only"}
               </Button>
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div className="p-6">
             {isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="p-3 border rounded-lg animate-pulse">
-                    <div className="h-4 bg-muted rounded w-3/4 mb-2" />
-                    <div className="h-3 bg-muted rounded w-full mb-1" />
-                    <div className="h-3 bg-muted rounded w-1/2" />
+                  <div key={i} className="p-3 border border-slate-700/50 rounded-lg animate-pulse bg-slate-800/30">
+                    <div className="h-4 bg-slate-700/50 rounded w-3/4 mb-2" />
+                    <div className="h-3 bg-slate-700/50 rounded w-full mb-1" />
+                    <div className="h-3 bg-slate-700/50 rounded w-1/2" />
                   </div>
                 ))}
               </div>
             ) : messages.length === 0 ? (
-              <EmptyState
-                icon={Inbox}
-                title="No messages yet"
-                description="Messages from your social platforms will appear here."
-              />
+              <div className="text-center py-8">
+                <Inbox className="h-12 w-12 mx-auto mb-3 text-slate-600" />
+                <p className="text-slate-400 font-medium">No messages yet</p>
+                <p className="text-slate-500 text-sm">Messages from your social platforms will appear here.</p>
+              </div>
             ) : filteredMessages.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p>No messages match your search</p>
-                <Button variant="link" onClick={() => setSearchQuery("")}>
+              <div className="text-center py-8">
+                <Search className="h-12 w-12 mx-auto mb-3 text-slate-600" />
+                <p className="text-slate-400">No messages match your search</p>
+                <Button variant="link" onClick={() => setSearchQuery("")} className="text-blue-400">
                   Clear search
                 </Button>
               </div>
@@ -346,34 +346,36 @@ export function InboxManager() {
                 {filteredMessages.map((message) => (
                 <div
                   key={message.id}
-                  className={`p-3 border-2 rounded-lg cursor-pointer hover:bg-muted transition-all ${
-                    !message.is_read ? "bg-blue-50 dark:bg-blue-950/20 border-blue-300" : ""
-                  } ${selectedMessage?.id === message.id ? "border-primary ring-1 ring-primary" : ""}`}
+                  className={`p-3 border rounded-xl cursor-pointer transition-all ${
+                    !message.is_read 
+                      ? "bg-blue-500/10 border-blue-500/30 hover:bg-blue-500/20" 
+                      : "bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50"
+                  } ${selectedMessage?.id === message.id ? "border-blue-500 ring-1 ring-blue-500/50" : ""}`}
                   onClick={() => {
                     setSelectedMessage(message)
                     if (!message.is_read) handleMarkRead(message.id)
                   }}
                 >
                   <div className="flex items-start gap-2">
-                    <div className="flex flex-col items-center gap-1">
+                    <div className="flex flex-col items-center gap-1 text-slate-400">
                       {getMessageIcon(message.message_type)}
                       {message.is_starred && <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-sm truncate ${!message.is_read ? "font-bold" : "font-medium"}`}>
+                        <span className={`text-sm truncate ${!message.is_read ? "font-bold text-white" : "font-medium text-slate-300"}`}>
                           {message.sender_username}
                         </span>
-                        <Badge variant="outline" className="capitalize text-xs flex items-center gap-1">
+                        <Badge variant="outline" className="capitalize text-xs flex items-center gap-1 border-slate-600 text-slate-400">
                           <PlatformIcon platform={message.platform} />
                           {message.platform}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
+                      <p className="text-sm text-slate-400 line-clamp-2">
                         {message.content}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-slate-500">
                           {format(new Date(message.created_at), "MMM d, h:mm a")}
                         </span>
                         {message.sentiment && (
@@ -397,23 +399,23 @@ export function InboxManager() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
 
       {selectedMessage ? (
-        <Card className="lg:col-span-2 border-2">
-          <CardHeader>
+        <div className="lg:col-span-2 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+          <div className="p-6 border-b border-slate-700/50">
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="flex items-center gap-2">
-                  {getMessageIcon(selectedMessage.message_type)}
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                  <span className="text-slate-400">{getMessageIcon(selectedMessage.message_type)}</span>
                   {selectedMessage.message_type.charAt(0).toUpperCase() +
                     selectedMessage.message_type.slice(1)}
                   {selectedMessage.is_starred && <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
-                  from <span className="font-medium">{selectedMessage.sender_username}</span> on 
-                  <Badge variant="outline" className="capitalize flex items-center gap-1">
+                </h3>
+                <p className="text-sm text-slate-400 mt-1 flex items-center gap-2">
+                  from <span className="font-medium text-white">{selectedMessage.sender_username}</span> on 
+                  <Badge variant="outline" className="capitalize flex items-center gap-1 border-slate-600 text-slate-400">
                     <PlatformIcon platform={selectedMessage.platform} />
                     {selectedMessage.platform}
                   </Badge>
@@ -425,6 +427,7 @@ export function InboxManager() {
                     variant="outline"
                     size="sm"
                     onClick={() => handleMarkRead(selectedMessage.id)}
+                    className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white"
                   >
                     <Check className="h-4 w-4 mr-2" />
                     Mark Read
@@ -434,7 +437,7 @@ export function InboxManager() {
                   variant="outline" 
                   size="sm"
                   onClick={() => handleToggleStar(selectedMessage.id)}
-                  className={selectedMessage.is_starred ? "text-yellow-600" : ""}
+                  className={`border-slate-700/50 bg-slate-800/50 hover:text-white ${selectedMessage.is_starred ? "text-yellow-500" : "text-slate-300"}`}
                 >
                   {selectedMessage.is_starred ? (
                     <StarOff className="h-4 w-4" />
@@ -446,43 +449,45 @@ export function InboxManager() {
                   variant="outline" 
                   size="sm"
                   onClick={() => handleArchive(selectedMessage.id)}
+                  className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white"
                 >
                   <Archive className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 bg-muted rounded-lg">
-              <p className="whitespace-pre-wrap">{selectedMessage.content}</p>
-              <p className="text-xs text-muted-foreground mt-3 pt-3 border-t">
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="p-4 bg-slate-800/40 rounded-xl border border-slate-700/50">
+              <p className="whitespace-pre-wrap text-slate-300">{selectedMessage.content}</p>
+              <p className="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-700/50">
                 {format(new Date(selectedMessage.created_at), "EEEE, MMM d, yyyy 'at' h:mm a")}
               </p>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Reply</label>
+              <label className="text-sm font-medium text-slate-300">Reply</label>
               <Textarea
                 placeholder="Type your reply..."
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 rows={4}
+                className="bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
-              <Button onClick={handleReply} className="w-full" disabled={!replyContent.trim()}>
+              <Button onClick={handleReply} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700" disabled={!replyContent.trim()}>
                 <Reply className="h-4 w-4 mr-2" />
                 Send Reply
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ) : (
-        <Card className="lg:col-span-2 border-2">
-          <CardContent className="flex flex-col items-center justify-center h-full min-h-[400px] text-muted-foreground">
-            <MessageSquare className="h-16 w-16 mb-4 opacity-30" />
-            <p className="text-lg font-medium">Select a message</p>
-            <p className="text-sm">Click on a message to view details and reply</p>
-          </CardContent>
-        </Card>
+        <div className="lg:col-span-2 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50">
+          <div className="flex flex-col items-center justify-center h-full min-h-[400px] p-6">
+            <MessageSquare className="h-16 w-16 mb-4 text-slate-600" />
+            <p className="text-lg font-medium text-slate-400">Select a message</p>
+            <p className="text-sm text-slate-500">Click on a message to view details and reply</p>
+          </div>
+        </div>
       )}
       </div>
     </div>

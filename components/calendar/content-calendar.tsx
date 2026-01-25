@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Grid, List } from "lucide-react"
@@ -119,7 +118,7 @@ export function ContentCalendar({
   const renderMonthView = () => (
     <div className="grid grid-cols-7 gap-1">
       {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-        <div key={day} className="p-2 text-center text-sm font-semibold text-muted-foreground">
+        <div key={day} className="p-2 text-center text-sm font-semibold text-slate-400">
           {day}
         </div>
       ))}
@@ -132,16 +131,16 @@ export function ContentCalendar({
           <div
             key={idx}
             className={cn(
-              "min-h-[100px] p-2 border rounded-lg transition-colors",
-              !isCurrentMonth && "opacity-30 bg-muted/30",
-              isTodayDate && "ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-950/20"
+              "min-h-[100px] p-2 border border-slate-700/50 rounded-lg transition-colors bg-slate-900/30 hover:bg-slate-800/50",
+              !isCurrentMonth && "opacity-30",
+              isTodayDate && "ring-2 ring-blue-500 bg-blue-950/30"
             )}
             onClick={() => onDateChange?.(day)}
             onDragOver={(e) => handleDragOver(e, day)}
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, day)}
           >
-            <div className={cn("text-sm font-semibold mb-1", isTodayDate && "text-blue-600")}>
+            <div className={cn("text-sm font-semibold mb-1 text-slate-300", isTodayDate && "text-blue-400")}>
               {format(day, "d")}
             </div>
             <div className="space-y-1">
@@ -166,7 +165,7 @@ export function ContentCalendar({
                 </div>
               ))}
               {dayPosts.length > 3 && (
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-slate-500">
                   +{dayPosts.length - 3} more
                 </div>
               )}
@@ -194,11 +193,11 @@ export function ContentCalendar({
             <div
               key={idx}
               className={cn(
-                "min-h-[400px] p-3 border rounded-lg",
-                isTodayDate && "ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                "min-h-[400px] p-3 border border-slate-700/50 rounded-lg bg-slate-900/30",
+                isTodayDate && "ring-2 ring-blue-500 bg-blue-950/30"
               )}
             >
-              <div className={cn("text-sm font-semibold mb-2", isTodayDate && "text-blue-600")}>
+              <div className={cn("text-sm font-semibold mb-2 text-slate-300", isTodayDate && "text-blue-400")}>
                 {format(day, "EEE, MMM d")}
               </div>
               <div className="space-y-2">
@@ -228,13 +227,13 @@ export function ContentCalendar({
     const isTodayDate = isToday(currentDate)
 
     return (
-      <div className={cn("p-4", isTodayDate && "ring-2 ring-blue-500 rounded-lg bg-blue-50 dark:bg-blue-950/20")}>
-        <div className={cn("text-lg font-semibold mb-4", isTodayDate && "text-blue-600")}>
+      <div className={cn("p-4 rounded-lg bg-slate-900/30 border border-slate-700/50", isTodayDate && "ring-2 ring-blue-500 bg-blue-950/30")}>
+        <div className={cn("text-lg font-semibold mb-4 text-white", isTodayDate && "text-blue-400")}>
           {format(currentDate, "EEEE, MMMM d, yyyy")}
         </div>
         <div className="space-y-3">
           {dayPosts.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-slate-500">
               No posts scheduled for this day
             </div>
           ) : (
@@ -261,44 +260,44 @@ export function ContentCalendar({
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50">
+      <div className="p-6 border-b border-slate-700/50">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle className="flex items-center gap-2">
-            <CalendarIcon className="h-5 w-5" />
+          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+            <CalendarIcon className="h-5 w-5 text-slate-400" />
             Content Calendar
-          </CardTitle>
+          </h3>
           <div className="flex items-center gap-2">
             <Tabs value={selectedView} onValueChange={(v) => setSelectedView(v as typeof selectedView)}>
-              <TabsList>
-                <TabsTrigger value="month">
+              <TabsList className="bg-slate-800/50 border border-slate-700/50">
+                <TabsTrigger value="month" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">
                   <Grid className="h-4 w-4 mr-2" />
                   Month
                 </TabsTrigger>
-                <TabsTrigger value="week">Week</TabsTrigger>
-                <TabsTrigger value="day">Day</TabsTrigger>
+                <TabsTrigger value="week" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">Week</TabsTrigger>
+                <TabsTrigger value="day" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">Day</TabsTrigger>
               </TabsList>
             </Tabs>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={handlePrevious}>
+              <Button variant="outline" size="sm" onClick={handlePrevious} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={handleToday}>
+              <Button variant="outline" size="sm" onClick={handleToday} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50">
                 Today
               </Button>
-              <Button variant="outline" size="sm" onClick={handleNext}>
+              <Button variant="outline" size="sm" onClick={handleNext} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50">
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-6">
         {selectedView === "month" && renderMonthView()}
         {selectedView === "week" && renderWeekView()}
         {selectedView === "day" && renderDayView()}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 

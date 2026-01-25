@@ -83,6 +83,7 @@ export function CalendarExport() {
         variant="outline"
         onClick={handleExportICal}
         disabled={isExporting}
+        className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50"
       >
         {isExporting ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -95,6 +96,7 @@ export function CalendarExport() {
         variant="outline"
         onClick={handleExportGoogle}
         disabled={isExporting}
+        className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50"
       >
         {isExporting ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />

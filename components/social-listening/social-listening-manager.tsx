@@ -196,76 +196,76 @@ export function SocialListeningManager() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-5">
-          <Card className="border-2 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Keywords</CardTitle>
-              <Hash className="h-5 w-5 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.totalKeywords}</div>
-              <p className="text-xs text-muted-foreground mt-1">Tracking</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Active</CardTitle>
-              <Zap className="h-5 w-5 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.activeKeywords}</div>
-              <p className="text-xs text-muted-foreground mt-1">Running now</p>
-            </CardContent>
-          </Card>
-          <Card className="border-2 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Mentions</CardTitle>
-              <MessageCircle className="h-5 w-5 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.totalMentions}</div>
-              <p className="text-xs text-muted-foreground mt-1">Detected</p>
-            </CardContent>
-          </Card>
-          <Card 
-            className={`border-2 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 cursor-pointer hover:shadow-lg transition-shadow ${sentimentFilter === "positive" ? "ring-2 ring-primary" : ""}`}
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Keywords</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
+                <Hash className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.totalKeywords}</div>
+            <p className="text-xs text-slate-500 mt-1">Tracking</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Active</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-md">
+                <Zap className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.activeKeywords}</div>
+            <p className="text-xs text-slate-500 mt-1">Running now</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Mentions</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+                <MessageCircle className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.totalMentions}</div>
+            <p className="text-xs text-slate-500 mt-1">Detected</p>
+          </div>
+          <div 
+            className={`p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border transition-all duration-300 hover:-translate-y-1 cursor-pointer ${sentimentFilter === "positive" ? "border-emerald-500/50 ring-2 ring-emerald-500/30" : "border-slate-700/50 hover:border-emerald-500/50"}`}
             onClick={() => setSentimentFilter(sentimentFilter === "positive" ? "all" : "positive")}
           >
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Positive</CardTitle>
-              <ThumbsUp className="h-5 w-5 text-emerald-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.positiveMentions}</div>
-              <p className="text-xs text-muted-foreground mt-1">Good sentiment</p>
-            </CardContent>
-          </Card>
-          <Card 
-            className={`border-2 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 cursor-pointer hover:shadow-lg transition-shadow ${sentimentFilter === "negative" ? "ring-2 ring-primary" : ""}`}
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Positive</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 shadow-md">
+                <ThumbsUp className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.positiveMentions}</div>
+            <p className="text-xs text-slate-500 mt-1">Good sentiment</p>
+          </div>
+          <div 
+            className={`p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border transition-all duration-300 hover:-translate-y-1 cursor-pointer ${sentimentFilter === "negative" ? "border-red-500/50 ring-2 ring-red-500/30" : "border-slate-700/50 hover:border-red-500/50"}`}
             onClick={() => setSentimentFilter(sentimentFilter === "negative" ? "all" : "negative")}
           >
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Negative</CardTitle>
-              <ThumbsDown className="h-5 w-5 text-red-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{stats.negativeMentions}</div>
-              <p className="text-xs text-muted-foreground mt-1">Need attention</p>
-            </CardContent>
-          </Card>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-slate-400">Negative</span>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 shadow-md">
+                <ThumbsDown className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-white">{stats.negativeMentions}</div>
+            <p className="text-xs text-slate-500 mt-1">Need attention</p>
+          </div>
         </div>
       )}
 
       {/* Tracking Keywords Card */}
-      <Card className="border-2">
-        <CardHeader>
+      <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+        <div className="p-6 border-b border-slate-700/50">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <CardTitle>Tracking Keywords</CardTitle>
-              <CardDescription>Keywords and hashtags you&apos;re monitoring</CardDescription>
+              <h3 className="text-xl font-bold text-white">Tracking Keywords</h3>
+              <p className="text-slate-400 text-sm">Keywords and hashtags you&apos;re monitoring</p>
             </div>
             <div className="flex items-center gap-2">
               {/* View Toggle */}
-              <div className="flex border rounded-md">
+              <div className="flex border border-slate-700/50 rounded-md bg-slate-900/50">
                 <Button
                   variant={viewMode === "list" ? "secondary" : "ghost"}
                   size="sm"
@@ -285,14 +285,14 @@ export function SocialListeningManager() {
               </div>
               <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
                 <DialogTrigger asChild>
-                  <Button onClick={() => setEditingKeyword(null)}>
+                  <Button onClick={() => setEditingKeyword(null)} className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Keyword
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                   <DialogHeader>
-                    <DialogTitle>
+                    <DialogTitle className="text-white">
                       {editingKeyword ? "Edit Keyword" : "Add Tracking Keyword"}
                     </DialogTitle>
                   </DialogHeader>
@@ -307,16 +307,16 @@ export function SocialListeningManager() {
               </Dialog>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        </div>
+        <div className="p-6 space-y-4">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
             <Input
               placeholder="Search keywords..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
+              className="pl-9 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
             />
           </div>
 
@@ -458,23 +458,23 @@ export function SocialListeningManager() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Brand Mentions Card */}
-      <Card className="border-2">
-        <CardHeader>
+      <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+        <div className="p-6 border-b border-slate-700/50">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <CardTitle>Brand Mentions</CardTitle>
-              <CardDescription>Recent mentions detected across platforms</CardDescription>
+              <h3 className="text-xl font-bold text-white">Brand Mentions</h3>
+              <p className="text-slate-400 text-sm">Recent mentions detected across platforms</p>
             </div>
             <div className="flex gap-2">
               <Select value={selectedKeyword} onValueChange={setSelectedKeyword}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                   <SelectValue placeholder="Filter by keyword" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                   <SelectItem value="all">All Keywords</SelectItem>
                   {keywords.map((kw) => (
                     <SelectItem key={kw.id} value={kw.keyword}>
@@ -484,10 +484,10 @@ export function SocialListeningManager() {
                 </SelectContent>
               </Select>
               <Select value={sentimentFilter} onValueChange={setSentimentFilter}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-[150px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                   <SelectValue placeholder="Sentiment" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                   <SelectItem value="all">All Sentiment</SelectItem>
                   <SelectItem value="positive">Positive</SelectItem>
                   <SelectItem value="neutral">Neutral</SelectItem>
@@ -496,30 +496,30 @@ export function SocialListeningManager() {
               </Select>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <div className="p-6">
           {mentions.length === 0 ? (
-            <EmptyState
-              icon={MessageCircle}
-              title="No mentions yet"
-              description="Brand mentions will appear here when detected. Add tracking keywords to start monitoring."
-            />
+            <div className="text-center py-8">
+              <MessageCircle className="h-12 w-12 mx-auto mb-3 text-slate-600" />
+              <p className="text-slate-400 font-medium">No mentions yet</p>
+              <p className="text-slate-500 text-sm">Brand mentions will appear here when detected. Add tracking keywords to start monitoring.</p>
+            </div>
           ) : filteredMentions.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>No mentions match your filters</p>
-              <Button variant="link" onClick={() => { setSelectedKeyword("all"); setSentimentFilter("all"); }}>
+            <div className="text-center py-8">
+              <Search className="h-12 w-12 mx-auto mb-3 text-slate-600" />
+              <p className="text-slate-400">No mentions match your filters</p>
+              <Button variant="link" onClick={() => { setSelectedKeyword("all"); setSentimentFilter("all"); }} className="text-blue-400">
                 Clear filters
               </Button>
             </div>
           ) : (
             <div className="space-y-3 max-h-[500px] overflow-y-auto">
               {filteredMentions.map((mention) => (
-                <div key={mention.id} className="p-4 border-2 rounded-lg hover:border-primary/50 transition-colors">
+                <div key={mention.id} className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 hover:border-purple-500/30 transition-colors">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{mention.platform_username}</span>
-                      <Badge variant="secondary" className="capitalize flex items-center gap-1">
+                      <span className="font-semibold text-white">{mention.platform_username}</span>
+                      <Badge variant="secondary" className="capitalize flex items-center gap-1 bg-slate-700/50 text-slate-300 border-slate-600">
                         <PlatformIcon platform={mention.platform} />
                         {mention.platform}
                       </Badge>
@@ -539,12 +539,12 @@ export function SocialListeningManager() {
                         </Badge>
                       )}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-slate-500">
                       {format(new Date(mention.detected_at), "MMM d, h:mm a")}
                     </div>
                   </div>
-                  <p className="text-sm mb-3 bg-muted p-3 rounded">{mention.content}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <p className="text-sm mb-3 bg-slate-900/50 p-3 rounded-lg text-slate-300 border border-slate-700/50">{mention.content}</p>
+                  <div className="flex items-center gap-4 text-xs text-slate-500">
                     <span className="flex items-center gap-1">
                       <Hash className="h-3 w-3" />
                       {mention.keyword}
@@ -558,8 +558,8 @@ export function SocialListeningManager() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

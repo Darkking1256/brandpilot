@@ -157,151 +157,175 @@ export default function CalendarPage() {
 
   return (
     <>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="section-header border-0 pb-0 mb-0">
-          <div>
-            <h1 className="section-title text-3xl flex items-center gap-2">
-              <CalendarIcon className="h-7 w-7 text-primary" />
-              Content Calendar
-            </h1>
-            <p className="section-subtitle">
-              Visualize and manage your scheduled posts
-            </p>
-          </div>
-          <Button 
-            className="bg-primary hover:bg-primary/90"
-            onClick={() => setIsCreatePostOpen(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Post
-          </Button>
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950">
+        {/* Animated background blobs */}
+        <div className="fixed inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
-          {isLoading ? (
-            <>
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-            </>
-          ) : (
-            <>
-              <Card className="card-professional stat-card-blue cursor-pointer hover:shadow-md transition-all" onClick={() => setStatusFilter("scheduled")}>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Scheduled</CardTitle>
-                  <CalendarIcon className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{scheduledCount}</div>
-                </CardContent>
-              </Card>
-              <Card className="card-professional stat-card-teal cursor-pointer hover:shadow-md transition-all" onClick={() => setStatusFilter("published")}>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Published</CardTitle>
-                  <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{publishedCount}</div>
-                </CardContent>
-              </Card>
-              <Card className="card-professional stat-card-purple cursor-pointer hover:shadow-md transition-all" onClick={() => setStatusFilter("draft")}>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Drafts</CardTitle>
-                  <FileEdit className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{draftCount}</div>
-                </CardContent>
-              </Card>
-              <Card className={`card-professional stat-card-orange cursor-pointer hover:shadow-md transition-all ${failedCount > 0 ? "border-red-300" : ""}`} onClick={() => setStatusFilter("failed")}>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Failed</CardTitle>
-                  <AlertCircle className={`h-5 w-5 ${failedCount > 0 ? "text-red-500" : "text-muted-foreground"}`} />
-                </CardHeader>
-                <CardContent>
-                  <div className={`text-3xl font-bold ${failedCount > 0 ? "text-red-600" : ""}`}>{failedCount}</div>
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </div>
-
-        {/* Filters and Legend */}
-        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-          <div className="flex gap-2 flex-wrap">
-            <Select value={platformFilter} onValueChange={setPlatformFilter}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="All Platforms" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Platforms</SelectItem>
-                <SelectItem value="twitter">Twitter</SelectItem>
-                <SelectItem value="linkedin">LinkedIn</SelectItem>
-                <SelectItem value="facebook">Facebook</SelectItem>
-                <SelectItem value="instagram">Instagram</SelectItem>
-                <SelectItem value="tiktok">TikTok</SelectItem>
-                <SelectItem value="youtube">YouTube</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="scheduled">Scheduled</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={colorBy} onValueChange={(v) => setColorBy(v as typeof colorBy)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="platform">Color by Platform</SelectItem>
-                <SelectItem value="status">Color by Status</SelectItem>
-              </SelectContent>
-            </Select>
-            <CalendarExport />
-          </div>
-
-          {/* Color Legend */}
-          <Card className="p-3">
-            <div className="flex flex-wrap gap-3">
-              {(colorBy === "platform" ? platformColors : statusColors).map((item) => (
-                <div key={item.name} className="flex items-center gap-1.5">
-                  <div className={`w-3 h-3 rounded ${item.color}`} />
-                  <span className="text-xs text-muted-foreground">{item.name}</span>
-                </div>
-              ))}
+        <div className="relative z-10 space-y-8">
+          {/* Header */}
+          <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md">
+                    <CalendarIcon className="h-6 w-6 text-white" />
+                  </div>
+                  Content <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Calendar</span>
+                </h1>
+                <p className="text-slate-400">
+                  Visualize and manage your scheduled posts
+                </p>
+              </div>
+              <Button 
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg"
+                onClick={() => setIsCreatePostOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Post
+              </Button>
             </div>
-          </Card>
-        </div>
+          </div>
 
-        {/* Calendar */}
-        {isLoading ? (
-          <Card>
-            <CardContent className="p-12">
+          {/* Stats Cards */}
+          <div className="grid gap-4 md:grid-cols-4">
+            {isLoading ? (
+              <>
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+              </>
+            ) : (
+              <>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                  onClick={() => setStatusFilter("scheduled")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Scheduled</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md">
+                      <CalendarIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white">{scheduledCount}</div>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                  onClick={() => setStatusFilter("published")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Published</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-md">
+                      <CheckCircle2 className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white">{publishedCount}</div>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                  onClick={() => setStatusFilter("draft")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Drafts</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+                      <FileEdit className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white">{draftCount}</div>
+                </div>
+                <div 
+                  className={`p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border transition-all duration-300 hover:-translate-y-1 cursor-pointer group ${failedCount > 0 ? "border-red-500/50 hover:border-red-400/70" : "border-slate-700/50 hover:border-orange-500/50"}`}
+                  onClick={() => setStatusFilter("failed")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Failed</span>
+                    <div className={`p-2 rounded-lg shadow-md ${failedCount > 0 ? "bg-gradient-to-br from-red-500 to-pink-500" : "bg-gradient-to-br from-orange-500 to-red-500"}`}>
+                      <AlertCircle className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className={`text-3xl font-bold ${failedCount > 0 ? "text-red-400" : "text-white"}`}>{failedCount}</div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Filters and Legend */}
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+            <div className="flex gap-2 flex-wrap">
+              <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                <SelectTrigger className="w-[160px] bg-slate-900/50 border-slate-700/50 text-slate-300">
+                  <SelectValue placeholder="All Platforms" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+                  <SelectItem value="all">All Platforms</SelectItem>
+                  <SelectItem value="twitter">Twitter</SelectItem>
+                  <SelectItem value="linkedin">LinkedIn</SelectItem>
+                  <SelectItem value="facebook">Facebook</SelectItem>
+                  <SelectItem value="instagram">Instagram</SelectItem>
+                  <SelectItem value="tiktok">TikTok</SelectItem>
+                  <SelectItem value="youtube">YouTube</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[150px] bg-slate-900/50 border-slate-700/50 text-slate-300">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="scheduled">Scheduled</SelectItem>
+                  <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="failed">Failed</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={colorBy} onValueChange={(v) => setColorBy(v as typeof colorBy)}>
+                <SelectTrigger className="w-[180px] bg-slate-900/50 border-slate-700/50 text-slate-300">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+                  <SelectItem value="platform">Color by Platform</SelectItem>
+                  <SelectItem value="status">Color by Status</SelectItem>
+                </SelectContent>
+              </Select>
+              <CalendarExport />
+            </div>
+
+            {/* Color Legend */}
+            <div className="p-4 rounded-xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50">
+              <div className="flex flex-wrap gap-3">
+                {(colorBy === "platform" ? platformColors : statusColors).map((item) => (
+                  <div key={item.name} className="flex items-center gap-1.5">
+                    <div className={`w-3 h-3 rounded ${item.color}`} />
+                    <span className="text-xs text-slate-400">{item.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Calendar */}
+          {isLoading ? (
+            <div className="p-12 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50">
               <div className="flex flex-col items-center justify-center gap-4">
                 <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                <p className="text-muted-foreground">Loading calendar...</p>
+                <p className="text-slate-400">Loading calendar...</p>
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <ContentCalendar
-            posts={filteredPosts}
-            onPostClick={handlePostClick}
-            onDateChange={handleDateChange}
-            onDragDrop={handleDragDrop}
-            colorBy={colorBy}
-          />
-        )}
+            </div>
+          ) : (
+            <div className="rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 overflow-hidden">
+              <ContentCalendar
+                posts={filteredPosts}
+                onPostClick={handlePostClick}
+                onDateChange={handleDateChange}
+                onDragDrop={handleDragDrop}
+                colorBy={colorBy}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Create/Edit Post Dialog */}
@@ -315,13 +339,13 @@ export default function CalendarPage() {
 
       {/* Post Details Dialog */}
       <Dialog open={isPostDialogOpen} onOpenChange={setIsPostDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg bg-slate-900/95 border-slate-700 backdrop-blur-xl">
           {selectedPost && (
             <>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
+                <DialogTitle className="flex items-center gap-2 text-white">
                   Post Details
-                  <Badge variant="outline" className="capitalize">{selectedPost.platform}</Badge>
+                  <Badge variant="outline" className="capitalize border-slate-600 text-slate-300">{selectedPost.platform}</Badge>
                   <Badge 
                     variant={
                       selectedPost.status === "published" ? "default" :
@@ -332,33 +356,33 @@ export default function CalendarPage() {
                     {selectedPost.status}
                   </Badge>
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-slate-400">
                   Scheduled for {format(new Date(`${selectedPost.scheduledDate}T${selectedPost.scheduledTime}`), "PPP 'at' p")}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-medium mb-2">Content</h4>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedPost.content}</p>
+                  <h4 className="text-sm font-medium mb-2 text-slate-300">Content</h4>
+                  <p className="text-sm text-slate-400 whitespace-pre-wrap p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">{selectedPost.content}</p>
                 </div>
                 {selectedPost.imageUrl && (
                   <div>
-                    <h4 className="text-sm font-medium mb-2">Image</h4>
+                    <h4 className="text-sm font-medium mb-2 text-slate-300">Image</h4>
                     <img 
                       src={selectedPost.imageUrl} 
                       alt="Post image" 
-                      className="rounded-lg max-h-48 object-cover w-full"
+                      className="rounded-lg max-h-48 object-cover w-full border border-slate-700/50"
                     />
                   </div>
                 )}
                 {selectedPost.linkUrl && (
                   <div>
-                    <h4 className="text-sm font-medium mb-2">Link</h4>
+                    <h4 className="text-sm font-medium mb-2 text-slate-300">Link</h4>
                     <a 
                       href={selectedPost.linkUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-500 hover:underline"
+                      className="text-sm text-blue-400 hover:underline"
                     >
                       {selectedPost.linkUrl}
                     </a>
@@ -366,14 +390,14 @@ export default function CalendarPage() {
                 )}
                 <div className="flex gap-2 pt-4">
                   <Button 
-                    className="flex-1" 
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700" 
                     onClick={() => handleEditPost(selectedPost)}
                   >
                     Edit Post
                   </Button>
                   <Button 
                     variant="outline" 
-                    className="flex-1"
+                    className="flex-1 border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50"
                     onClick={() => setIsPostDialogOpen(false)}
                   >
                     Close

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
-import { Sparkles, Mail, Lock, User, ArrowRight, Check, X } from "lucide-react"
+import { Sparkles, Mail, Lock, User, ArrowRight, Check, X, Plus } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 
 // Password requirements
@@ -128,28 +128,34 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-        <Card className="w-full max-w-md border-2 shadow-xl">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-950 via-indigo-950 to-blue-950 p-4 relative overflow-hidden">
+        {/* Animated background blobs */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-1/4 right-1/4 w-[700px] h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-1/4 left-1/4 w-[700px] h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+        </div>
+        
+        <Card className="w-full max-w-md border-2 border-slate-700/50 shadow-2xl bg-slate-900/50 backdrop-blur-xl relative z-10">
           <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
-              <div className="rounded-full bg-green-500 p-3">
+              <div className="rounded-full bg-gradient-to-r from-green-500 to-emerald-500 p-3 shadow-lg">
                 <Mail className="h-8 w-8 text-white" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold">Check your email</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl font-bold text-white">Check your email</CardTitle>
+            <CardDescription className="text-slate-400">
               We&apos;ve sent a confirmation email to {email}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <p className="text-sm text-blue-800 dark:text-blue-200">
+            <div className="p-4 bg-blue-900/20 backdrop-blur-xl border border-blue-600/50 rounded-lg">
+              <p className="text-sm text-blue-300">
                 Please check your inbox and click the confirmation link to verify your account. 
                 You&apos;ll be able to sign in once your email is confirmed.
               </p>
             </div>
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground text-center">
+              <p className="text-sm text-slate-400 text-center">
                 Didn&apos;t receive the email? Check your spam folder or try signing up again.
               </p>
               <Button
@@ -158,12 +164,12 @@ export default function SignupPage() {
                   setEmail("")
                 }}
                 variant="outline"
-                className="w-full"
+                className="w-full border-slate-700/50 text-slate-300 hover:bg-slate-800 hover:border-blue-500"
               >
                 Try again
               </Button>
               <Link href="/auth/login" className="block">
-                <Button variant="ghost" className="w-full">
+                <Button variant="ghost" className="w-full text-slate-300 hover:bg-slate-800 hover:text-white">
                   Go to Login
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -176,26 +182,60 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
-      <Card className="w-full max-w-md border-2 shadow-xl">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-950 via-indigo-950 to-blue-950 p-4 relative overflow-hidden">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-1/4 right-1/4 w-[700px] h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-1/4 left-1/4 w-[700px] h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      </div>
+
+      {/* Animated decorative plus signs */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(8)].map((_, idx) => {
+          const positions = [
+            { top: '10%', left: '15%' },
+            { top: '20%', right: '12%' },
+            { bottom: '15%', left: '20%' },
+            { bottom: '25%', right: '18%' },
+            { top: '40%', left: '8%' },
+            { top: '60%', right: '10%' },
+            { top: '80%', left: '40%' },
+            { bottom: '12%', right: '30%' },
+          ]
+          return (
+            <Plus
+              key={idx}
+              className="absolute text-blue-500/20 animate-pulse-plus"
+              style={{
+                ...positions[idx],
+                animationDelay: `${idx * 0.5}s`,
+                width: '20px',
+                height: '20px',
+              }}
+            />
+          )
+        })}
+      </div>
+      
+      <Card className="w-full max-w-md border-2 border-slate-700/50 shadow-2xl bg-slate-900/50 backdrop-blur-xl relative z-10">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="rounded-full bg-gradient-to-r from-blue-600 to-purple-600 p-3">
+            <div className="rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 p-3 shadow-lg">
               <Sparkles className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
             Get Started
           </CardTitle>
-          <CardDescription className="text-base">
+          <CardDescription className="text-base text-slate-400">
             Create your MarketPilot AI account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
+              <Label htmlFor="fullName" className="flex items-center gap-2 text-slate-300">
+                <User className="h-4 w-4 text-blue-400" />
                 Full Name
               </Label>
               <Input
@@ -206,12 +246,12 @@ export default function SignupPage() {
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-11"
+                className="h-11 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
+              <Label htmlFor="email" className="flex items-center gap-2 text-slate-300">
+                <Mail className="h-4 w-4 text-blue-400" />
                 Email
               </Label>
               <Input
@@ -222,12 +262,12 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-11"
+                className="h-11 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
-                <Lock className="h-4 w-4" />
+              <Label htmlFor="password" className="flex items-center gap-2 text-slate-300">
+                <Lock className="h-4 w-4 text-blue-400" />
                 Password
               </Label>
               <Input
@@ -238,7 +278,7 @@ export default function SignupPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-11"
+                className="h-11 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
                 minLength={8}
               />
               {password && (
@@ -246,11 +286,11 @@ export default function SignupPage() {
                   {passwordChecks.map((req) => (
                     <div key={req.id} className="flex items-center gap-2 text-xs">
                       {req.passed ? (
-                        <Check className="h-3 w-3 text-green-500" />
+                        <Check className="h-3 w-3 text-green-400" />
                       ) : (
-                        <X className="h-3 w-3 text-red-500" />
+                        <X className="h-3 w-3 text-red-400" />
                       )}
-                      <span className={req.passed ? "text-green-600" : "text-muted-foreground"}>
+                      <span className={req.passed ? "text-green-400" : "text-slate-500"}>
                         {req.label}
                       </span>
                     </div>
@@ -259,8 +299,8 @@ export default function SignupPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="flex items-center gap-2">
-                <Lock className="h-4 w-4" />
+              <Label htmlFor="confirmPassword" className="flex items-center gap-2 text-slate-300">
+                <Lock className="h-4 w-4 text-blue-400" />
                 Confirm Password
               </Label>
               <Input
@@ -271,7 +311,7 @@ export default function SignupPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={isLoading}
-                className="h-11"
+                className="h-11 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
               />
             </div>
             <div className="flex items-start space-x-2">
@@ -280,21 +320,22 @@ export default function SignupPage() {
                 checked={acceptedTerms}
                 onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
                 disabled={isLoading}
+                className="border-slate-600"
               />
-              <Label htmlFor="terms" className="text-sm text-muted-foreground leading-tight cursor-pointer">
+              <Label htmlFor="terms" className="text-sm text-slate-400 leading-tight cursor-pointer">
                 I agree to the{" "}
-                <Link href="/terms" className="text-blue-600 hover:underline">
+                <Link href="/terms" className="text-blue-400 hover:text-blue-300 hover:underline transition-colors">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href="/privacy" className="text-blue-600 hover:underline">
+                <Link href="/privacy" className="text-blue-400 hover:text-blue-300 hover:underline transition-colors">
                   Privacy Policy
                 </Link>
               </Label>
             </div>
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 h-11 text-base font-semibold"
+              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 h-11 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               disabled={isLoading || !allRequirementsMet || !acceptedTerms}
             >
               {isLoading ? "Creating account..." : "Create Account"}
@@ -303,9 +344,9 @@ export default function SignupPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-slate-400">
               Already have an account?{" "}
-              <Link href="/auth/login" className="text-blue-600 hover:underline font-medium">
+              <Link href="/auth/login" className="text-blue-400 hover:text-blue-300 hover:underline font-medium transition-colors">
                 Sign in
               </Link>
             </p>

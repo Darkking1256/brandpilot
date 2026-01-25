@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
@@ -97,24 +96,24 @@ export function PostPerformanceComparison({
   }, [posts])
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+      <div className="p-6 border-b border-slate-700/50">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-slate-400" />
               Post Performance Comparison
-            </CardTitle>
-            <CardDescription>
+            </h3>
+            <p className="text-slate-400 text-sm">
               Compare performance across your posts
-            </CardDescription>
+            </p>
           </div>
           <div className="flex gap-2">
             <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-[140px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                 <SelectItem value="all">All Platforms</SelectItem>
                 {platforms.map((platform) => (
                   <SelectItem key={platform} value={platform}>
@@ -124,10 +123,10 @@ export function PostPerformanceComparison({
               </SelectContent>
             </Select>
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-[140px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                 <SelectItem value="engagement">Engagement Rate</SelectItem>
                 <SelectItem value="impressions">Impressions</SelectItem>
                 <SelectItem value="likes">Likes</SelectItem>
@@ -135,91 +134,91 @@ export function PostPerformanceComparison({
             </Select>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="p-6 space-y-6">
         {/* Average Metrics */}
         {avgMetrics && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-800/40 rounded-xl border border-slate-700/50">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Avg Impressions</p>
-              <p className="text-2xl font-bold">{avgMetrics.impressions.toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mb-1">Avg Impressions</p>
+              <p className="text-2xl font-bold text-white">{avgMetrics.impressions.toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Avg Engagement</p>
-              <p className="text-2xl font-bold">{avgMetrics.engagementRate}%</p>
+              <p className="text-xs text-slate-500 mb-1">Avg Engagement</p>
+              <p className="text-2xl font-bold text-white">{avgMetrics.engagementRate}%</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Avg Likes</p>
-              <p className="text-2xl font-bold">{avgMetrics.likes.toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mb-1">Avg Likes</p>
+              <p className="text-2xl font-bold text-white">{avgMetrics.likes.toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Avg Clicks</p>
-              <p className="text-2xl font-bold">{avgMetrics.clicks.toLocaleString()}</p>
+              <p className="text-xs text-slate-500 mb-1">Avg Clicks</p>
+              <p className="text-2xl font-bold text-white">{avgMetrics.clicks.toLocaleString()}</p>
             </div>
           </div>
         )}
 
         {/* Top Performing Posts */}
         <div className="space-y-3">
-          <h3 className="font-semibold">Top Performing Posts</h3>
+          <h3 className="font-semibold text-white">Top Performing Posts</h3>
           {sortedPosts.slice(0, 5).map((post, idx) => (
             <div
               key={post.id}
-              className="p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+              className="p-4 border border-slate-700/50 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition-colors"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <Badge variant="outline">#{idx + 1}</Badge>
-                    <Badge>{post.platform}</Badge>
-                    <span className="text-sm text-muted-foreground">
+                    <Badge variant="outline" className="border-slate-600 text-slate-300">#{idx + 1}</Badge>
+                    <Badge className="bg-slate-700/50 text-slate-300">{post.platform}</Badge>
+                    <span className="text-sm text-slate-500">
                       {new Date(post.postedAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-sm line-clamp-2">{post.content}</p>
+                  <p className="text-sm line-clamp-2 text-slate-300">{post.content}</p>
                 </div>
                 <div className="text-right ml-4">
-                  <div className="text-lg font-bold text-green-600">
+                  <div className="text-lg font-bold text-green-400">
                     {post.engagementRate}%
                   </div>
-                  <div className="text-xs text-muted-foreground">Engagement</div>
+                  <div className="text-xs text-slate-500">Engagement</div>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-4 mt-3 pt-3 border-t">
+              <div className="grid grid-cols-4 gap-4 mt-3 pt-3 border-t border-slate-700/50">
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <Users className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Impressions</p>
-                    <p className="text-sm font-semibold">{post.impressions.toLocaleString()}</p>
+                    <p className="text-xs text-slate-500">Impressions</p>
+                    <p className="text-sm font-semibold text-slate-300">{post.impressions.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Heart className="h-4 w-4 text-muted-foreground" />
+                  <Heart className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Likes</p>
-                    <p className="text-sm font-semibold">{post.likes.toLocaleString()}</p>
+                    <p className="text-xs text-slate-500">Likes</p>
+                    <p className="text-sm font-semibold text-slate-300">{post.likes.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                  <MessageSquare className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Comments</p>
-                    <p className="text-sm font-semibold">{post.comments.toLocaleString()}</p>
+                    <p className="text-xs text-slate-500">Comments</p>
+                    <p className="text-sm font-semibold text-slate-300">{post.comments.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Share2 className="h-4 w-4 text-muted-foreground" />
+                  <Share2 className="h-4 w-4 text-slate-500" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Shares</p>
-                    <p className="text-sm font-semibold">{post.shares.toLocaleString()}</p>
+                    <p className="text-xs text-slate-500">Shares</p>
+                    <p className="text-sm font-semibold text-slate-300">{post.shares.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 

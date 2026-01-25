@@ -53,20 +53,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Check for required environment variables
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    // If env vars are missing, allow request to proceed (will fail at runtime)
-    // This prevents build failures during deployment
-    return response
-  }
-
   // Create Supabase client for middleware
   const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         get(name: string) {

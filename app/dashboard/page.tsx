@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calendar, BarChart3, FileText, TrendingUp, ArrowUpRight, Plus, Clock, Users, Zap, Activity, ArrowRight, Download, ChevronDown } from "lucide-react"
+import { Calendar, BarChart3, FileText, TrendingUp, ArrowUpRight, Plus, Clock, Users, Zap, Activity, ArrowRight, Download, ChevronDown, Eye, Target, MessageSquare, Share2, Settings, RefreshCw } from "lucide-react"
 import { cn } from "@/utils/cn"
 import Link from "next/link"
 import { CreatePostForm } from "@/components/forms/create-post-form"
@@ -67,13 +67,32 @@ export default function DashboardPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [showWelcomeBanner, setShowWelcomeBanner] = useState(false)
+  const [showGuestBanner, setShowGuestBanner] = useState(false)
+  const [isGuest, setIsGuest] = useState(false)
   const [dateRange, setDateRange] = useState<DateRange>("7d")
   const { toast } = useToast()
   const { startTour, hasCompletedOnboarding, completeOnboarding } = useOnboarding()
 
+  // Check if user is authenticated (guest mode)
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const response = await fetch('/api/user/profile')
+        if (response.status === 401 || response.status === 403) {
+          setIsGuest(true)
+          setShowGuestBanner(true)
+        }
+      } catch (error) {
+        setIsGuest(true)
+        setShowGuestBanner(true)
+      }
+    }
+    checkAuth()
+  }, [])
+
   // Show welcome banner and auto-start tour for new users
   useEffect(() => {
-    if (!hasCompletedOnboarding) {
+    if (!hasCompletedOnboarding && !isGuest) {
       setShowWelcomeBanner(true)
       // Auto-start tour after a short delay
       const timer = setTimeout(() => {
@@ -81,7 +100,7 @@ export default function DashboardPage() {
       }, 1000)
       return () => clearTimeout(timer)
     }
-  }, [hasCompletedOnboarding, startTour])
+  }, [hasCompletedOnboarding, startTour, isGuest])
 
   // Fetch data on mount
   useEffect(() => {
@@ -127,6 +146,32 @@ export default function DashboardPage() {
 
   const handleCampaignCreated = () => {
     fetchData()
+  }
+
+  const handleCreatePostClick = () => {
+    if (isGuest) {
+      toast({
+        title: "Account Required",
+        description: "Please create a free account to start creating posts.",
+        variant: "default",
+      })
+      window.location.href = `/auth/signup?redirect=${encodeURIComponent(window.location.pathname)}`
+      return
+    }
+    setIsCreatePostOpen(true)
+  }
+
+  const handleCreateCampaignClick = () => {
+    if (isGuest) {
+      toast({
+        title: "Account Required",
+        description: "Please create a free account to start creating campaigns.",
+        variant: "default",
+      })
+      window.location.href = `/auth/signup?redirect=${encodeURIComponent(window.location.pathname)}`
+      return
+    }
+    setIsCreateCampaignOpen(true)
   }
 
   // Calculate date ranges for comparison
@@ -263,7 +308,7 @@ export default function DashboardPage() {
       title: "Create New Post",
       description: "Schedule content for your social media platforms",
       icon: Calendar,
-      onClick: () => setIsCreatePostOpen(true),
+      onClick: handleCreatePostClick,
       color: "text-blue-600",
       bgColor: "bg-blue-50 dark:bg-blue-950/20"
     },
@@ -271,7 +316,7 @@ export default function DashboardPage() {
       title: "Start Campaign",
       description: "Launch a new marketing campaign",
       icon: BarChart3,
-      onClick: () => setIsCreateCampaignOpen(true),
+      onClick: handleCreateCampaignClick,
       color: "text-purple-600",
       bgColor: "bg-purple-50 dark:bg-purple-950/20"
     },
@@ -382,410 +427,420 @@ export default function DashboardPage() {
   ]
 
   return (
-    <>
-    <div className="space-y-8">
-      {/* Welcome Banner for New Users */}
-      {showWelcomeBanner && (
-        <Alert className="border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 dark:border-blue-800">
-          <Sparkles className="h-5 w-5 text-blue-600" />
-          <AlertTitle className="text-lg font-semibold text-blue-900 dark:text-blue-100">
-            Welcome to MarketPilot AI! 🎉
-          </AlertTitle>
-          <AlertDescription className="mt-2 text-blue-800 dark:text-blue-200">
-            <p>We&apos;re starting a quick tour to help you get familiar with the platform. You can skip it anytime or restart it from the help icon.</p>
-            <div className="flex gap-2 mt-3">
-              <Button size="sm" onClick={startTour} className="bg-blue-600 hover:bg-blue-700">
-                Start Tour
-              </Button>
-              <Button 
-                size="sm" 
-                variant="outline" 
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950">
+      {/* Animated background blobs */}
+      <div className="fixed inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+      </div>
+
+      <div className="relative z-10 space-y-8 p-6 md:p-8 lg:p-10">
+        {/* Welcome Banner for New Users */}
+        {showWelcomeBanner && (
+          <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 shadow-lg">
+                  <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Welcome to MarketPilot AI! 🎉
+                  </h3>
+                  <p className="text-slate-300 mb-4">
+                    We&apos;re starting a quick tour to help you get familiar with the platform. You can skip it anytime or restart it from the help icon.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button size="sm" onClick={startTour} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg">
+                      Start Tour
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-slate-700/50 text-slate-300 hover:bg-slate-800/50 hover:border-slate-600"
+                      onClick={() => {
+                        setShowWelcomeBanner(false)
+                        completeOnboarding()
+                      }}
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-slate-400 hover:text-white hover:bg-slate-800/50"
                 onClick={() => {
                   setShowWelcomeBanner(false)
                   completeOnboarding()
                 }}
               >
-                Dismiss
+                <X className="h-5 w-5" />
               </Button>
             </div>
-          </AlertDescription>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 top-2 h-6 w-6"
-            onClick={() => {
-              setShowWelcomeBanner(false)
-              completeOnboarding()
-            }}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </Alert>
-      )}
+          </div>
+        )}
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground text-lg">
-            Welcome back! Here&apos;s what&apos;s happening with your marketing today.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Clock className="h-4 w-4 mr-2" />
-                {dateRange === "7d" ? "Last 7 days" : dateRange === "30d" ? "Last 30 days" : dateRange === "90d" ? "Last 90 days" : "All time"}
-                <ChevronDown className="h-4 w-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setDateRange("7d")}>
-                Last 7 days
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setDateRange("30d")}>
-                Last 30 days
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setDateRange("90d")}>
-                Last 90 days
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setDateRange("all")}>
-                All time
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-600">
-                <Plus className="h-4 w-4 mr-2" />
-                Quick Create
-                <ChevronDown className="h-4 w-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsCreatePostOpen(true)}>
-                <Calendar className="h-4 w-4 mr-2" />
-                Create Post
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsCreateCampaignOpen(true)}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Start Campaign
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard/repurpose">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Repurpose Content
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon
-          return (
-            <Card 
-              key={stat.title}
-              className={cn(
-                "relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group",
-                `bg-gradient-to-br ${stat.bgGradient}`
-              )}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-foreground/80">
-                  {stat.title}
-                </CardTitle>
-                <div className={cn(
-                  "p-2 rounded-lg bg-gradient-to-br shadow-md group-hover:scale-110 transition-transform",
-                  stat.gradient
-                )}>
-                  <Icon className="h-4 w-4 text-white" />
+        {/* Guest Mode Banner */}
+        {showGuestBanner && isGuest && (
+          <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
+                  <Sparkles className="h-6 w-6 text-white" />
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-baseline justify-between mb-1">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    🎉 Welcome to MarketPilot AI - Guest Mode
+                  </h3>
+                  <p className="text-slate-300 mb-4">
+                    You&apos;re exploring in guest mode! Create a free account to connect your social media accounts and start managing your content.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button size="sm" asChild className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 shadow-lg">
+                      <Link href="/auth/signup">Create Free Account</Link>
+                    </Button>
+                    <Button size="sm" asChild variant="outline" className="border-slate-700/50 text-slate-300 hover:bg-slate-800/50 hover:border-slate-600">
+                      <Link href="/auth/login">Sign In</Link>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-slate-400 hover:text-white hover:bg-slate-800/50"
+                onClick={() => setShowGuestBanner(false)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Dashboard Header */}
+        <div className="text-center mb-16 p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+            Dashboard <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Overview</span>
+          </h1>
+          <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+            Welcome back! Here&apos;s what&apos;s happening with your social media marketing today.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:bg-slate-800/50 hover:border-blue-500/50">
+                  <Clock className="h-4 w-4 mr-2" />
+                  {dateRange === "7d" ? "Last 7 days" : dateRange === "30d" ? "Last 30 days" : dateRange === "90d" ? "Last 90 days" : "All time"}
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
+                <DropdownMenuItem onClick={() => setDateRange("7d")} className="text-slate-300 hover:bg-slate-800 hover:text-white">
+                  Last 7 days
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDateRange("30d")} className="text-slate-300 hover:bg-slate-800 hover:text-white">
+                  Last 30 days
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDateRange("90d")} className="text-slate-300 hover:bg-slate-800 hover:text-white">
+                  Last 90 days
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDateRange("all")} className="text-slate-300 hover:bg-slate-800 hover:text-white">
+                  All time
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg backdrop-blur-xl">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh Data
+            </Button>
+            <Button size="sm" variant="outline" className="border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:bg-slate-800/50 hover:border-blue-500/50">
+              <Download className="h-4 w-4 mr-2" />
+              Export Report
+            </Button>
+          </div>
+        </div>
+
+        {/* Key Metrics Cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-16">
+          {stats.map((stat, idx) => {
+            const Icon = stat.icon
+            return (
+              <div
+                key={stat.title}
+                className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 group"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-sm font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
+                    {stat.title}
+                  </div>
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md group-hover:scale-110 transition-transform">
+                    <Icon className="h-4 w-4 text-white" />
+                  </div>
+                </div>
+                <div className="flex items-baseline justify-between mb-2">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
                     {stat.value}
                   </div>
                   <div className={cn(
                     "text-xs font-semibold px-2 py-1 rounded-full",
-                    stat.trend === "up" 
-                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" 
+                    stat.trend === "up"
+                      ? "bg-green-500/20 text-green-400 border border-green-500/30"
                       : stat.trend === "down"
-                      ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                      : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                      ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                      : "bg-slate-500/20 text-slate-400 border border-slate-500/30"
                   )}>
                     {stat.change}
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <p className="text-sm text-slate-500 group-hover:text-slate-400 transition-colors">
                   {stat.description}
-                  <ArrowUpRight className="h-3 w-3 opacity-50" />
                 </p>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+              </div>
+            )
+          })}
+        </div>
 
-      {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Quick Actions */}
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">Quick Actions</h2>
-              <Button variant="ghost" size="sm">
-                View All
-                <ArrowRight className="h-4 w-4 ml-2" />
+      {/* Main Dashboard Grid */}
+      <div className="grid gap-6 lg:grid-cols-12">
+        {/* Analytics Charts Section */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Engagement Overview */}
+          <div className="p-8 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md">
+                    <TrendingUp className="h-5 w-5 text-white" />
+                  </div>
+                  Engagement Overview
+                </h3>
+                <p className="text-slate-400">
+                  Track your content performance across all platforms
+                </p>
+              </div>
+              <Button variant="ghost" size="sm" className="border border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-400 hover:text-white hover:border-blue-500/50">
+                <Eye className="h-4 w-4 mr-2" />
+                View Details
               </Button>
             </div>
-            <div className="grid gap-4 md:grid-cols-3" data-tour="quick-actions">
+            <div className="pt-2">
+              {isLoading ? (
+                <ChartSkeleton />
+              ) : (
+                <EngagementChart posts={filteredPosts} />
+              )}
+            </div>
+          </div>
+
+          {/* Platform Performance */}
+          <div className="p-8 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+                    <BarChart3 className="h-5 w-5 text-white" />
+                  </div>
+                  Platform Performance
+                </h3>
+                <p className="text-slate-400">
+                  Compare engagement across different social media platforms
+                </p>
+              </div>
+              <Button variant="ghost" size="sm" className="border border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-400 hover:text-white hover:border-purple-500/50">
+                <Settings className="h-4 w-4 mr-2" />
+                Configure
+              </Button>
+            </div>
+            <div className="pt-2">
+              {isLoading ? (
+                <ChartSkeleton />
+              ) : (
+                <PerformanceChart posts={filteredPosts} />
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar Widgets */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* Quick Actions */}
+          <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-white mb-2">Quick Actions</h3>
+              <p className="text-slate-400 text-sm">Frequently used features</p>
+            </div>
+            <div className="space-y-3">
               {quickActions.map((action, idx) => {
                 const Icon = action.icon
-                
+
                 if (action.href) {
                   return (
                     <Link key={idx} href={action.href}>
-                      <Card className={cn(
-                        "border-2 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group",
-                        action.bgColor
-                      )}>
-                        <CardHeader>
-                          <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-3", action.bgColor)}>
-                            <Icon className={cn("h-6 w-6", action.color)} />
-                          </div>
-                          <CardTitle className="text-lg">{action.title}</CardTitle>
-                          <CardDescription className="text-sm">{action.description}</CardDescription>
-                        </CardHeader>
-                      </Card>
+                      <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all duration-300 cursor-pointer group">
+                        <div className={cn("p-2 rounded-lg", action.bgColor)}>
+                          <Icon className={cn("h-4 w-4", action.color)} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-white group-hover:text-cyan-400 transition-colors">
+                            {action.title}
+                          </p>
+                          <p className="text-xs text-slate-500">{action.description}</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-cyan-400 transition-colors" />
+                      </div>
                     </Link>
                   )
                 }
-                
+
                 return (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     onClick={action.onClick}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 hover:bg-slate-800/60 transition-all duration-300 cursor-pointer group"
                     data-tour={idx === 0 ? "create-post" : undefined}
                   >
-                    <Card className={cn(
-                      "border-2 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group",
-                      action.bgColor
-                    )}>
-                      <CardHeader>
-                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-3", action.bgColor)}>
-                          <Icon className={cn("h-6 w-6", action.color)} />
-                        </div>
-                        <CardTitle className="text-lg">{action.title}</CardTitle>
-                        <CardDescription className="text-sm">{action.description}</CardDescription>
-                      </CardHeader>
-                    </Card>
+                    <div className={cn("p-2 rounded-lg", action.bgColor)}>
+                      <Icon className={cn("h-4 w-4", action.color)} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-white group-hover:text-cyan-400 transition-colors">
+                        {action.title}
+                      </p>
+                      <p className="text-xs text-slate-500">{action.description}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-slate-500 group-hover:text-cyan-400 transition-colors" />
                   </div>
                 )
               })}
             </div>
           </div>
 
-          {/* Engagement Chart */}
-          <Card className="border-2 shadow-lg">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl">Engagement Trends</CardTitle>
-                  <CardDescription>Weekly engagement and reach metrics</CardDescription>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => window.location.href = "/dashboard/analytics"}
-                >
-                  View Report
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <EngagementChart posts={filteredPosts} />
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Performance Chart */}
-          <Card className="border-2 shadow-lg">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl">Platform Performance</CardTitle>
-                  <CardDescription>Compare performance across platforms</CardDescription>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={async () => {
-                    try {
-                      const response = await fetch("/api/analytics/export-pdf", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          dateRange: { start: getDateRange(dateRange).start, end: getDateRange(dateRange).end },
-                          type: "performance",
-                        }),
-                      })
-                      if (response.ok) {
-                        const blob = await response.blob()
-                        const url = window.URL.createObjectURL(blob)
-                        const a = document.createElement("a")
-                        a.href = url
-                        a.download = `performance-report-${format(new Date(), "yyyy-MM-dd")}.pdf`
-                        document.body.appendChild(a)
-                        a.click()
-                        window.URL.revokeObjectURL(url)
-                        document.body.removeChild(a)
-                        toast({
-                          title: "Export successful",
-                          description: "Performance report has been downloaded.",
-                        })
-                      }
-                    } catch (error) {
-                      toast({
-                        variant: "destructive",
-                        title: "Export failed",
-                        description: "Failed to export performance report.",
-                      })
-                    }
-                  }}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <PerformanceChart posts={filteredPosts} />
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity & Insights */}
-        <div className="space-y-6">
           {/* Recent Activity */}
-          <Card className="border-2 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <Activity className="h-5 w-5 text-blue-600" />
+          <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-500">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-md">
+                  <Activity className="h-5 w-5 text-white" />
+                </div>
                 Recent Activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivity.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Activity className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                    <p className="text-sm text-muted-foreground mb-2">No recent activity</p>
-                    <p className="text-xs text-muted-foreground">Create your first post or campaign to see activity here</p>
-                  </div>
-                ) : (
-                  <>
-                    {recentActivity.map((activity, idx) => {
-                      const Icon = activity.icon
-                      return (
-                        <div key={idx} className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                            <Icon className="h-5 w-5 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium">
-                              <span className="text-blue-600">{activity.action}</span> {activity.item}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
-                          </div>
+              </h3>
+              <p className="text-slate-400 text-sm">Latest updates and actions</p>
+            </div>
+            <div className="space-y-4">
+              {recentActivity.length === 0 ? (
+                <div className="text-center py-8">
+                  <Activity className="h-8 w-8 mx-auto text-slate-600 mb-2" />
+                  <p className="text-sm text-slate-500">No recent activity</p>
+                </div>
+              ) : (
+                <>
+                  {recentActivity.slice(0, 4).map((activity, idx) => {
+                    const Icon = activity.icon
+                    return (
+                      <div key={idx} className="flex items-start gap-4 p-3 rounded-lg bg-slate-800/40 backdrop-blur-xl border border-slate-700/50">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">
+                          <Icon className="h-4 w-4 text-white" />
                         </div>
-                      )
-                    })}
-                    <Button variant="ghost" className="w-full mt-2" asChild>
-                      <Link href="/dashboard/scheduler">
-                        View All Activity
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-white">
+                            <span className="text-green-400">{activity.action}</span> {activity.item}
+                          </p>
+                          <p className="text-xs text-slate-500">{activity.time}</p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  <Button variant="ghost" size="sm" className="w-full border border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-400 hover:text-white hover:border-green-500/50 mt-4" asChild>
+                    <Link href="/dashboard/scheduler">
+                      View All Activity
+                    </Link>
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
 
           {/* Platform Distribution */}
-          <Card className="border-2 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
+          <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-orange-500/50 transition-all duration-500">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 shadow-md">
+                  <Share2 className="h-5 w-5 text-white" />
+                </div>
                 Platform Distribution
-              </CardTitle>
-              <CardDescription>Content distribution across platforms</CardDescription>
-            </CardHeader>
-            <CardContent>
+              </h3>
+              <p className="text-slate-400 text-sm">Content across platforms</p>
+            </div>
+            <div className="pt-2">
               {isLoading ? (
                 <ChartSkeleton />
               ) : (
                 <PlatformDistributionChart posts={filteredPosts} />
               )}
-            </CardContent>
-          </Card>
-
-          {/* Growth Trend */}
-          <Card className="border-2 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-blue-600" />
-                Growth Trend
-              </CardTitle>
-              <CardDescription>Monthly growth trajectory</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <ChartSkeleton />
-              ) : (
-                <TrendChart posts={filteredPosts} />
-              )}
-            </CardContent>
-          </Card>
-
-          {/* AI Insights */}
-          <AIAnalyticsInsights type="posts" />
-
-          {/* Quick Stats */}
-          <QuickStats />
-
-          {/* Post Recycling */}
-          <PostRecycling />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Content Suggestions Section */}
-      <ContentSuggestions />
-    </div>
-    
-    <CreatePostForm 
-      open={isCreatePostOpen} 
+        {/* Quick Actions Footer */}
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <div className="p-6 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500 text-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Plus className="h-6 w-6 text-white" />
+            </div>
+            <h4 className="text-lg font-semibold text-white mb-2">Create New Post</h4>
+            <p className="text-slate-400 text-sm mb-4">Schedule content for your platforms</p>
+            <Button
+              onClick={handleCreatePostClick}
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+            >
+              Create Post
+            </Button>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 text-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="h-6 w-6 text-white" />
+            </div>
+            <h4 className="text-lg font-semibold text-white mb-2">Start Campaign</h4>
+            <p className="text-slate-400 text-sm mb-4">Launch a new marketing campaign</p>
+            <Button
+              onClick={handleCreateCampaignClick}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              Start Campaign
+            </Button>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-500 text-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="h-6 w-6 text-white" />
+            </div>
+            <h4 className="text-lg font-semibold text-white mb-2">Repurpose Content</h4>
+            <p className="text-slate-400 text-sm mb-4">Use AI to adapt content</p>
+            <Button
+              asChild
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+            >
+              <Link href="/dashboard/repurpose">Get Started</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+    <CreatePostForm
+      open={isCreatePostOpen}
       onOpenChange={setIsCreatePostOpen}
       onSubmit={handlePostCreated}
     />
-    <CreateCampaignForm 
-      open={isCreateCampaignOpen} 
+    <CreateCampaignForm
+      open={isCreateCampaignOpen}
       onOpenChange={setIsCreateCampaignOpen}
       onSubmit={handleCampaignCreated}
     />
-    </>
+    </div>
   )
 }

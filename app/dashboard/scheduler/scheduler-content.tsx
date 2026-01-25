@@ -376,93 +376,105 @@ export function SchedulerContent() {
 
   return (
       <>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="section-header border-0 pb-0 mb-0">
-          <div>
-            <h1 className="section-title text-3xl">Content Scheduler</h1>
-            <p className="section-subtitle">
-              Schedule and manage your social media posts
-            </p>
-          </div>
-          <Button 
-            className="bg-primary hover:bg-primary/90"
-            onClick={() => setIsCreatePostOpen(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Post
-          </Button>
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950">
+        {/* Animated background blobs */}
+        <div className="fixed inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
-          {isLoading ? (
-            <>
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-            </>
-          ) : (
-            <>
-              <Card 
-                className="card-professional stat-card-blue cursor-pointer hover:shadow-md transition-all"
-                onClick={() => setStatusFilter("draft")}
+        <div className="relative z-10 space-y-8">
+          {/* Header */}
+          <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-2">
+                  Content <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Scheduler</span>
+                </h1>
+                <p className="text-slate-400">
+                  Schedule and manage your social media posts
+                </p>
+              </div>
+              <Button 
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg"
+                onClick={() => setIsCreatePostOpen(true)}
               >
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Drafts</CardTitle>
-                  <FileEdit className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">
+                <Plus className="h-4 w-4 mr-2" />
+                New Post
+              </Button>
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid gap-4 md:grid-cols-4">
+            {isLoading ? (
+              <>
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+                <StatsCardSkeleton />
+              </>
+            ) : (
+              <>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                  onClick={() => setStatusFilter("draft")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Drafts</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-yellow-500 shadow-md">
+                      <FileEdit className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white">
                     {posts.filter((p) => p.status === "draft").length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">Work in progress</p>
-                </CardContent>
-              </Card>
-              <Card 
-                className="card-professional stat-card-teal cursor-pointer hover:shadow-md transition-all"
-                onClick={() => setStatusFilter("scheduled")}
-              >
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Scheduled</CardTitle>
-                  <Calendar className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">
+                  <p className="text-sm text-slate-500 mt-1">Work in progress</p>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                  onClick={() => setStatusFilter("scheduled")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Scheduled</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md">
+                      <Calendar className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white">
                     {posts.filter((p) => p.status === "scheduled").length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">Ready to publish</p>
-                </CardContent>
-              </Card>
-              <Card 
-                className="card-professional stat-card-purple cursor-pointer hover:shadow-md transition-all"
-                onClick={() => setStatusFilter("all")}
-              >
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Upcoming</CardTitle>
-                  <Clock className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">
+                  <p className="text-sm text-slate-500 mt-1">Ready to publish</p>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                  onClick={() => setStatusFilter("all")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Upcoming</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md">
+                      <Clock className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white">
                     {posts.filter((p) => {
                       const scheduledTime = new Date(`${p.scheduledDate}T${p.scheduledTime}`)
                       return scheduledTime > new Date() && p.status === "scheduled"
                     }).length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">Posts in queue</p>
-                </CardContent>
-              </Card>
-              <Card 
-                className="card-professional stat-card-orange cursor-pointer hover:shadow-md transition-all"
-                onClick={() => setStatusFilter("published")}
-              >
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Published</CardTitle>
-                  <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">
+                  <p className="text-sm text-slate-500 mt-1">Posts in queue</p>
+                </div>
+                <div 
+                  className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                  onClick={() => setStatusFilter("published")}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-slate-400 uppercase tracking-wide">Published</span>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 shadow-md">
+                      <CheckCircle2 className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white">
                     {posts.filter((p) => {
                       if (p.status !== "published") return false
                       const postDate = new Date(p.scheduledDate || p.createdAt)
@@ -470,108 +482,108 @@ export function SchedulerContent() {
                       return postDate.getMonth() === now.getMonth() && postDate.getFullYear() === now.getFullYear()
                     }).length}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">This month</p>
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </div>
+                  <p className="text-sm text-slate-500 mt-1">This month</p>
+                </div>
+              </>
+            )}
+          </div>
 
-        {/* Quick Status Filters */}
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm text-slate-400 mr-2">Filter:</span>
-          {[
-            { key: "all", label: "All", icon: null, count: posts.length, color: "slate" },
-            { key: "draft", label: "Drafts", icon: FileEdit, count: posts.filter(p => p.status === "draft").length, color: "orange" },
-            { key: "scheduled", label: "Scheduled", icon: Calendar, count: posts.filter(p => p.status === "scheduled").length, color: "blue" },
-            { key: "published", label: "Published", icon: CheckCircle2, count: posts.filter(p => p.status === "published").length, color: "green" },
-            { key: "failed", label: "Failed", icon: null, count: posts.filter(p => p.status === "failed").length, color: "red" },
-          ].map((filter) => (
-            <Button
-              key={filter.key}
-              variant={statusFilter === filter.key ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter(filter.key)}
-              className={`transition-all duration-300 ${
-                statusFilter === filter.key
-                  ? filter.color === "red"
-                    ? "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white border-red-500"
-                    : filter.color === "blue"
-                    ? "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-blue-500"
-                    : filter.color === "green"
-                    ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-green-500"
-                    : filter.color === "orange"
-                    ? "bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white border-orange-500"
-                    : "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white border-slate-500"
-                  : `border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:text-white hover:border-${filter.color}-500/50 hover:bg-gradient-to-r hover:from-${filter.color}-600/20 hover:to-${filter.color}-700/20`
-              } ${filter.key === "failed" && filter.count > 0 ? "animate-pulse" : ""}`}
-            >
-              {filter.icon && <filter.icon className="h-3.5 w-3.5 mr-1.5" />}
-              {filter.label} ({filter.count})
-            </Button>
-          ))}
-        </div>
+          {/* Quick Status Filters */}
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm text-slate-400 mr-2">Filter:</span>
+            {[
+              { key: "all", label: "All", icon: null, count: posts.length, color: "slate" },
+              { key: "draft", label: "Drafts", icon: FileEdit, count: posts.filter(p => p.status === "draft").length, color: "orange" },
+              { key: "scheduled", label: "Scheduled", icon: Calendar, count: posts.filter(p => p.status === "scheduled").length, color: "blue" },
+              { key: "published", label: "Published", icon: CheckCircle2, count: posts.filter(p => p.status === "published").length, color: "green" },
+              { key: "failed", label: "Failed", icon: null, count: posts.filter(p => p.status === "failed").length, color: "red" },
+            ].map((filter) => (
+              <Button
+                key={filter.key}
+                variant={statusFilter === filter.key ? "default" : "outline"}
+                size="sm"
+                onClick={() => setStatusFilter(filter.key)}
+                className={`transition-all duration-300 ${
+                  statusFilter === filter.key
+                    ? filter.color === "red"
+                      ? "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white border-red-500"
+                      : filter.color === "blue"
+                      ? "bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-blue-500"
+                      : filter.color === "green"
+                      ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-green-500"
+                      : filter.color === "orange"
+                      ? "bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white border-orange-500"
+                      : "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white border-slate-500"
+                    : `border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:text-white hover:border-${filter.color}-500/50 hover:bg-gradient-to-r hover:from-${filter.color}-600/20 hover:to-${filter.color}-700/20`
+                } ${filter.key === "failed" && filter.count > 0 ? "animate-pulse" : ""}`}
+              >
+                {filter.icon && <filter.icon className="h-3.5 w-3.5 mr-1.5" />}
+                {filter.label} ({filter.count})
+              </Button>
+            ))}
+          </div>
 
-        {/* Post Recycling Section */}
-        <PostRecycling />
+          {/* Post Recycling Section */}
+          <PostRecycling />
 
-        {/* Filters and Search */}
-        <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
-          <div className="p-8 border-b border-slate-700/50">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 shadow-md">
-                    <FileEdit className="h-5 w-5 text-white" />
+          {/* Filters and Search */}
+          <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+            <div className="p-8 border-b border-slate-700/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 shadow-md">
+                      <FileEdit className="h-5 w-5 text-white" />
+                    </div>
+                    Posts
+                  </h3>
+                  <p className="text-slate-400">
+                    Manage and filter your scheduled posts
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  {/* View Toggle */}
+                  <div className="flex border border-slate-700/50 rounded-md bg-slate-900/50">
+                    <Button
+                      variant={viewMode === "table" ? "secondary" : "ghost"}
+                      size="sm"
+                      className="rounded-r-none"
+                      onClick={() => setViewMode("table")}
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === "cards" ? "secondary" : "ghost"}
+                      size="sm"
+                      className="rounded-l-none"
+                      onClick={() => setViewMode("cards")}
+                    >
+                      <LayoutGrid className="h-4 w-4" />
+                    </Button>
                   </div>
-                  Posts
-                </h3>
-                <p className="text-slate-400">
-                  Manage and filter your scheduled posts
-                </p>
-              </div>
-              <div className="flex gap-3">
-                {/* View Toggle */}
-                <div className="flex border rounded-md">
+                  <ExportDialog type="posts" selectedIds={selectedPostIds.length > 0 ? selectedPostIds : undefined} />
                   <Button
-                    variant={viewMode === "table" ? "secondary" : "ghost"}
+                    variant="outline"
                     size="sm"
-                    className="rounded-r-none"
-                    onClick={() => setViewMode("table")}
+                    onClick={() => handleExportAll("csv")}
+                    className="border-slate-700/50 bg-slate-900/50 text-slate-300 hover:text-white hover:border-slate-600"
                   >
-                    <List className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "cards" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="rounded-l-none"
-                    onClick={() => setViewMode("cards")}
-                  >
-                    <LayoutGrid className="h-4 w-4" />
+                    <FileDown className="h-4 w-4 mr-2" />
+                    Quick CSV
                   </Button>
                 </div>
-                <ExportDialog type="posts" selectedIds={selectedPostIds.length > 0 ? selectedPostIds : undefined} />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleExportAll("csv")}
-                >
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Quick CSV
-                </Button>
               </div>
             </div>
-          </div>
           <div className="p-8">
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               {/* Search */}
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                 <Input
                   placeholder="Search posts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
+                  className="pl-9 bg-slate-800/50 border-slate-700/50 text-white placeholder:text-slate-500"
                 />
               </div>
 
@@ -586,10 +598,10 @@ export function SchedulerContent() {
 
               {/* Status Filter */}
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="draft">Draft</SelectItem>
                   <SelectItem value="scheduled">Scheduled</SelectItem>
@@ -600,10 +612,10 @@ export function SchedulerContent() {
 
               {/* Platform Filter */}
               <Select value={platformFilter} onValueChange={setPlatformFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[180px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                   <SelectValue placeholder="Filter by platform" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                   <SelectItem value="all">All Platforms</SelectItem>
                   <SelectItem value="twitter">Twitter</SelectItem>
                   <SelectItem value="linkedin">LinkedIn</SelectItem>
@@ -617,10 +629,10 @@ export function SchedulerContent() {
               {/* Sort */}
               <div className="flex gap-2">
                 <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-[150px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                     <SelectItem value="date">Sort by Date</SelectItem>
                     <SelectItem value="platform">Sort by Platform</SelectItem>
                     <SelectItem value="status">Sort by Status</SelectItem>
@@ -630,6 +642,7 @@ export function SchedulerContent() {
                   variant="outline"
                   size="icon"
                   onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                  className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-slate-600"
                 >
                   <ArrowUpDown className="h-4 w-4" />
                 </Button>
@@ -763,12 +776,13 @@ export function SchedulerContent() {
                     />
                   </div>
                 )}
-                <div className="mt-4 text-sm text-muted-foreground">
+                <div className="mt-4 text-sm text-slate-500">
                   Showing {paginatedPosts.length} of {filteredAndSortedPosts.length} posts
                 </div>
               </>
             )}
           </div>
+        </div>
         </div>
       </div>
 

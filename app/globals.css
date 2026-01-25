@@ -169,6 +169,35 @@
     }
   }
   
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 60px rgba(139, 92, 246, 0.5);
+    }
+  }
+  
+  @keyframes orbit-rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes pulse-plus {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.2);
+    }
+  }
+  
   .animate-blob {
     animation: blob 7s infinite;
   }
@@ -188,6 +217,18 @@
   
   .animate-float {
     animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  
+  .animate-orbit {
+    animation: orbit-rotate 60s linear infinite;
+  }
+  
+  .animate-pulse-plus {
+    animation: pulse-plus 4s ease-in-out infinite;
   }
   
   .bg-grid-slate-100 {

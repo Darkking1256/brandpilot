@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Clock, TrendingUp } from "lucide-react"
@@ -53,24 +52,24 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
+      <div className="p-6 border-b border-slate-700/50">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <Clock className="h-5 w-5 text-slate-400" />
               Best Time to Post
-            </CardTitle>
-            <CardDescription>
+            </h3>
+            <p className="text-slate-400 text-sm">
               Optimal posting times based on engagement data
-            </CardDescription>
+            </p>
           </div>
           {platform && (
             <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-[140px] bg-slate-800/50 border-slate-700/50 text-slate-300">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
                 <SelectItem value="all">All Platforms</SelectItem>
                 <SelectItem value="twitter">Twitter</SelectItem>
                 <SelectItem value="linkedin">LinkedIn</SelectItem>
@@ -80,37 +79,37 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
             </Select>
           )}
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      </div>
+      <div className="p-6 space-y-6">
         {/* Top Recommendations */}
         {bestTimes.length > 0 && (
           <div className="space-y-2">
-            <h3 className="font-semibold flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
+            <h3 className="font-semibold text-white flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-slate-400" />
               Top Recommended Times
             </h3>
             <div className="grid gap-2">
               {bestTimes.map((time, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                  className="flex items-center justify-between p-3 bg-slate-800/40 rounded-xl border border-slate-700/50"
                 >
                   <div className="flex items-center gap-3">
-                    <Badge variant="outline">#{idx + 1}</Badge>
+                    <Badge variant="outline" className="border-slate-600 text-slate-300">#{idx + 1}</Badge>
                     <div>
-                      <p className="font-medium">
+                      <p className="font-medium text-white">
                         {daysOfWeek[time.day]} at {time.hour}:00
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-slate-500">
                         {time.postCount} posts • {time.totalEngagement.toLocaleString()} total engagement
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-bold text-green-600">
+                    <p className="text-lg font-bold text-green-400">
                       {time.avgEngagementRate.toFixed(2)}%
                     </p>
-                    <p className="text-xs text-muted-foreground">Avg Engagement</p>
+                    <p className="text-xs text-slate-500">Avg Engagement</p>
                   </div>
                 </div>
               ))}
@@ -120,7 +119,7 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
 
         {/* Heatmap */}
         <div className="space-y-2">
-          <h3 className="font-semibold">Engagement Heatmap</h3>
+          <h3 className="font-semibold text-white">Engagement Heatmap</h3>
           <div className="overflow-x-auto">
             <div className="min-w-[600px]">
               <div className="grid gap-1" style={{ gridTemplateColumns: "60px repeat(24, 1fr)" }}>
@@ -129,7 +128,7 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
                 {Array.from({ length: 24 }).map((_, hour) => (
                   <div
                     key={hour}
-                    className="text-xs text-center text-muted-foreground py-1"
+                    className="text-xs text-center text-slate-500 py-1"
                   >
                     {hour}
                   </div>
@@ -137,7 +136,7 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
                 {/* Rows */}
                 {daysOfWeek.map((day, dayIdx) => (
                   <div key={dayIdx} className="contents">
-                    <div className="text-xs font-medium py-2 pr-2 text-right">
+                    <div className="text-xs font-medium py-2 pr-2 text-right text-slate-400">
                       {day}
                     </div>
                     {Array.from({ length: 24 }).map((_, hour) => {
@@ -148,7 +147,7 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
                         <div
                           key={hour}
                           className={cn(
-                            "h-8 rounded border cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all",
+                            "h-8 rounded border border-slate-700/50 cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all",
                             getIntensity(engagementRate),
                             engagementRate === 0 && "opacity-30"
                           )}
@@ -161,9 +160,9 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex items-center gap-4 text-xs text-slate-500">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-gray-200 dark:bg-gray-800 rounded" />
+              <div className="w-4 h-4 bg-slate-800 rounded border border-slate-700" />
               <span>No data</span>
             </div>
             <div className="flex items-center gap-2">
@@ -184,8 +183,8 @@ export function BestTimeToPost({ data, platform }: BestTimeToPostProps) {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 
