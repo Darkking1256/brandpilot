@@ -3,10 +3,22 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { requireAuth } from "@/lib/auth"
 
+// Check if Supabase is configured
+const isSupabaseConfigured = () => {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL && 
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+         !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder')
+}
+
 export async function GET(request: NextRequest) {
   try {
+    // Return empty posts if Supabase is not configured (demo mode)
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ posts: [] })
+    }
+
     const { user, error: authError } = await requireAuth()
-    if (authError) return authError
+    if (authError) return NextResponse.json({ posts: [] })
 
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get("limit") || "10")
