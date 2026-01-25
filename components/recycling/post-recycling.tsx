@@ -39,15 +39,14 @@ export function PostRecycling() {
         const data = await response.json()
         setTopPosts(data.posts || [])
       } else {
-        throw new Error("Failed to fetch top posts")
+        // Don't show error toast - set empty posts (demo mode)
+        console.log("Top posts API returned non-ok status:", response.status)
+        setTopPosts([])
       }
     } catch (error) {
+      // Silently fail - set empty posts
       console.error("Failed to fetch top posts", error)
-      toast({
-        variant: "destructive",
-        title: "Failed to load posts",
-        description: "Could not fetch top-performing posts.",
-      })
+      setTopPosts([])
     } finally {
       setIsLoading(false)
     }

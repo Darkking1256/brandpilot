@@ -32,14 +32,14 @@ export function QuickStats() {
         const data = await response.json()
         setStats(data.stats)
       } else {
-        throw new Error("Failed to fetch stats")
+        // Don't show error toast - set default empty stats (demo mode)
+        console.log("Quick stats API returned non-ok status:", response.status)
+        setStats({ totalPosts: 0, totalEngagement: 0, avgEngagementRate: 0, topPlatform: "none", bestPost: null })
       }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Failed to load stats",
-        description: "Could not fetch quick stats. Please try again.",
-      })
+      // Silently fail - set default empty stats
+      console.error("Failed to fetch stats", error)
+      setStats({ totalPosts: 0, totalEngagement: 0, avgEngagementRate: 0, topPlatform: "none", bestPost: null })
     } finally {
       setIsLoading(false)
     }

@@ -51,15 +51,15 @@ export function ContentSuggestions() {
         const data = await response.json()
         setSuggestions(data.suggestions || [])
       } else {
-        throw new Error("Failed to fetch suggestions")
+        // Don't show error toast for auth failures (401) - just set empty suggestions
+        // This allows demo mode to work gracefully
+        console.log("Suggestions API returned non-ok status:", response.status)
+        setSuggestions([])
       }
     } catch (error) {
+      // Silently fail - just log and set empty suggestions
       console.error("Failed to fetch suggestions", error)
-      toast({
-        variant: "destructive",
-        title: "Failed to load suggestions",
-        description: "Could not fetch content suggestions. Please try again.",
-      })
+      setSuggestions([])
     } finally {
       setIsLoading(false)
     }
