@@ -4,6 +4,13 @@ import { createClient } from "@/lib/supabase/server"
 import { requireAuth } from "@/lib/auth"
 import { z } from "zod"
 
+// Check if Supabase is configured
+const isSupabaseConfigured = () => {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL && 
+         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+         !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder')
+}
+
 const profileSchema = z.object({
   full_name: z.string().min(1).max(100).optional(),
   email: z.string().email().optional(),
@@ -13,6 +20,11 @@ const profileSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
+    // Return 401 if Supabase is not configured (triggers guest mode in dashboard)
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json({ error: "Not configured" }, { status: 401 })
+    }
+
     const { user, error: authError } = await requireAuth()
     if (authError) return authError
 
