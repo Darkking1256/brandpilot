@@ -49,21 +49,21 @@ export default function AnalyticsPage() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
+        // Fetch each independently to handle partial failures gracefully
         const [fetchedPosts, fetchedCampaigns, fetchedAds] = await Promise.all([
-          getPosts(),
-          getCampaigns(),
-          getAds(),
+          getPosts().catch(() => []),
+          getCampaigns().catch(() => []),
+          getAds().catch(() => []),
         ])
-        setPosts(fetchedPosts)
-        setCampaigns(fetchedCampaigns)
-        setAds(fetchedAds)
+        setPosts(fetchedPosts || [])
+        setCampaigns(fetchedCampaigns || [])
+        setAds(fetchedAds || [])
       } catch (error) {
+        // Silently fail - set empty data (demo mode)
         console.error("Error fetching analytics data:", error)
-        toast({
-          variant: "destructive",
-          title: "Failed to load analytics",
-          description: "There was an error loading your analytics data.",
-        })
+        setPosts([])
+        setCampaigns([])
+        setAds([])
       } finally {
         setIsLoading(false)
       }
