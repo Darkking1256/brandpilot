@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -84,8 +84,22 @@ export default function SignupPage() {
     setIsLoading(true)
 
     // #region agent log
-    console.log('[DEBUG][HYP-D] Signup attempt starting:', { emailPrefix: email.substring(0, 5) + '***', hasPassword: !!password });
+    console.log('[DEBUG][HYP-D] Signup attempt starting:', { emailPrefix: email.substring(0, 5) + '***', hasPassword: !!password, isConfigured: isSupabaseConfigured() });
     // #endregion
+
+    // Check if Supabase is configured before attempting signup
+    if (!isSupabaseConfigured()) {
+      // #region agent log
+      console.log('[DEBUG][HYP-A/B] Supabase not configured - showing demo mode message');
+      // #endregion
+      toast({
+        title: "Demo Mode",
+        description: "Authentication is not configured. Please set up Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY) in Netlify to enable signup.",
+        variant: "destructive",
+      })
+      setIsLoading(false)
+      return
+    }
 
     try {
       const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
@@ -134,9 +148,14 @@ export default function SignupPage() {
       console.log('[DEBUG][HYP-E] Caught exception in signup:', { errorName: error?.name, errorMsg: error?.message, errorStack: error?.stack?.substring(0, 300) });
       // #endregion
 
+      // Handle network errors (Failed to fetch) with a better message
+      const errorMessage = error.message === "Failed to fetch" 
+        ? "Unable to connect to the authentication server. Please check your internet connection or try again later."
+        : error.message || "An unexpected error occurred"
+
       toast({
         title: "Signup failed",
-        description: error.message || "An unexpected error occurred",
+        description: errorMessage,
         variant: "destructive",
       })
       setIsLoading(false)

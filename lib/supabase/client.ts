@@ -1,5 +1,12 @@
 import { createBrowserClient } from '@supabase/ssr'
 
+// Check if Supabase is properly configured (not using placeholders)
+export function isSupabaseConfigured(): boolean {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  return !!(supabaseUrl && supabaseAnonKey && !supabaseUrl.includes('placeholder'))
+}
+
 export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

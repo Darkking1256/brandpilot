@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -41,6 +41,17 @@ export function LoginForm() {
     setIsLoading(true)
     setShowResendConfirmation(false)
 
+    // Check if Supabase is configured before attempting login
+    if (!isSupabaseConfigured()) {
+      toast({
+        title: "Demo Mode",
+        description: "Authentication is not configured. Please set up Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY) in Netlify to enable login.",
+        variant: "destructive",
+      })
+      setIsLoading(false)
+      return
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -76,9 +87,14 @@ export function LoginForm() {
         router.refresh()
       }
     } catch (error: any) {
+      // Handle network errors (Failed to fetch) with a better message
+      const errorMessage = error.message === "Failed to fetch" 
+        ? "Unable to connect to the authentication server. Please check your internet connection or try again later."
+        : error.message || "An unexpected error occurred"
+      
       toast({
-        title: "Error",
-        description: error.message || "An unexpected error occurred",
+        title: "Login failed",
+        description: errorMessage,
         variant: "destructive",
       })
       setIsLoading(false)
