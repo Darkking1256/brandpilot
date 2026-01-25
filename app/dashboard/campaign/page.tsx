@@ -93,14 +93,11 @@ export default function CampaignPage() {
     setIsLoading(true)
     try {
       const fetchedCampaigns = await getCampaigns()
-      setCampaigns(fetchedCampaigns)
+      setCampaigns(fetchedCampaigns || [])
     } catch (error) {
+      // Silently fail - set empty campaigns (demo mode)
       console.error("Error fetching campaigns:", error)
-      toast({
-        variant: "destructive",
-        title: "Failed to load campaigns",
-        description: "There was an error loading your campaigns. Please refresh the page.",
-      })
+      setCampaigns([])
     } finally {
       setIsLoading(false)
     }

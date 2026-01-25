@@ -61,14 +61,11 @@ export default function CalendarPage() {
     setIsLoading(true)
     try {
       const fetchedPosts = await getPosts()
-      setPosts(fetchedPosts)
+      setPosts(fetchedPosts || [])
     } catch (error) {
+      // Silently fail - set empty posts (demo mode)
       console.error("Error fetching posts:", error)
-      toast({
-        variant: "destructive",
-        title: "Failed to load posts",
-        description: "There was an error loading your scheduled posts.",
-      })
+      setPosts([])
     } finally {
       setIsLoading(false)
     }
