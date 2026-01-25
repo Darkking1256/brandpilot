@@ -31,11 +31,7 @@ export default function SignupPage() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const supabase = createClient()
-  
-  // #region agent log - Debug: Check if Supabase is configured
   const supabaseConfigured = isSupabaseConfigured()
-  console.log('[DEBUG] Supabase configured:', supabaseConfigured)
-  // #endregion
 
   // Check password requirements
   const passwordChecks = useMemo(() => {
@@ -88,15 +84,8 @@ export default function SignupPage() {
 
     setIsLoading(true)
 
-    // #region agent log
-    console.log('[DEBUG][HYP-D] Signup attempt starting:', { emailPrefix: email.substring(0, 5) + '***', hasPassword: !!password, isConfigured: isSupabaseConfigured() });
-    // #endregion
-
     // Check if Supabase is configured before attempting signup
     if (!isSupabaseConfigured()) {
-      // #region agent log
-      console.log('[DEBUG][HYP-A/B] Supabase not configured - showing demo mode message');
-      // #endregion
       toast({
         title: "Demo Mode",
         description: "Authentication is not configured. Please set up Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY) in Netlify to enable signup.",
@@ -109,10 +98,6 @@ export default function SignupPage() {
     try {
       const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
       
-      // #region agent log
-      console.log('[DEBUG][HYP-D] About to call supabase.auth.signUp:', { baseUrl });
-      // #endregion
-
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -123,10 +108,6 @@ export default function SignupPage() {
           emailRedirectTo: `${baseUrl}/auth/callback?next=/dashboard`,
         },
       })
-
-      // #region agent log
-      console.log('[DEBUG][HYP-D] signUp call completed:', { hasData: !!data, hasError: !!error, errorMsg: error?.message, userId: data?.user?.id?.substring(0, 8) });
-      // #endregion
 
       if (error) {
         toast({
@@ -149,10 +130,6 @@ export default function SignupPage() {
         setConfirmPassword("")
       }
     } catch (error: any) {
-      // #region agent log
-      console.log('[DEBUG][HYP-E] Caught exception in signup:', { errorName: error?.name, errorMsg: error?.message, errorStack: error?.stack?.substring(0, 300) });
-      // #endregion
-
       // Handle network errors (Failed to fetch) with a better message
       const errorMessage = error.message === "Failed to fetch" 
         ? "Unable to connect to the authentication server. Please check your internet connection or try again later."
