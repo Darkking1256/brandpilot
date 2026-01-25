@@ -48,4 +48,4 @@
 # STRIPE_SECRET_KEY (optional)
 # STRIPE_PUBLISHABLE_KEY (optional)
 
-# Force clean rebuild - January 25, 2026 - v2 (clearing .next cache)
+# Force clean rebuild - January 25, 2026 - v3 (added ads API and fixed analytics)
