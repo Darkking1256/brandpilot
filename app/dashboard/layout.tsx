@@ -93,32 +93,37 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
 
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/95 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/80">
-        <div className="container flex h-20 items-center justify-between px-6 mx-auto">
-          <Link href="/dashboard" className="flex items-center space-x-3 group">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-              <Sparkles className="h-6 w-6 text-white" />
+        <div className="container flex h-14 md:h-20 items-center justify-between px-3 md:px-6 mx-auto">
+          <div className="flex items-center gap-2">
+            {/* Mobile Nav Trigger */}
+            <div className="md:hidden">
+              <MobileNav />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              MarketPilot AI
-            </span>
-          </Link>
+            <Link href="/dashboard" className="flex items-center space-x-2 md:space-x-3 group">
+              <div className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                <Sparkles className="h-4 w-4 md:h-6 md:w-6 text-white" />
+              </div>
+              <span className="text-base md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent hidden sm:inline">
+                MarketPilot AI
+              </span>
+            </Link>
+          </div>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            <MobileNav />
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={startTour}
-                title="Start Tour"
-                className="hover:bg-slate-800/50 backdrop-blur-xl text-slate-300 hover:text-white"
-              >
-                <HelpCircle className="h-5 w-5" />
-              </Button>
+          <nav className="flex items-center space-x-2 md:space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={startTour}
+              title="Start Tour"
+              className="hover:bg-slate-800/50 backdrop-blur-xl text-slate-300 hover:text-white h-8 w-8 md:h-10 md:w-10"
+            >
+              <HelpCircle className="h-4 w-4 md:h-5 md:w-5" />
+            </Button>
+            <div className="hidden sm:block">
               <HelpCenter />
-              <NotificationCenter />
-              <LogoutButton />
             </div>
+            <NotificationCenter />
+            <LogoutButton />
           </nav>
         </div>
       </header>
@@ -222,7 +227,7 @@ function DashboardContent({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 md:p-8 lg:p-10 min-h-[calc(100vh-5rem)] pb-20 md:pb-10">
+        <main className="flex-1 p-2 sm:p-4 md:p-8 lg:p-10 min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-5rem)] pb-20 md:pb-10">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

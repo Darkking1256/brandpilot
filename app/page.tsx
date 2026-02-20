@@ -137,12 +137,12 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-slate-950">
       {/* Navigation - DARK background */}
       <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/95 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/80">
-        <div className="container flex h-20 items-center justify-between px-6 mx-auto">
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-              <Sparkles className="h-6 w-6 text-white" />
+        <div className="container flex h-16 md:h-20 items-center justify-between px-4 md:px-6 mx-auto">
+          <Link href="/" className="flex items-center space-x-2 md:space-x-3 group">
+            <div className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+              <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="text-lg md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
               MarketPilot AI
             </span>
           </Link>
@@ -160,23 +160,23 @@ export default function Home() {
               FAQs
             </Link>
           </nav>
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" asChild className="hover:bg-slate-800/50 backdrop-blur-xl text-slate-300 hover:text-white">
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <Button variant="ghost" asChild className="hover:bg-slate-800/50 backdrop-blur-xl text-slate-300 hover:text-white text-sm px-3 md:px-4">
               <Link href="/auth/login">Login</Link>
             </Button>
-            <Button asChild className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 shadow-lg backdrop-blur-xl">
-              <Link href="/dashboard">Get Started Free</Link>
+            <Button asChild className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 shadow-lg backdrop-blur-xl text-xs md:text-sm px-3 md:px-4">
+              <Link href="/dashboard">Get Started</Link>
             </Button>
           </div>
         </div>
       </header>
 
       {/* Hero Section - Braine Style with DARK gradient */}
-      <section className="relative py-32 px-6 overflow-hidden bg-gradient-to-b from-slate-950 via-indigo-950 to-blue-950">
+      <section className="relative py-12 md:py-32 px-4 md:px-6 overflow-hidden bg-gradient-to-b from-slate-950 via-indigo-950 to-blue-950">
         {/* Animated background blobs */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
-          <div className="absolute bottom-0 left-1/4 w-[700px] h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute top-0 right-1/4 w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-0 left-1/4 w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
         </div>
         
         <div className="container mx-auto max-w-7xl relative z-10">
@@ -188,15 +188,15 @@ export default function Home() {
             >
               {heroSlides.map((slide, slideIdx) => (
                 <div key={slideIdx} className="min-w-full">
-                  <div className="grid lg:grid-cols-2 gap-12 items-center">
+                  <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center">
                     {/* Left Content */}
-                    <div className="space-y-8 p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50">
-                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium">
-                        <Zap className="h-4 w-4" />
+                    <div className="space-y-4 md:space-y-8 p-4 md:p-8 rounded-2xl md:rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50">
+                      <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs md:text-sm font-medium">
+                        <Zap className="h-3 w-3 md:h-4 md:w-4" />
                         {slide.badge}
                       </div>
                       
-                      <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                         <span className="block text-white">{slide.title[0]}</span>
                         <span className="block text-white">{slide.title[1]}</span>
                         <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
@@ -204,12 +204,12 @@ export default function Home() {
                         </span>
                       </h1>
 
-                      <p className="text-xl text-slate-300 leading-relaxed max-w-lg">
+                      <p className="text-base md:text-xl text-slate-300 leading-relaxed max-w-lg">
                         {slide.description}
                       </p>
 
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 shadow-lg">
+                      <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                        <Button asChild size="lg" className="text-sm md:text-lg px-6 md:px-8 py-4 md:py-6 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700 shadow-lg">
                           <Link href="/dashboard">Get started free</Link>
                         </Button>
                       </div>
@@ -344,15 +344,15 @@ export default function Home() {
       </section>
 
       {/* Integration Orbital Section - AIMug Style */}
-      <section className="relative py-32 bg-gradient-to-b from-blue-950 via-slate-950 to-slate-950 overflow-hidden">
+      <section className="relative py-16 md:py-32 bg-gradient-to-b from-blue-950 via-slate-950 to-slate-950 overflow-hidden">
         {/* Animated background blobs */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-1/4 left-1/4 w-[700px] h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob" />
-          <div className="absolute bottom-1/4 right-1/4 w-[700px] h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute top-1/4 left-1/4 w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-1/4 right-1/4 w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
         </div>
         
-        {/* Animated decorative plus signs */}
-        <div className="absolute inset-0 pointer-events-none">
+        {/* Animated decorative plus signs - hidden on mobile */}
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
           {[...Array(12)].map((_, idx) => {
             const positions = [
               { top: '10%', left: '15%' },
@@ -383,19 +383,21 @@ export default function Home() {
           })}
         </div>
 
-        <div className="container mx-auto px-6 max-w-7xl relative z-10">
-          {/* Orbital Container */}
-          <div className="relative w-full h-[700px] md:h-[800px] mx-auto flex items-center justify-center">
+        <div className="container mx-auto px-4 md:px-6 max-w-7xl relative z-10">
+          {/* Mobile: Grid Layout, Desktop: Orbital Layout */}
+          
+          {/* Desktop Orbital Container - Hidden on Mobile */}
+          <div className="hidden md:flex relative w-full h-[700px] lg:h-[800px] mx-auto items-center justify-center">
             {/* Central MarketPilot Card */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500 animate-pulse-glow"></div>
-                <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-3xl bg-gradient-to-br from-slate-800/70 to-slate-900/70 backdrop-blur-xl border-2 border-blue-500/50 flex flex-col items-center justify-center gap-4 animate-float group-hover:scale-110 transition-all duration-500 cursor-pointer">
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 flex items-center justify-center shadow-2xl">
-                    <Sparkles className="w-12 h-12 md:w-14 md:h-14 text-white" />
+                <div className="relative w-48 h-48 lg:w-64 lg:h-64 rounded-3xl bg-gradient-to-br from-slate-800/70 to-slate-900/70 backdrop-blur-xl border-2 border-blue-500/50 flex flex-col items-center justify-center gap-4 animate-float group-hover:scale-110 transition-all duration-500 cursor-pointer">
+                  <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 flex items-center justify-center shadow-2xl">
+                    <Sparkles className="w-12 h-12 lg:w-14 lg:h-14 text-white" />
                   </div>
                   <div className="text-center">
-                    <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                    <h3 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                       MarketPilot
                     </h3>
                   </div>
@@ -403,7 +405,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Orbiting Platform Cards */}
+            {/* Orbiting Platform Cards - Desktop */}
             {[
               { name: "Twitter", Icon: Twitter, gradient: "from-blue-400 to-blue-600", angle: 0 },
               { name: "LinkedIn", Icon: Linkedin, gradient: "from-blue-500 to-blue-700", angle: 60 },
@@ -412,8 +414,7 @@ export default function Home() {
               { name: "TikTok", Icon: TikTokIcon, gradient: "from-slate-700 to-slate-900", angle: 240 },
               { name: "YouTube", Icon: Youtube, gradient: "from-red-500 to-red-700", angle: 300 },
             ].map((feature, idx) => {
-              // Use a fixed radius for SSR compatibility, will adjust on client if needed
-              const radius = 280
+              const radius = 240
               const angleRad = (feature.angle * Math.PI) / 180
               const x = radius * Math.cos(angleRad)
               const y = radius * Math.sin(angleRad)
@@ -422,22 +423,22 @@ export default function Home() {
               return (
                 <div
                   key={idx}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  className="absolute top-1/2 left-1/2"
                   style={{
                     transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
                   }}
                 >
                   <div className="relative group cursor-pointer">
                     <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} rounded-2xl blur-lg opacity-40 group-hover:opacity-70 transition-opacity duration-300`}></div>
-                    <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 group-hover:border-blue-500 flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:scale-110 hover:-translate-y-2"
+                    <div className="relative w-28 h-28 lg:w-36 lg:h-36 rounded-2xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 group-hover:border-blue-500 flex flex-col items-center justify-center gap-2 transition-all duration-300 hover:scale-110 hover:-translate-y-2"
                       style={{
                         animationDelay: `${idx * 0.5}s`,
                       }}
                     >
-                      <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center shadow-lg`}>
-                        <PlatformIcon className="w-7 h-7 md:w-9 md:h-9 text-white" />
+                      <div className={`w-10 h-10 lg:w-14 lg:h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center shadow-lg`}>
+                        <PlatformIcon className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
                       </div>
-                      <p className="text-white text-xs md:text-sm font-semibold text-center px-2">
+                      <p className="text-white text-xs lg:text-sm font-semibold text-center px-2">
                         {feature.name}
                       </p>
                     </div>
@@ -447,15 +448,60 @@ export default function Home() {
             })}
           </div>
 
-          {/* Info badges */}
-          <div className="flex flex-wrap justify-center gap-8 mt-12">
-            <div className="flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300">
-              <Users className="w-5 h-5 text-blue-400" />
-              <span className="text-white font-semibold">10,000+ Active Users</span>
+          {/* Mobile Grid Layout */}
+          <div className="md:hidden">
+            {/* Central MarketPilot Card */}
+            <div className="flex justify-center mb-8">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 rounded-2xl blur-xl opacity-50"></div>
+                <div className="relative w-32 h-32 rounded-2xl bg-gradient-to-br from-slate-800/70 to-slate-900/70 backdrop-blur-xl border-2 border-blue-500/50 flex flex-col items-center justify-center gap-2">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 flex items-center justify-center shadow-2xl">
+                    <Sparkles className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-sm font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                    MarketPilot
+                  </h3>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-3 px-6 py-3 rounded-xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300">
-              <Zap className="w-5 h-5 text-purple-400" />
-              <span className="text-white font-semibold">6 Platforms Integrated</span>
+
+            {/* Platform Cards Grid */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { name: "Twitter", Icon: Twitter, gradient: "from-blue-400 to-blue-600" },
+                { name: "LinkedIn", Icon: Linkedin, gradient: "from-blue-500 to-blue-700" },
+                { name: "Facebook", Icon: Facebook, gradient: "from-blue-600 to-blue-800" },
+                { name: "Instagram", Icon: Instagram, gradient: "from-pink-500 to-purple-600" },
+                { name: "TikTok", Icon: TikTokIcon, gradient: "from-slate-700 to-slate-900" },
+                { name: "YouTube", Icon: Youtube, gradient: "from-red-500 to-red-700" },
+              ].map((feature, idx) => {
+                const PlatformIcon = feature.Icon
+                return (
+                  <div key={idx} className="relative group cursor-pointer">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} rounded-xl blur-md opacity-30`}></div>
+                    <div className="relative p-3 rounded-xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 flex flex-col items-center justify-center gap-2 transition-all duration-300 active:scale-95">
+                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${feature.gradient} flex items-center justify-center shadow-lg`}>
+                        <PlatformIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <p className="text-white text-[10px] font-semibold text-center">
+                        {feature.name}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Info badges */}
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-8 mt-8 md:mt-12">
+            <div className="flex items-center justify-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300">
+              <Users className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
+              <span className="text-white font-semibold text-sm md:text-base">10,000+ Active Users</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300">
+              <Zap className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
+              <span className="text-white font-semibold text-sm md:text-base">6 Platforms Integrated</span>
             </div>
           </div>
         </div>
@@ -643,8 +689,9 @@ export default function Home() {
                 </Button>
               </div>
 
-              {/* Right Side - Social Media Post Gallery (Overlapping Layout) */}
-              <div className="relative h-[500px]">
+              {/* Right Side - Social Media Post Gallery */}
+              {/* Desktop: Overlapping Layout */}
+              <div className="hidden lg:block relative h-[500px]">
                 {/* Background decorative shape */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-full blur-3xl"></div>
 
@@ -720,6 +767,31 @@ export default function Home() {
                   <p className="text-xs text-slate-300">Short</p>
                 </div>
               </div>
+
+              {/* Mobile/Tablet: Grid Layout */}
+              <div className="lg:hidden grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6">
+                {[
+                  { name: "Twitter", Icon: Twitter, color: "text-blue-400", borderColor: "hover:border-blue-400/50", bgGradient: "from-blue-500/20 to-cyan-500/20" },
+                  { name: "LinkedIn", Icon: Linkedin, color: "text-blue-600", borderColor: "hover:border-blue-600/50", bgGradient: "from-blue-600/20 to-blue-800/20" },
+                  { name: "Instagram", Icon: Instagram, color: "text-pink-500", borderColor: "hover:border-pink-500/50", bgGradient: "from-pink-500/20 to-purple-600/20" },
+                  { name: "Facebook", Icon: Facebook, color: "text-blue-700", borderColor: "hover:border-blue-700/50", bgGradient: "from-blue-700/20 to-blue-900/20" },
+                  { name: "YouTube", Icon: Youtube, color: "text-red-600", borderColor: "hover:border-red-600/50", bgGradient: "from-red-600/20 to-red-800/20" },
+                  { name: "TikTok", Icon: TikTokIcon, color: "text-slate-300", borderColor: "hover:border-slate-500/50", bgGradient: "from-slate-700/20 to-slate-900/20" },
+                ].map((platform, idx) => {
+                  const PlatformIcon = platform.Icon
+                  return (
+                    <div key={idx} className={`p-3 rounded-xl bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 ${platform.borderColor} transition-all duration-300 shadow-lg`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <PlatformIcon className={`w-4 h-4 ${platform.color}`} />
+                        <span className="text-xs text-slate-400 font-medium">{platform.name}</span>
+                      </div>
+                      <div className={`aspect-square rounded-lg bg-gradient-to-br ${platform.bgGradient} flex items-center justify-center`}>
+                        <PlatformIcon className={`w-8 h-8 ${platform.color}`} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -791,16 +863,16 @@ export default function Home() {
       </section>
 
       {/* Stats Section - DARK gradient */}
-      <section ref={statsRef} className="py-32 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950 relative overflow-hidden">
+      <section ref={statsRef} className="py-16 md:py-32 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950 relative overflow-hidden">
         {/* Animated background blobs */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-1/2 left-0 w-[700px] h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob" />
-          <div className="absolute top-1/2 right-0 w-[700px] h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
+          <div className="absolute top-1/2 left-0 w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-blue-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute top-1/2 right-0 w-[400px] md:w-[700px] h-[400px] md:h-[700px] bg-indigo-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
         </div>
         
-        <div className="container mx-auto px-6 max-w-6xl relative z-10">
-          <div className="p-12 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="container mx-auto px-4 md:px-6 max-w-6xl relative z-10">
+          <div className="p-4 md:p-12 rounded-2xl md:rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center">
             {[
               { icon: Users, value: 8000, suffix: "+", label: "Active Customers" },
               { icon: FileText, value: 100000, suffix: "+", label: "Posts Created" },
@@ -810,17 +882,17 @@ export default function Home() {
               const Icon = stat.icon
               return (
                 <div key={idx} className="group">
-                  <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="h-8 w-8 text-white" />
+                  <div className="inline-flex p-2 md:p-4 rounded-xl md:rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 mb-2 md:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="h-5 w-5 md:h-8 md:w-8 text-white" />
                   </div>
-                  <div className="text-4xl md:text-5xl font-bold mb-2 text-white">
+                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 md:mb-2 text-white">
                     {isStatsVisible ? (
                       <AnimatedCounter end={stat.value} suffix={stat.suffix} />
                     ) : (
                       <span>0{stat.suffix}</span>
                     )}
                   </div>
-                  <p className="text-sm text-slate-300 font-medium">{stat.label}</p>
+                  <p className="text-[10px] sm:text-xs md:text-sm text-slate-300 font-medium">{stat.label}</p>
                 </div>
               )
             })}
@@ -1159,54 +1231,54 @@ export default function Home() {
       </section>
 
       {/* Footer - DARK gradient */}
-      <footer className="bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950 py-16 border-t border-slate-800/50 relative overflow-hidden">
+      <footer className="bg-gradient-to-b from-slate-950 via-slate-950 to-slate-950 py-8 md:py-16 border-t border-slate-800/50 relative overflow-hidden">
         {/* Subtle animated background */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-slate-600 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[800px] h-[200px] md:h-[400px] bg-slate-600 rounded-full blur-3xl animate-blob" />
         </div>
         
-        <div className="container mx-auto px-6 max-w-6xl relative z-10">
-          <div className="p-12 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50">
-          <div className="grid md:grid-cols-4 gap-8 mb-12">
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500">
-                  <Sparkles className="h-5 w-5 text-white" />
+        <div className="container mx-auto px-4 md:px-6 max-w-6xl relative z-10">
+          <div className="p-4 md:p-12 rounded-2xl md:rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center space-x-2 md:space-x-3 mb-3 md:mb-4">
+                <div className="p-1.5 md:p-2 rounded-lg md:rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500">
+                  <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="text-base md:text-xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                   MarketPilot AI
                 </span>
               </div>
-              <p className="text-sm text-slate-400 mb-4">
+              <p className="text-xs md:text-sm text-slate-400 mb-4">
                 Your all-in-one social media management platform.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-white">Services</h3>
-              <ul className="space-y-2 text-sm text-slate-400">
+              <h3 className="font-semibold mb-2 md:mb-4 text-white text-sm md:text-base">Services</h3>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-400">
                 <li><Link href="#features" className="hover:text-blue-400 transition-colors">AI-powered copywriting</Link></li>
                 <li><Link href="#features" className="hover:text-blue-400 transition-colors">Social media management</Link></li>
                 <li><Link href="#features" className="hover:text-blue-400 transition-colors">Analytics & insights</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-white">Resources</h3>
-              <ul className="space-y-2 text-sm text-slate-400">
+              <h3 className="font-semibold mb-2 md:mb-4 text-white text-sm md:text-base">Resources</h3>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-400">
                 <li><Link href="#faq" className="hover:text-blue-400 transition-colors">FAQs</Link></li>
                 <li><Link href="#about" className="hover:text-blue-400 transition-colors">About</Link></li>
                 <li><Link href="#pricing" className="hover:text-blue-400 transition-colors">Pricing</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-white">About us</h3>
-              <ul className="space-y-2 text-sm text-slate-400">
+              <h3 className="font-semibold mb-2 md:mb-4 text-white text-sm md:text-base">About us</h3>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-slate-400">
                 <li><Link href="/auth/login" className="hover:text-blue-400 transition-colors">Login</Link></li>
                 <li><Link href="/dashboard" className="hover:text-blue-400 transition-colors">Sign up</Link></li>
                 <li><Link href="#" className="hover:text-blue-400 transition-colors">Contact</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-700/50 pt-8 text-center text-sm text-slate-500">
+          <div className="border-t border-slate-700/50 pt-4 md:pt-8 text-center text-xs md:text-sm text-slate-500">
             © 2025 MarketPilot AI. All rights reserved.
           </div>
           </div>

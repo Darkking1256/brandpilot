@@ -116,10 +116,11 @@ export function ContentCalendar({
   }
 
   const renderMonthView = () => (
-    <div className="grid grid-cols-7 gap-1">
-      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-        <div key={day} className="p-2 text-center text-sm font-semibold text-slate-400">
-          {day}
+    <div className="grid grid-cols-7 gap-0.5 md:gap-1">
+      {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
+        <div key={idx} className="p-1 md:p-2 text-center text-[10px] md:text-sm font-semibold text-slate-400">
+          <span className="md:hidden">{day}</span>
+          <span className="hidden md:inline">{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][idx]}</span>
         </div>
       ))}
       {calendarDays.map((day, idx) => {
@@ -131,24 +132,24 @@ export function ContentCalendar({
           <div
             key={idx}
             className={cn(
-              "min-h-[100px] p-2 border border-slate-700/50 rounded-lg transition-colors bg-slate-900/30 hover:bg-slate-800/50",
+              "min-h-[60px] md:min-h-[100px] p-1 md:p-2 border border-slate-700/50 rounded md:rounded-lg transition-colors bg-slate-900/30 hover:bg-slate-800/50",
               !isCurrentMonth && "opacity-30",
-              isTodayDate && "ring-2 ring-blue-500 bg-blue-950/30"
+              isTodayDate && "ring-1 md:ring-2 ring-blue-500 bg-blue-950/30"
             )}
             onClick={() => onDateChange?.(day)}
             onDragOver={(e) => handleDragOver(e, day)}
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, day)}
           >
-            <div className={cn("text-sm font-semibold mb-1 text-slate-300", isTodayDate && "text-blue-400")}>
+            <div className={cn("text-[10px] md:text-sm font-semibold mb-0.5 md:mb-1 text-slate-300", isTodayDate && "text-blue-400")}>
               {format(day, "d")}
             </div>
-            <div className="space-y-1">
-              {dayPosts.slice(0, 3).map((post) => (
+            <div className="space-y-0.5 md:space-y-1">
+              {dayPosts.slice(0, window?.innerWidth < 768 ? 1 : 3).map((post) => (
                 <div
                   key={post.id}
                   className={cn(
-                    "text-xs p-1 rounded cursor-pointer hover:opacity-80 truncate text-white",
+                    "text-[8px] md:text-xs p-0.5 md:p-1 rounded cursor-pointer hover:opacity-80 truncate text-white",
                     getPostColor(post)
                   )}
                   onClick={(e) => {
@@ -161,12 +162,13 @@ export function ContentCalendar({
                     e.dataTransfer.effectAllowed = "move"
                   }}
                 >
-                  {post.content.substring(0, 30)}...
+                  <span className="hidden md:inline">{post.content.substring(0, 30)}...</span>
+                  <span className="md:hidden">{post.platform.charAt(0).toUpperCase()}</span>
                 </div>
               ))}
-              {dayPosts.length > 3 && (
-                <div className="text-xs text-slate-500">
-                  +{dayPosts.length - 3} more
+              {dayPosts.length > (typeof window !== 'undefined' && window?.innerWidth < 768 ? 1 : 3) && (
+                <div className="text-[8px] md:text-xs text-slate-500">
+                  +{dayPosts.length - (typeof window !== 'undefined' && window?.innerWidth < 768 ? 1 : 3)}
                 </div>
               )}
             </div>
@@ -184,41 +186,93 @@ export function ContentCalendar({
     })
 
     return (
-      <div className="grid grid-cols-7 gap-2">
-        {weekDays.map((day, idx) => {
-          const dayPosts = postsByDate.get(format(day, "yyyy-MM-dd")) || []
-          const isTodayDate = isToday(day)
+      <>
+        {/* Desktop Week View - 7 columns */}
+        <div className="hidden md:grid grid-cols-7 gap-2">
+          {weekDays.map((day, idx) => {
+            const dayPosts = postsByDate.get(format(day, "yyyy-MM-dd")) || []
+            const isTodayDate = isToday(day)
 
-          return (
-            <div
-              key={idx}
-              className={cn(
-                "min-h-[400px] p-3 border border-slate-700/50 rounded-lg bg-slate-900/30",
-                isTodayDate && "ring-2 ring-blue-500 bg-blue-950/30"
-              )}
-            >
-              <div className={cn("text-sm font-semibold mb-2 text-slate-300", isTodayDate && "text-blue-400")}>
-                {format(day, "EEE, MMM d")}
+            return (
+              <div
+                key={idx}
+                className={cn(
+                  "min-h-[400px] p-3 border border-slate-700/50 rounded-lg bg-slate-900/30",
+                  isTodayDate && "ring-2 ring-blue-500 bg-blue-950/30"
+                )}
+              >
+                <div className={cn("text-sm font-semibold mb-2 text-slate-300", isTodayDate && "text-blue-400")}>
+                  {format(day, "EEE, MMM d")}
+                </div>
+                <div className="space-y-2">
+                  {dayPosts.map((post) => (
+                    <div
+                      key={post.id}
+                      className={cn(
+                        "text-xs p-2 rounded cursor-pointer hover:opacity-80 text-white",
+                        getPostColor(post)
+                      )}
+                      onClick={() => onPostClick?.(post)}
+                    >
+                      <div className="font-semibold">{format(new Date(`${post.scheduledDate}T${post.scheduledTime}`), "h:mm a")}</div>
+                      <div className="mt-1">{post.content.substring(0, 50)}...</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                {dayPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className={cn(
-                      "text-xs p-2 rounded cursor-pointer hover:opacity-80 text-white",
-                      getPostColor(post)
-                    )}
-                    onClick={() => onPostClick?.(post)}
-                  >
-                    <div className="font-semibold">{format(new Date(`${post.scheduledDate}T${post.scheduledTime}`), "h:mm a")}</div>
-                    <div className="mt-1">{post.content.substring(0, 50)}...</div>
-                  </div>
-                ))}
+            )
+          })}
+        </div>
+
+        {/* Mobile Week View - Vertical stack */}
+        <div className="md:hidden space-y-3">
+          {weekDays.map((day, idx) => {
+            const dayPosts = postsByDate.get(format(day, "yyyy-MM-dd")) || []
+            const isTodayDate = isToday(day)
+
+            return (
+              <div
+                key={idx}
+                className={cn(
+                  "p-3 border border-slate-700/50 rounded-lg bg-slate-900/30",
+                  isTodayDate && "ring-2 ring-blue-500 bg-blue-950/30"
+                )}
+              >
+                <div className={cn("text-sm font-semibold mb-2 text-slate-300 flex items-center justify-between", isTodayDate && "text-blue-400")}>
+                  <span>{format(day, "EEE, MMM d")}</span>
+                  {dayPosts.length > 0 && (
+                    <span className="text-[10px] bg-slate-700 px-2 py-0.5 rounded-full text-slate-300">
+                      {dayPosts.length} post{dayPosts.length > 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  {dayPosts.length === 0 ? (
+                    <div className="text-xs text-slate-500 py-2">No posts scheduled</div>
+                  ) : (
+                    dayPosts.map((post) => (
+                      <div
+                        key={post.id}
+                        className={cn(
+                          "text-xs p-2 rounded cursor-pointer hover:opacity-80 text-white",
+                          getPostColor(post)
+                        )}
+                        onClick={() => onPostClick?.(post)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold">{format(new Date(`${post.scheduledDate}T${post.scheduledTime}`), "h:mm a")}</span>
+                          <span className="text-[10px] opacity-80 capitalize">{post.platform}</span>
+                        </div>
+                        <div className="mt-1 truncate">{post.content.substring(0, 60)}...</div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      </>
     )
   }
 
@@ -260,39 +314,42 @@ export function ContentCalendar({
   }
 
   return (
-    <div className="rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50">
-      <div className="p-6 border-b border-slate-700/50">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <CalendarIcon className="h-5 w-5 text-slate-400" />
-            Content Calendar
-          </h3>
-          <div className="flex items-center gap-2">
-            <Tabs value={selectedView} onValueChange={(v) => setSelectedView(v as typeof selectedView)}>
-              <TabsList className="bg-slate-800/50 border border-slate-700/50">
-                <TabsTrigger value="month" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">
-                  <Grid className="h-4 w-4 mr-2" />
-                  Month
-                </TabsTrigger>
-                <TabsTrigger value="week" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">Week</TabsTrigger>
-                <TabsTrigger value="day" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white">Day</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={handlePrevious} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50">
+    <div className="rounded-2xl md:rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50">
+      <div className="p-3 md:p-6 border-b border-slate-700/50">
+        <div className="flex flex-col gap-3 md:gap-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base md:text-xl font-bold text-white flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4 md:h-5 md:w-5 text-slate-400" />
+              <span className="hidden sm:inline">Content Calendar</span>
+              <span className="sm:hidden">Calendar</span>
+            </h3>
+            {/* Navigation controls */}
+            <div className="flex items-center gap-1 md:gap-2">
+              <Button variant="outline" size="sm" onClick={handlePrevious} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50 h-8 w-8 md:h-9 md:w-9 p-0">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={handleToday} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50">
+              <Button variant="outline" size="sm" onClick={handleToday} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50 h-8 md:h-9 px-2 md:px-3 text-xs md:text-sm">
                 Today
               </Button>
-              <Button variant="outline" size="sm" onClick={handleNext} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50">
+              <Button variant="outline" size="sm" onClick={handleNext} className="border-slate-700/50 bg-slate-800/50 text-slate-300 hover:text-white hover:border-blue-500/50 h-8 w-8 md:h-9 md:w-9 p-0">
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
+          {/* View Tabs */}
+          <Tabs value={selectedView} onValueChange={(v) => setSelectedView(v as typeof selectedView)} className="w-full">
+            <TabsList className="bg-slate-800/50 border border-slate-700/50 w-full grid grid-cols-3">
+              <TabsTrigger value="month" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-xs md:text-sm">
+                <Grid className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                Month
+              </TabsTrigger>
+              <TabsTrigger value="week" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-xs md:text-sm">Week</TabsTrigger>
+              <TabsTrigger value="day" className="data-[state=active]:bg-slate-700 data-[state=active]:text-white text-xs md:text-sm">Day</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </div>
-      <div className="p-6">
+      <div className="p-2 md:p-6">
         {selectedView === "month" && renderMonthView()}
         {selectedView === "week" && renderWeekView()}
         {selectedView === "day" && renderDayView()}

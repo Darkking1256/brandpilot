@@ -23,8 +23,8 @@ export function BottomNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-t safe-area-inset-bottom">
-      <div className="flex items-center justify-around h-16 px-2">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-md border-t border-slate-800">
+      <div className="flex items-center justify-around h-14 px-1 safe-area-inset-bottom">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || 
@@ -35,10 +35,10 @@ export function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center -mt-4"
+                className="flex flex-col items-center justify-center -mt-5"
               >
-                <div className="p-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 shadow-lg">
-                  <Icon className="h-6 w-6 text-white" />
+                <div className="p-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 shadow-lg shadow-blue-500/30 border-4 border-slate-950">
+                  <Icon className="h-5 w-5 text-white" />
                 </div>
               </Link>
             )
@@ -49,14 +49,14 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 px-3 py-2 transition-colors",
+                "flex flex-col items-center justify-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-[52px]",
                 isActive 
-                  ? "text-blue-600 dark:text-blue-400" 
-                  : "text-muted-foreground"
+                  ? "text-blue-400 bg-blue-500/10" 
+                  : "text-slate-500 active:bg-slate-800"
               )}
             >
-              <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <Icon className={cn("h-5 w-5", isActive && "text-blue-400")} />
+              <span className={cn("text-[9px] font-medium", isActive ? "text-blue-400" : "text-slate-500")}>{item.label}</span>
             </Link>
           )
         })}

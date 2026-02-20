@@ -434,7 +434,7 @@ export default function DashboardPage() {
         <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-blue-600 rounded-full blur-3xl animate-blob animation-delay-2000" />
       </div>
 
-      <div className="relative z-10 space-y-8 p-6 md:p-8 lg:p-10">
+      <div className="relative z-10 space-y-4 md:space-y-8 p-3 sm:p-4 md:p-8 lg:p-10">
         {/* Welcome Banner for New Users */}
         {showWelcomeBanner && (
           <div className="p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
@@ -521,20 +521,21 @@ export default function DashboardPage() {
         )}
 
         {/* Dashboard Header */}
-        <div className="text-center mb-16 p-8 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+        <div className="text-center mb-8 md:mb-16 p-4 md:p-8 rounded-2xl md:rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-6 text-white">
             Dashboard <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Overview</span>
           </h1>
-          <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+          <p className="text-sm sm:text-base md:text-xl text-slate-300 mb-4 md:mb-8 max-w-3xl mx-auto px-2">
             Welcome back! Here&apos;s what&apos;s happening with your social media marketing today.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:bg-slate-800/50 hover:border-blue-500/50">
-                  <Clock className="h-4 w-4 mr-2" />
-                  {dateRange === "7d" ? "Last 7 days" : dateRange === "30d" ? "Last 30 days" : dateRange === "90d" ? "Last 90 days" : "All time"}
-                  <ChevronDown className="h-4 w-4 ml-2" />
+                <Button variant="outline" size="sm" className="border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:bg-slate-800/50 hover:border-blue-500/50 text-xs md:text-sm">
+                  <Clock className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">{dateRange === "7d" ? "Last 7 days" : dateRange === "30d" ? "Last 30 days" : dateRange === "90d" ? "Last 90 days" : "All time"}</span>
+                  <span className="sm:hidden">{dateRange === "7d" ? "7d" : dateRange === "30d" ? "30d" : dateRange === "90d" ? "90d" : "All"}</span>
+                  <ChevronDown className="h-3 w-3 md:h-4 md:w-4 ml-1 md:ml-2" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-slate-900/95 border-slate-700 backdrop-blur-xl">
@@ -552,40 +553,42 @@ export default function DashboardPage() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg backdrop-blur-xl">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh Data
+            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg backdrop-blur-xl text-xs md:text-sm">
+              <RefreshCw className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">Refresh Data</span>
+              <span className="sm:hidden">Refresh</span>
             </Button>
-            <Button size="sm" variant="outline" className="border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:bg-slate-800/50 hover:border-blue-500/50">
-              <Download className="h-4 w-4 mr-2" />
-              Export Report
+            <Button size="sm" variant="outline" className="border-slate-700/50 bg-slate-900/50 backdrop-blur-xl text-slate-300 hover:bg-slate-800/50 hover:border-blue-500/50 text-xs md:text-sm">
+              <Download className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">Export Report</span>
+              <span className="sm:hidden">Export</span>
             </Button>
           </div>
         </div>
 
         {/* Key Metrics Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-16">
+        <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-4 mb-8 md:mb-16">
           {stats.map((stat, idx) => {
             const Icon = stat.icon
             return (
               <div
                 key={stat.title}
-                className="p-6 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 group"
+                className="p-3 md:p-6 rounded-xl md:rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 group"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-sm font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
+                <div className="flex items-center justify-between mb-2 md:mb-4">
+                  <div className="text-[10px] sm:text-xs md:text-sm font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
                     {stat.title}
                   </div>
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md group-hover:scale-110 transition-transform">
-                    <Icon className="h-4 w-4 text-white" />
+                  <div className="p-1.5 md:p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md group-hover:scale-110 transition-transform">
+                    <Icon className="h-3 w-3 md:h-4 md:w-4 text-white" />
                   </div>
                 </div>
-                <div className="flex items-baseline justify-between mb-2">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                <div className="flex items-baseline justify-between mb-1 md:mb-2">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
                     {stat.value}
                   </div>
                   <div className={cn(
-                    "text-xs font-semibold px-2 py-1 rounded-full",
+                    "text-[10px] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 md:py-1 rounded-full",
                     stat.trend === "up"
                       ? "bg-green-500/20 text-green-400 border border-green-500/30"
                       : stat.trend === "down"
@@ -595,7 +598,7 @@ export default function DashboardPage() {
                     {stat.change}
                   </div>
                 </div>
-                <p className="text-sm text-slate-500 group-hover:text-slate-400 transition-colors">
+                <p className="text-[10px] sm:text-xs md:text-sm text-slate-500 group-hover:text-slate-400 transition-colors truncate">
                   {stat.description}
                 </p>
               </div>
@@ -604,9 +607,9 @@ export default function DashboardPage() {
         </div>
 
       {/* Main Dashboard Grid */}
-      <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid gap-4 md:gap-6 lg:grid-cols-12">
         {/* Analytics Charts Section */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-4 md:space-y-8">
           {/* Engagement Overview */}
           <div className="p-8 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500">
             <div className="flex items-center justify-between mb-6">
@@ -665,7 +668,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Sidebar Widgets */}
-        <div className="lg:col-span-4 space-y-8">
+        <div className="lg:col-span-4 space-y-4 md:space-y-8">
           {/* Quick Actions */}
           <div className="p-6 rounded-3xl bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-500">
             <div className="mb-6">
@@ -786,44 +789,47 @@ export default function DashboardPage() {
       </div>
 
         {/* Quick Actions Footer */}
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          <div className="p-6 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500 text-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Plus className="h-6 w-6 text-white" />
+        <div className="mt-6 md:mt-8 grid gap-3 md:gap-6 grid-cols-1 sm:grid-cols-3">
+          <div className="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-blue-500/50 transition-all duration-500 text-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <Plus className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <h4 className="text-lg font-semibold text-white mb-2">Create New Post</h4>
-            <p className="text-slate-400 text-sm mb-4">Schedule content for your platforms</p>
+            <h4 className="text-base md:text-lg font-semibold text-white mb-1 md:mb-2">Create New Post</h4>
+            <p className="text-slate-400 text-xs md:text-sm mb-3 md:mb-4">Schedule content for your platforms</p>
             <Button
               onClick={handleCreatePostClick}
-              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+              size="sm"
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-xs md:text-sm"
             >
               Create Post
             </Button>
           </div>
 
-          <div className="p-6 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 text-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <BarChart3 className="h-6 w-6 text-white" />
+          <div className="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-purple-500/50 transition-all duration-500 text-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <BarChart3 className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <h4 className="text-lg font-semibold text-white mb-2">Start Campaign</h4>
-            <p className="text-slate-400 text-sm mb-4">Launch a new marketing campaign</p>
+            <h4 className="text-base md:text-lg font-semibold text-white mb-1 md:mb-2">Start Campaign</h4>
+            <p className="text-slate-400 text-xs md:text-sm mb-3 md:mb-4">Launch a new marketing campaign</p>
             <Button
               onClick={handleCreateCampaignClick}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              size="sm"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-xs md:text-sm"
             >
               Start Campaign
             </Button>
           </div>
 
-          <div className="p-6 rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-500 text-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="h-6 w-6 text-white" />
+          <div className="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-slate-900/30 backdrop-blur-xl border border-slate-700/50 hover:border-green-500/50 transition-all duration-500 text-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <FileText className="h-5 w-5 md:h-6 md:w-6 text-white" />
             </div>
-            <h4 className="text-lg font-semibold text-white mb-2">Repurpose Content</h4>
-            <p className="text-slate-400 text-sm mb-4">Use AI to adapt content</p>
+            <h4 className="text-base md:text-lg font-semibold text-white mb-1 md:mb-2">Repurpose Content</h4>
+            <p className="text-slate-400 text-xs md:text-sm mb-3 md:mb-4">Use AI to adapt content</p>
             <Button
               asChild
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              size="sm"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-xs md:text-sm"
             >
               <Link href="/dashboard/repurpose">Get Started</Link>
             </Button>

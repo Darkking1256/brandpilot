@@ -356,6 +356,49 @@
   .safe-area-inset-top {
     padding-top: env(safe-area-inset-top, 0);
   }
+  
+  /* Mobile-friendly text truncation */
+  .mobile-truncate {
+    @apply truncate;
+  }
+  
+  @media (min-width: 768px) {
+    .mobile-truncate {
+      @apply whitespace-normal;
+      overflow: visible;
+      text-overflow: clip;
+    }
+  }
+  
+  /* Hide on mobile utility */
+  .hide-mobile {
+    @apply hidden sm:block;
+  }
+  
+  /* Show only on mobile utility */
+  .show-mobile {
+    @apply block sm:hidden;
+  }
+  
+  /* Mobile-optimized grid gaps */
+  .mobile-gap {
+    @apply gap-2 sm:gap-4 md:gap-6;
+  }
+  
+  /* Mobile-optimized padding */
+  .mobile-padding {
+    @apply p-2 sm:p-4 md:p-6;
+  }
+  
+  /* Mobile-optimized margin */
+  .mobile-margin {
+    @apply m-2 sm:m-4 md:m-6;
+  }
+  
+  /* Better tap highlight for mobile */
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 /* Mobile-specific styles */
@@ -369,13 +412,6 @@
   
   /* Better touch targets */
   @media (max-width: 768px) {
-    button, 
-    a, 
-    [role="button"] {
-      min-height: 44px;
-      min-width: 44px;
-    }
-    
     /* Larger text on mobile for readability */
     html {
       font-size: 16px;
@@ -392,6 +428,48 @@
     .overflow-y-auto,
     .overflow-auto {
       -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Mobile typography adjustments */
+    h1 {
+      @apply text-2xl;
+    }
+    
+    h2 {
+      @apply text-xl;
+    }
+    
+    h3 {
+      @apply text-lg;
+    }
+    
+    /* Card padding reduction on mobile */
+    .card-professional {
+      @apply p-3;
+    }
+    
+    /* Better spacing for mobile sections */
+    .section-header {
+      @apply pb-3 mb-4;
+    }
+  }
+  
+  /* Extra small devices (phones in portrait) */
+  @media (max-width: 375px) {
+    html {
+      font-size: 14px;
+    }
+    
+    h1 {
+      @apply text-xl;
+    }
+    
+    h2 {
+      @apply text-lg;
+    }
+    
+    h3 {
+      @apply text-base;
     }
   }
 }
