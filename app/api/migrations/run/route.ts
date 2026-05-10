@@ -1,39 +1,56 @@
 export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
 
-// ⚠️ WARNING: This endpoint should be protected in production!
-// Only allow in development or with proper authentication
+// ⚠️ WARNING: Unauthenticated in development — path traversal is blocked; production requires MIGRATION_SECRET.
 
 export async function POST(request: NextRequest) {
-  // In production, add authentication check here
   if (process.env.NODE_ENV === "production") {
+    const secret = process.env.MIGRATION_SECRET
+    if (!secret) {
+      return NextResponse.json(
+        { error: "Migrations API is disabled (MIGRATION_SECRET not set)" },
+        { status: 503 }
+      )
+    }
     const authHeader = request.headers.get("authorization")
-    if (authHeader !== `Bearer ${process.env.MIGRATION_SECRET}`) {
+    if (authHeader !== `Bearer ${secret}`) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
   }
 
   try {
-    const supabase = await createClient()
     const { migration_file } = await request.json()
 
-    if (!migration_file) {
+    if (!migration_file || typeof migration_file !== "string") {
       return NextResponse.json(
         { error: "migration_file parameter is required" },
         { status: 400 }
       )
     }
 
-    // Read migration file
+    if (migration_file.includes("\0")) {
+      return NextResponse.json({ error: "Invalid migration_file" }, { status: 400 })
+    }
+
+    // Read migration file (path must stay inside supabase/migrations)
     const fs = await import("fs")
     const path = await import("path")
-    const migrationPath = path.join(
-      process.cwd(),
-      "supabase",
-      "migrations",
-      migration_file
-    )
+    const migrationsDir = path.resolve(process.cwd(), "supabase", "migrations")
+    const resolvedPath = path.resolve(migrationsDir, migration_file)
+    const relativeToMigrations = path.relative(migrationsDir, resolvedPath)
+    const isInsideMigrations =
+      relativeToMigrations !== "" &&
+      !relativeToMigrations.startsWith("..") &&
+      !path.isAbsolute(relativeToMigrations)
+
+    if (!isInsideMigrations) {
+      return NextResponse.json(
+        { error: "Invalid migration_file path" },
+        { status: 400 }
+      )
+    }
+
+    const migrationPath = resolvedPath
 
     if (!fs.existsSync(migrationPath)) {
       return NextResponse.json(
